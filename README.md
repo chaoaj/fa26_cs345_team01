@@ -1,5 +1,5 @@
-# Project Readme file
-List your team members here and summarize your project.
+# Project README file
+Yony Woube, Amaya Cranford, Caden Cole VanValkenburg, Parker Giles, Angelina Yoha, Parash
 
 [Dev url](https://chaoaj.github.io/team0x-chao-fa26/index-dev.html)
 
