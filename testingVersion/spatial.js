@@ -1,0 +1,147 @@
+/* The spatial grid is a tool I've used to avoid iterating over
+ * every single troop/collision object ever time a troop/projectile
+ * moves or gets a target. Instead, it subdivides the map into a grid
+ * of fixed width-cells.
+ * 
+ * Troops and collision objects are kept in the corresponding cell that relates
+ * to their physical position, and when we need to check collisions and the like,
+ * we can simply query the cells that are caught with a circle of radius r from a point.
+ */
+
+// Map cell sizes
+const CELL_SIZE = 600;
+const SPACE_CELL_SIZE = 500;
+
+/**
+ * Spatial Grid object. Map and mode each have one, as the map can use a grid
+ * with smaller cell sizes since trees aren't going to be that large
+ */
+class SpatialGrid {
+    /**
+     * Constructor
+     * @param {number} width    should be MAP_W
+     * @param {number} height   should be MAP_H
+     * @param {number} cellSize size of cells
+     */
+    constructor(width, height, cellSize) {
+        this.cellSize = cellSize;
+        this.cols = Math.ceil(width / cellSize);
+        this.rows = Math.ceil(height / cellSize);
+        this.cells = new Array(this.cols * this.rows);
+        this.cells.fill(null);
+    }
+
+    /**
+     * Get the cell an item should be in based on their (x, y)
+     * @param {number} x    x position
+     * @param {number} y    y position
+     * @returns {number}    index
+     */
+    getCellIndex(x, y) {
+        const col = Math.floor(x / this.cellSize);
+        const row = Math.floor(y / this.cellSize);
+
+        if (
+            col < 0 || col >= this.cols ||
+            row < 0 || row >= this.rows
+        ) {
+            return -1;
+        }
+
+        return row * this.cols + col;
+    }
+
+    /**
+     * Inserts an item into the grid
+     * @param {(Troop|MapObject)} item Troop/collision object to insert
+     */
+    insert(item) {
+        const index = this.getCellIndex(
+            item.pos.x,
+            item.pos.y
+        );
+
+        if (index < 0)
+            return;
+
+        if (!this.cells[index])
+            this.cells[index] = [];
+        item.gridIndex = index;
+        this.cells[index].push(item);
+    }
+
+    /**
+     * Insert an item at a given index rather than calculating their cell index
+     * @param {(Troop|MapObject)} item  item to insert
+     * @param {number} index            index to insert them in
+     * @returns 
+     */
+    insertIndex(item, index) {
+        if (index < 0)
+            return;
+        if (!this.cells[index])
+            this.cells[index] = [];
+        item.gridIndex = index;
+        this.cells[index].push(item);
+    }
+
+    /**
+     * Get all cells within a given radius from (x, y) and return all items in those cells
+     * @param {number} x                center x
+     * @param {number} y                center y
+     * @param {number} range            search radius
+     * @returns {(Troop|MapObject)[]}   items
+     */
+    query(x, y, range) {
+        if (
+            !Number.isFinite(x) ||
+            !Number.isFinite(y)
+        ) {
+            console.error("Invalid SpatialGrid.query:", {
+                x,
+                y,
+                range
+            });
+            return [];
+        }
+        if (!Number.isFinite(range) || range < 0)
+            range = 0;
+
+        const minCol = Math.max(
+            0,
+            Math.floor((x - range) / this.cellSize)
+        );
+
+        const maxCol = Math.min(
+            this.cols - 1,
+            Math.floor((x + range) / this.cellSize)
+        );
+
+        const minRow = Math.max(
+            0,
+            Math.floor((y - range) / this.cellSize)
+        );
+
+        const maxRow = Math.min(
+            this.rows - 1,
+            Math.floor((y + range) / this.cellSize)
+        );
+
+        if (minCol > maxCol
+            || minRow > maxRow) {
+            return [];
+        }
+
+        const result = [];
+        for (let row = minRow; row <= maxRow; row++) {
+            for (let col = minCol; col <= maxCol; col++) {
+                const cell = this.cells[row * this.cols + col];
+
+                if (cell)
+                    result.push(...cell);
+            }
+        }
+
+        return result;
+    }
+}
