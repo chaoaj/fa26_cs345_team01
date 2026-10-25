@@ -18,15 +18,14 @@
 
 ✏️ *Summarize in one or two sentences what your team will accomplish this week. It must be achievable in one week and something you can demonstrate to stakeholders at the end of the sprint, even if that is only a blank frame with the app name at the top.*
 
-**Sprint Goal:** Basic Start up screen 
-
-The goal of our first sprint is to get the basic functionality of our start up menu, there we will be a start button, when the start button is selected the option to select difficultly will be shown with 3 levels (Easy, Medium, Hard), once the difficultly setting is selected then the option to select between a series of factions will be shown once that is selected the base game showcasing a task bar with units and the background & environment.
+**Sprint Goal:** 
+Goal: Develop the core game initialization flow, allowing players to navigate from the main menu through a series of difficulty and faction selections into the active game environment 
 
 ### 1.1 Value to Stakeholders
 
 ✏️ *Explain who benefits from this goal and why it matters to them.*
 
-[Describe the value this sprint delivers to stakeholders.]
+Who benefits from this goal?: This goal benefits all stakeholders, from users to developers, as core UI aspects & fundamental are addressed so further implementation can focus on gameplay. 
 
 ### 2. GitHub Projects Setup Checklist
 
