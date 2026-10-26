@@ -453,6 +453,7 @@ class Menu extends Mode {
                 hoverBg: [39, 74, 130],
                 onClick: () => {
                     this.stage = MenuStages.SETTINGS;
+                    this.showUI(this.settingsUI);
                 }
             }
         ]);

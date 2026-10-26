@@ -1174,7 +1174,7 @@ function wrap(str, size, style, width) {
             current = word;
         }
     }
-    if (current !== "")
+    // if (current !== "")
         lines.push(current);
     return lines;
 };
@@ -1217,6 +1217,33 @@ function resolveContextValue(dataContext, id = "") {
 }
 
 /**
+ * Parses formulas like '50%', '100% - 30', '50 + 10%', etc
+ * @param {string|number} value value to parse
+ * @param {number} base         base number, like parent value 
+ * @returns 
+ */
+function parseDimension(value, base) {
+    if (typeof value === "number") return value;
+    if (typeof value !== "string") return 0;
+
+    const expr = value.replace(/\s+/g, "");
+
+    // Numbers, optionally expressed as percentages, joined by + or -
+    if (!/^[+-]?(?:\d+\.?\d*|\.\d+)%?(?:[+-](?:\d+\.?\d*|\.\d+)%?)*$/.test(expr)) {
+        return Number(value) || 0;
+    }
+
+    const terms = expr.match(/[+-]?(?:\d+\.?\d*|\.\d+)%?/g);
+
+    return terms.reduce((total, term) => {
+        const isPercent = term.endsWith("%");
+        const number = Number(isPercent ? term.slice(0, -1) : term);
+
+        return total + (isPercent ? number / 100 * base : number);
+    }, 0);
+}
+
+/**
  * Create Interface from JS object
  * @param {Object} json             js object
  * @param {InterfaceElement} parent parent element
@@ -1237,20 +1264,14 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
      */
     if (context === null && parent)
         context = parent.dataContext;
-    let x = json.x ?? 0;
-    if (typeof x === 'string') {
-        const num = Number(x.slice(0, -1));
-        if (x.endsWith('%')) {
-            x = num / 100 * (parent ? parent.w : RES_X);
-        }
-    }
-    let y = json.y ?? 0;
-    if (typeof y === 'string') {
-        const num = Number(y.slice(0, -1));
-        if (y.endsWith('%')) {
-            y = num / 100 * (parent ? parent.w : RES_X);
-        }
-    }
+    const parentW = parent ? parent.w : RES_X;
+    const parentH = parent ? parent.h : RES_Y;
+
+    const x = parseDimension(json.x ?? 0, parentW);
+    const y = parseDimension(json.y ?? 0, parentH);
+    const w = parseDimension(json.w ?? 0, parentW);
+    const h = parseDimension(json.h ?? 0, parentH);
+
     /*
      * Create the element.
      */
@@ -1260,8 +1281,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 json.context ?? context,
                 x,
                 y,
-                json.w ?? 0,
-                json.h ?? 0,
+                w,
+                h,
                 json.padding ?? 0,
                 json.spacing ?? 0,
                 json.visible ?? (() => true),
@@ -1274,8 +1295,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 json.context ?? context,
                 x,
                 y,
-                json.w ?? 0,
-                json.h ?? 0,
+                w,
+                h,
                 json.padding ?? 0,
                 json.spacing ?? 0,
                 json.visible ?? (() => true),
@@ -1288,8 +1309,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 json.context ?? context,
                 x,
                 y,
-                json.w ?? 0,
-                json.h ?? 0,
+                w,
+                h,
                 json.padding ?? 0,
                 json.spacing ?? 0,
                 json.visible ?? (() => true),
@@ -1302,8 +1323,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 json.text ?? "",
                 x,
                 y,
-                json.w ?? 0,
-                json.h ?? 0,
+                w,
+                h,
                 json.maxWidth ?? -1,
                 json.align ?? LEFT,
                 json.style ?? NORMAL,
@@ -1321,8 +1342,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 json.lines ?? [],
                 x,
                 y,
-                json.w ?? 0,
-                json.h ?? 0,
+                w,
+                h,
                 json.maxWidth ?? -1,
                 json.align ?? LEFT,
                 json.style ?? NORMAL,
@@ -1338,8 +1359,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 json.text ?? "",
                 x,
                 y,
-                json.w ?? 0,
-                json.h ?? 0,
+                w,
+                h,
                 json.style ?? NORMAL,
                 json.size ?? 12,
                 json.colors ?? [255],
@@ -1362,10 +1383,11 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
             // Children describe template rather than objects
             const factories = [];
             for (const childJSON of json.children ?? []) {
+                const obj = { w, h };
                 factories.push((itemContext, x, y) => {
                     const child = initializeInterface(
                         childJSON,
-                        null,
+                        obj,
                         itemContext,
                         false
                     );
@@ -1383,8 +1405,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 (context) => { context },
                 x,
                 y,
-                json.w ?? 0,
-                json.h ?? 0,
+                w,
+                h,
                 json.spacing ?? 0,
                 factories,
                 json.direction ?? true,
@@ -1411,8 +1433,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
             element = new InterfaceLine(
                 x,
                 y,
-                json.w ?? 0,
-                json.h ?? 0,
+                w,
+                h,
                 json.visible ?? (() => true)
             );
             break;
@@ -1421,8 +1443,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
             element = new InterfaceElement(
                 x,
                 y,
-                json.w ?? 0,
-                json.h ?? 0,
+                w,
+                h,
                 json.visible ?? (() => true),
                 json.enabled ?? (() => true),
                 json.onClick ?? (() => true)
@@ -1489,9 +1511,9 @@ const FACTION_LIST_W = 2 * RES_X / 5;
 const FACTION_SCREEN = {
     type: "window",
 
-    x: (RES_X - FACTION_WINDOW_W) / 2,
-    y: RES_Y / 2,
-    w: FACTION_WINDOW_W,
+    x: '10% - 40',
+    y: '50%',
+    w: '80% + 80',
     h: 300,
     padding: WINDOW_PADDING,
     spacing: WINDOW_PADDING,
@@ -1501,7 +1523,7 @@ const FACTION_SCREEN = {
         {
             type: "text",
             text: "[name]",
-            x: FACTION_CENTER_X,
+            x: '50%',
             y: WINDOW_PADDING,
             align: 'center',
             style: 'bold',
@@ -1510,7 +1532,7 @@ const FACTION_SCREEN = {
         {
             type: "text",
             text: "[desc]",
-            x: FACTION_CENTER_X,
+            x: '50%',
             y: WINDOW_PADDING + 64,
             align: 'center',
             size: 24,
@@ -1521,7 +1543,7 @@ const FACTION_SCREEN = {
             attribute: (context) => context.pros,
             x: WINDOW_PADDING,
             y: WINDOW_PADDING + 160,
-            w: FACTION_LIST_W,
+            w: '50%',
             h: 120,
             block: false,
             children: [
@@ -1538,15 +1560,15 @@ const FACTION_SCREEN = {
         {
             type: "list",
             attribute: (context) => context.cons,
-            x: FACTION_WINDOW_W / 2,
+            x: '50%',
             y: WINDOW_PADDING + 160,
-            w: FACTION_LIST_W,
+            w: '50%',
             h: 120,
             children: [
                 {
                     type: "text",
                     text: "− []",
-                    x: 2 * RES_X / 5,
+                    x: '100% - 40',
                     y: 0,
                     align: 'right',
                     size: 24,
@@ -1557,7 +1579,7 @@ const FACTION_SCREEN = {
         {
             type: "list",
             attribute: (context) => context.squads,
-            x: FACTION_WINDOW_W / 2,
+            x: '50%',
             y: WINDOW_PADDING + 280,
             w: -1,
             h: 90,
@@ -1576,9 +1598,10 @@ const FACTION_SCREEN = {
         },
         {
             type: "button",
-            x: (FACTION_WINDOW_W + WINDOW_PADDING) / 4,
+            x: '25% + 10',
+            // x: (FACTION_WINDOW_W + WINDOW_PADDING) / 4,
             y: WINDOW_PADDING + 400,
-            w: FACTION_WINDOW_W / 2 - WINDOW_PADDING * 1.5,
+            w: '50% - 60',
             h: 50,
             size: 28,
             text: "Go Back",
@@ -1590,9 +1613,10 @@ const FACTION_SCREEN = {
         },
         {
             type: "button",
-            x: (3 * FACTION_WINDOW_W - WINDOW_PADDING) / 4,
+            x: '75% - 10',
+            // x: (3 * FACTION_WINDOW_W - WINDOW_PADDING) / 4,
             y: WINDOW_PADDING + 400,
-            w: FACTION_WINDOW_W / 2 - WINDOW_PADDING * 1.5,
+            w: '50% - 60',
             h: 50,
             size: 28,
             text: "Start Battle",
@@ -1609,10 +1633,10 @@ const SIDE_WINDOW_W = 250;
 const SQUAD_SCREEN = {
     type: "window",
 
-    x: RES_X - SIDE_WINDOW_W,
-    y: RES_Y / 2,
+    x: '100% - 250',
+    y: '50%',
     w: SIDE_WINDOW_W,
-    h: 3 * RES_Y / 5,
+    h: '60%',
     padding: SIDE_WINDOW_PADDING,
     spacing: SIDE_WINDOW_PADDING,
     bgColor: [50],
@@ -1621,7 +1645,7 @@ const SQUAD_SCREEN = {
         {
             type: "text",
             text: "[base?.name]",
-            x: SIDE_WINDOW_W / 2,
+            x: '50%',
             align: 'center',
             style: 'bold',
             size: 24
@@ -1656,15 +1680,6 @@ const SQUAD_SCREEN = {
                         }
                     ]
                 }
-                // {
-                //     type: "text",
-                //     text: "+ [text]",
-                //     x: 0,
-                //     y: 0,
-                //     size: 12,
-                //     maxWidth: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
-                //     colors: [180, 255, 180]
-                // }
             ]
         },
         {
@@ -1799,22 +1814,53 @@ const SQUAD_SCREEN = {
                     colors: [255]
                 },
                 {
-                    type: "text",
+                    type: "text_tooltip",
                     text: "Armor",
                     x: 80,
                     y: 65,
                     size: 12,
-                    colors: [255]
+                    colors: [255],
+                    header: "Armor: [base.armor]",
+                    lines: [
+                        {
+                            text: "[base.armorText]",
+                            colors: [255]
+                        }
+                    ]
                 },
                 {
-                    type: "text",
+                    type: "text_tooltip",
                     text: "[base.armor]",
                     x: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
                     y: 65,
                     size: 12,
                     align: "right",
-                    colors: [255]
+                    colors: [255],
+                    header: "Armor: [base.armor]",
+                    lines: [
+                        {
+                            text: "[base.armorText]",
+                            colors: [255]
+                        }
+                    ]
                 },
+                // {
+                //     type: "text",
+                //     text: "Armor",
+                //     x: 80,
+                //     y: 65,
+                //     size: 12,
+                //     colors: [255]
+                // },
+                // {
+                //     type: "text",
+                //     text: "[base.armor]",
+                //     x: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
+                //     y: 65,
+                //     size: 12,
+                //     align: "right",
+                //     colors: [255]
+                // },
                 {
                     type: "text",
                     text: "Speed",
@@ -1902,8 +1948,8 @@ const SQUAD_SCREEN = {
 
 const BATTLE_END_SCREEN = {
     type: "element",
-    w: RES_X,
-    h: RES_Y,
+    w: '100%',
+    h: '100%',
     x: 0,
     y: 0,
     bgColor: [255, 255, 255, 100],
@@ -1912,8 +1958,8 @@ const BATTLE_END_SCREEN = {
         {
             type: "text",
             text: "[victory]",
-            x: RES_X / 2,
-            y: RES_Y / 2 - 32,
+            x: '50%',
+            y: '50% - 32',
             align: 'center',
             style: 'bold',
             size: 64,
@@ -1922,9 +1968,9 @@ const BATTLE_END_SCREEN = {
         {
             type: "window",
             x: 0,
-            y: RES_Y / 2,
+            y: '50%',
             w: SIDE_WINDOW_W,
-            h: RES_Y - 2 * WINDOW_PADDING,
+            h: '100% - 80',
             padding: SIDE_WINDOW_PADDING,
             spacing: SIDE_WINDOW_PADDING,
             bgColor: [50],
@@ -1985,10 +2031,10 @@ const BATTLE_END_SCREEN = {
         },
         {
             type: "window",
-            x: RES_X - SIDE_WINDOW_W,
-            y: RES_Y / 2,
+            x: '100% - 250',
+            y: '50%',
             w: SIDE_WINDOW_W,
-            h: RES_Y - 2 * WINDOW_PADDING,
+            h: '100% - 80',
             padding: SIDE_WINDOW_PADDING,
             spacing: SIDE_WINDOW_PADDING,
             bgColor: [50],
@@ -1997,7 +2043,7 @@ const BATTLE_END_SCREEN = {
                 {
                     type: "text",
                     text: "Enemy",
-                    x: SIDE_WINDOW_W / 2,
+                    x: '50%',
                     align: 'center',
                     style: 'bold',
                     size: 24
@@ -2006,12 +2052,13 @@ const BATTLE_END_SCREEN = {
                     type: "list",
                     attribute: (context) => context.enemySquads,
                     x: 0,
-                    w: SIDE_WINDOW_W - SIDE_WINDOW_PADDING,
+                    w: '100% - 20',
                     spacing: 15,
                     children: [
                         {
                             type: "troopButton",
-                            x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
+                            x: '100% - 80',
+                            // x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
                             y: 0,
                             scale: 0.75,
                             attribute: (context) => context.base,
@@ -2021,7 +2068,8 @@ const BATTLE_END_SCREEN = {
                         {
                             type: "text",
                             text: "[base.name]",
-                            x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
+                            x: '100% - 80',
+                            // x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
                             align: 'right',
                             y: 1.5,
                             size: 12,
@@ -2031,7 +2079,8 @@ const BATTLE_END_SCREEN = {
                         {
                             type: "text",
                             text: "Kills: [kills]",
-                            x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
+                            x: '100% - 80',
+                            // x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
                             align: 'right',
                             y: 16.5,
                             size: 12,
@@ -2040,7 +2089,8 @@ const BATTLE_END_SCREEN = {
                         {
                             type: "text",
                             text: "Count: [count] / [maxCount]",
-                            x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
+                            x: '100% - 80',
+                            // x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
                             align: 'right',
                             y: 31.5,
                             size: 12,
@@ -2055,10 +2105,10 @@ const BATTLE_END_SCREEN = {
 
 const DEPLOY_SCREEN = {
     type: "window",
-    x: RES_X / 5,
-    w: 3 * RES_X / 5,
+    x: '20% - 10',
+    w: '60% + 20',
     h: 110,
-    y: RES_Y - 55,
+    y: '100% - 55',
     padding: 10,
     spacing: 10,
     bgColor: [50],
@@ -2078,7 +2128,7 @@ const DEPLOY_SCREEN = {
         {
             type: "text",
             text: "Wave: [wave]",
-            x: 3 * RES_X / 5 - 10,
+            x: '100% - 10',
             y: 0,
             w: 100,
             size: 16,
@@ -2090,7 +2140,7 @@ const DEPLOY_SCREEN = {
         {
             type: "hbox",
             h: 20,
-            x: 1.5 * RES_X / 5,
+            x: '50%',
             y: 0,
             w: 50,
             updates: true,
@@ -2119,9 +2169,9 @@ const DEPLOY_SCREEN = {
         {
             type: "hbox",
             h: 60,
-            x: 1.5 * RES_X / 5,
+            x: '50%',
             y: 0,
-            w: 3 * RES_X / 5 - 20,
+            w: '60% - 20',
             padding: 10,
             spacing: 15,
             children: [
@@ -2227,8 +2277,8 @@ function selectionScreen(header, buttons) {
     const window = {
         type: "window",
 
-        x: (RES_X - width) / 2,
-        y: RES_Y / 2,
+        x: `50% - ${width / 2}`,
+        y: '50%',
         w: width,
         h: 1,
         padding: WINDOW_PADDING,
