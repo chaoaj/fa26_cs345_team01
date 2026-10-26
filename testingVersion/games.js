@@ -737,11 +737,11 @@ class CombatMode extends Mode {
 
     tickCombatEntities(dt) {
         for (const squad of this.playerSquads) {
-            if (!this.finished && !this.paused)
+            if (!this.finished && !this.paused && !squad.dead)
                 squad.tick(dt);
         }
         for (const squad of this.enemySquads) {
-            if (!this.finished && !this.paused)
+            if (!this.finished && !this.paused && !squad.dead)
                 squad.tick(dt);
         }
         for (const troop of this.enemyTroops) {
@@ -789,21 +789,25 @@ class CombatMode extends Mode {
         if (specific) {
             if (team) {
                 for (const squad of this.playerSquads) {
+                    if (squad.dead)
+                        continue;
                     results.push(...squad.queryPos(pos, radius));
                 }
             } else {
                 for (const squad of this.enemySquads) {
+                    if (squad.dead)
+                        continue;
                     results.push(...squad.queryPos(pos, radius));
                 }
             }
         } else {
             for (const squad of this.playerSquads) {
-                if (squad === ownSquad)
+                if (squad.dead || squad === ownSquad)
                     continue;
                 results.push(...squad.queryPos(pos, radius));
             }
             for (const squad of this.enemySquads) {
-                if (squad === ownSquad)
+                if (squad.dead || squad === ownSquad)
                     continue;
                 results.push(...squad.queryPos(pos, radius));
             }
