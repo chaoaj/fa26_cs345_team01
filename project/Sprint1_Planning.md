@@ -1,6 +1,4 @@
-# Sprint N Plan
-
-> **How to use this template:** Copy this to a SprintNPlan.md (i.e. Sprint1Plan.md).  Replace every `[bracketed placeholder]` with your team's information. Delete the instruction lines (they start with ✏️) before you submit. Copy the "Sprint Backlog Item" section once for each item in your sprint.
+# Sprint 1 Plan
 
 ## Team and Sprint Information
 
@@ -16,14 +14,12 @@
 
 ## 1. Sprint Goal
 
-✏️ *Summarize in one or two sentences what your team will accomplish this week. It must be achievable in one week and something you can demonstrate to stakeholders at the end of the sprint, even if that is only a blank frame with the app name at the top.*
-
 **Sprint Goal:** 
-Goal: Develop the core game initialization flow, allowing players to navigate from the main menu through a series of difficulty and faction selections into the active game environment 
+**Goal:** Develop the core game initialization flow, allowing players to navigate from the main menu through a series of difficulty and faction selections into the active game environment 
 
 ### 1.1 Value to Stakeholders
 
-Who benefits from this goal?: This goal benefits all stakeholders, from users to developers, as core UI aspects & fundamental are addressed so further implementation can focus on gameplay. 
+**Who benefits from this goal?:** This goal benefits all stakeholders, from users to developers, as core UI aspects & fundamental are addressed so further implementation can focus on gameplay. 
 
 ### 2. GitHub Projects Setup Checklist
 
