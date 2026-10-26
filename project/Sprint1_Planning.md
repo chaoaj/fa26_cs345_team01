@@ -1,13 +1,11 @@
-# Sprint N Plan
-
-> **How to use this template:** Copy this to a SprintNPlan.md (i.e. Sprint1Plan.md).  Replace every `[bracketed placeholder]` with your team's information. Delete the instruction lines (they start with ✏️) before you submit. Copy the "Sprint Backlog Item" section once for each item in your sprint.
+# Sprint 1 Plan
 
 ## Team and Sprint Information
 
 | Field                      | Your answer                                                                                       |
 | -------------------------- | ------------------------------------------------------------------------------------------------- |
 | Team name                  | Team 1                                                                                            |
-| Team members               | Yony Woube, Amaya Cranford, Caden Cole VanValkenburg, Parker Giles , Angelina Yoha, Parash Khanal |
+| Team members               | Yony Woube, Amaya Cranford, Caden Cole VanValkenburg, Parker Giles, Angelina Yoha, Parash Khanal |
 | Project                    | Team 1 Project (WIP)                                                                              |
 | Sprint                     | Sprint 1                                                                                          |
 | Sprint start date          | 2026-10-26                                                                                        |
@@ -16,26 +14,21 @@
 
 ## 1. Sprint Goal
 
-✏️ *Summarize in one or two sentences what your team will accomplish this week. It must be achievable in one week and something you can demonstrate to stakeholders at the end of the sprint, even if that is only a blank frame with the app name at the top.*
-
-**Sprint Goal:** Basic Start up screen 
-
-The goal of our first sprint is to get the basic functionality of our start up menu, there we will be a start button, when the start button is selected the option to select difficultly will be shown with 3 levels (Easy, Medium, Hard), once the difficultly setting is selected then the option to select between a series of factions will be shown once that is selected the base game showcasing a task bar with units and the background & environment.
+**Sprint Goal:** 
+**Goal:** Develop the core game initialization flow, allowing players to navigate from the main menu through a series of difficulty and faction selections into the active game environment 
 
 ### 1.1 Value to Stakeholders
 
-✏️ *Explain who benefits from this goal and why it matters to them.*
-
-[Describe the value this sprint delivers to stakeholders.]
+**Who benefits from this goal?:** This goal benefits all stakeholders, from users to developers, as core UI aspects & fundamental are addressed so further implementation can focus on gameplay. 
 
 ### 2. GitHub Projects Setup Checklist
 
 ✏️ *Check each box once it is done in GitHub Projects. Change `[ ]` to `[x]`.*
 
-- [ ] Created a new Sprint (iteration) named "Sprint 1" in GitHub Projects
-- [ ] Moved every Sprint Backlog Item into Sprint 1
+- [x] Created a new Sprint (iteration) named "Sprint 1" in GitHub Projects
+- [x] Moved every Sprint Backlog Item into Sprint 1
 - [ ] Every Sprint Backlog Item has a story-point estimate
-- [ ] Every Sprint Backlog Item has acceptance criteria
+- [x] Every Sprint Backlog Item has acceptance criteria
 - [ ] Every Sprint Backlog Item has tasks with hour estimates and assigned team members, listed in the item's comments
 - [ ] **Started the sprint:** set every Sprint Backlog Item to **In Progress**
 
@@ -45,9 +38,10 @@ The goal of our first sprint is to get the basic functionality of our start up m
 
 | # | Sprint Backlog Item (user story) | Story points | GitHub issue |
 | --- | --- | --- | --- |
-| 1 | As a [user], I want [feature] so that [benefit]. | [pts] | [#issue] |
-| 2 | As a [user], I want [feature] so that [benefit]. | [pts] | [#issue] |
-| 3 | As a [user], I want [feature] so that [benefit]. | [pts] | [#issue] |
+| 1 | As a user, I want to click a "Start Game" button on the startup menu so that I can transition from the title screen and begin setting up a new game session. | [pts] | issue #3 |
+| 2 | As a User, I want to select a difficulty level (Easy, Medium, or Hard) from a dedicated menu so that the game configures parameters according to my preferred challenge. | [pts] | [issue #4] |
+| 3 | As a User, I want to select my faction after choosing my difficulty so that my game session initializes with the correct faction attributes. | [pts] | [issue #5] |
+| 4 | As a User, I want the base game screen to display a task bar, game units, and an environment background once setup is complete so that I can begin playing. | [pts] | [issue #6] |
 | | **Total story points** | **[total]** | |
 
 ## 4. Work Distribution
@@ -62,7 +56,7 @@ The goal of our first sprint is to get the basic functionality of our start up m
 | [Name 4] | [count] | [hrs] |
 | **Team total** | **[count]** | **[hrs]** |
 
-**Is the work split fairly?** [Yes / No. If not, explain why, for example "Name 2 has fewer hours because they are also setting up the repository."]
+**Is the work split fairly?** [Yes / No. If not, explain why, for example, "Name 2 has fewer hours because they are also setting up the repository."]
 
 ## ============================================================================
 ## Example (delete before submitting)
