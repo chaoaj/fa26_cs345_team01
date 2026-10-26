@@ -335,28 +335,10 @@ class Menu extends Mode {
         }
         switch (this.stage) {
             case MenuStages.MAIN:
-                // textAlign(CENTER, CENTER);
-                // fill(255);
-                // strokeWeight(0);
-                // textSize(80);
-                // text('MAIN MENU', RES_X / 2, RES_Y / 2 - 150);
-                // drawMenuButton(RES_X / 2 - 400, RES_Y / 2 - 90, 800, 80, 'Battle', '#9a1115', '#730c0f');
-                // drawMenuButton(RES_X / 2 - 400, RES_Y / 2 + 10, 800, 80, 'Siege', '#9a1115', '#730c0f');
-                // drawMenuButton(RES_X / 2 - 400, RES_Y / 2 + 110, 800, 80, 'Settings', '#3462ad', '#274a82');
                 break;
             case MenuStages.SELECT:
-                // textAlign(CENTER, CENTER);
-                // fill(255);
-                // strokeWeight(0);
-                // textSize(80);
-                // text('SELECT FACTION', RES_X / 2, RES_Y / 2 - 150);
-                // for (const fact of this.factions) {
-                //     if (fact.faction.playable)
-                //         fact.faction.drawUI(fact.x, fact.y, fact.w, fact.h);
-                // }
                 break;
             case MenuStages.FACTION:
-                // this.selectedFaction.drawScreen(this);
                 break;
             case MenuStages.SETTINGS:
                 // TODO
@@ -368,132 +350,8 @@ class Menu extends Mode {
                 break;
             // Only real difference between next two is text in center of screen. Unfortunately, JS doesn't have fall through switches in the right way.
             case MenuStages.VICTORY: // Player squads on left, enemy on right
-                textAlign(CENTER, CENTER);
-                textSize(80);
-                fill(255);
-                strokeWeight(0);
-                text("VICTORY", RES_X / 2, RES_Y / 2);
-                fill(50);
-                rect(20, 20, RES_X / 5, RES_Y - 40);
-                rect((4 * RES_X / 5) - 20, 20, RES_X / 5, RES_Y - 40);
-                fill(255);
-                textSize(40);
-                text("PLAYER", RES_X / 10 + 10, 60);
-                text("ENEMY", (9 * RES_X / 10) - 10, 60);
-                textAlign(LEFT, TOP);
-                textSize(18);
-                push();
-                translate(40, 100);
-                let y = 0;
-                scale(0.5);
-                for (const squad of this.playerSquads) {
-                    const cols = squad.count > 0 ? liveCols : deadCols;
-                    fill(149, 179, 120);
-                    stroke(...cols);
-                    strokeWeight(4);
-                    rect(0, y, 60, 60);
-                    squad.base.iconicTroop.drawBase(30, y + 30, cols);
-                    strokeWeight(0);
-                    fill(50);
-                    rect(80, y, 2 * (RES_X / 5 - 80), 60);
-                    fill(255);
-                    text(squad.base.name, 80, y);
-                    text(`Remaining: ${squad.count} / ${squad.maxCount}`, 80, y + 20);
-                    text(`Kills: ${squad.kills}`, 80, y + 40);
-                    y += 100;
-                }
-                pop();
-                push();
-                translate(RES_X - 40, 100);
-                y = 0;
-                scale(0.5);
-                textAlign(RIGHT, TOP);
-                for (const squad of this.enemySquads) {
-                    const cols = squad.count > 0 ? liveCols : deadCols;
-                    fill(149, 179, 120);
-                    stroke(...cols);
-                    strokeWeight(4);
-                    rect(-60, y, 60, 60);
-                    push();
-                    translate(-30, y + 30);
-                    rotate(Math.PI);
-                    squad.base.iconicTroop.drawBase(0, 0, cols);
-                    pop();
-                    strokeWeight(0);
-                    fill(50);
-                    const w = 2 * (RES_X / 5 - 80);
-                    rect(-80 - w, dy, w, 60);
-                    fill(255);
-                    text(squad.base.name, -80, y);
-                    text(`Remaining: ${squad.count} / ${squad.maxCount}`, -80, y + 20);
-                    text(`Kills: ${squad.kills}`, -80, y + 40);
-                    y += 100;
-                }
-                pop();
                 break;
             case MenuStages.DEFEAT: // Player squads on left, enemy on right
-                textAlign(CENTER, CENTER);
-                textSize(80);
-                fill(255);
-                strokeWeight(0);
-                text("DEFEAT", RES_X / 2, RES_Y / 2);
-                fill(50);
-                rect(20, 20, RES_X / 5, RES_Y - 40);
-                rect((4 * RES_X / 5) - 20, 20, RES_X / 5, RES_Y - 40);
-                fill(255);
-                textSize(40);
-                text("PLAYER", RES_X / 10 + 10, 60);
-                text("ENEMY", (9 * RES_X / 10) - 10, 60);
-                textAlign(LEFT, TOP);
-                textSize(18);
-                push();
-                translate(40, 100);
-                let dy = 0;
-                scale(0.5);
-                for (const squad of this.playerSquads) {
-                    const cols = squad.count > 0 ? liveCols : deadCols;
-                    fill(149, 179, 120);
-                    stroke(...cols);
-                    strokeWeight(4);
-                    rect(0, dy, 60, 60);
-                    squad.base.iconicTroop.drawBase(30, dy + 30, cols);
-                    strokeWeight(0);
-                    fill(50);
-                    rect(80, y, 2 * (RES_X / 5 - 80), 60);
-                    fill(255);
-                    text(squad.base.name, 80, dy);
-                    text(`Remaining: ${squad.count} / ${squad.maxCount}`, 80, dy + 20);
-                    text(`Kills: ${squad.kills}`, 80, dy + 40);
-                    dy += 100;
-                }
-                pop();
-                push();
-                translate(RES_X - 40, 100);
-                dy = 0;
-                scale(0.5);
-                textAlign(RIGHT, TOP);
-                for (const squad of this.enemySquads) {
-                    const cols = squad.count > 0 ? liveCols : deadCols;
-                    fill(149, 179, 120);
-                    stroke(...cols);
-                    strokeWeight(4);
-                    rect(-60, dy, 60, 60);
-                    push();
-                    translate(-30, dy + 30);
-                    rotate(Math.PI);
-                    squad.base.iconicTroop.drawBase(0, 0, cols);
-                    pop();
-                    strokeWeight(0);
-                    fill(50);
-                    const w = 2 * (RES_X / 5 - 80);
-                    rect(-80 - w, dy, w, 60);
-                    fill(255);
-                    text(squad.base.name, -80, dy);
-                    text(`Remaining: ${squad.count} / ${squad.maxCount}`, -80, dy + 20);
-                    text(`Kills: ${squad.kills}`, -80, dy + 40);
-                    dy += 100;
-                }
-                pop();
                 break;
         }
         return;
@@ -508,58 +366,22 @@ class Menu extends Mode {
         }
         switch (this.stage) {
             case MenuStages.MAIN:
-                if (mPos.x >= RES_X / 2 - 400 && mPos.x <= RES_X / 2 + 400) { // If clicking in the right x range to even hit a button
-                    // if (mPos.y >= RES_Y / 2 - 90 && mPos.y <= RES_Y / 2 - 10) { // Clicking field battle btn
-                    //     this.stage = MenuStages.SELECT;
-                    //     this.showUI(this.factionUI);
-                    //     this.battleType = BattleType.BATTLE;
-                    // }
-                    // else if (mPos.y >= RES_Y / 2 + 10 && mPos.y <= RES_Y / 2 + 90) { // Clicking siege battle btn
-                    //     this.stage = MenuStages.SELECT;
-                    //     this.showUI(this.factionUI);
-                    //     this.battleType = BattleType.SIEGE;
-                    // }
-                    // else if (mPos.y >= RES_Y / 2 + 110 && mPos.y <= RES_Y / 2 + 190) { // Clicking settings btn
-                    //     this.stage = MenuStages.SETTINGS;
-                    // }
-                }
                 break;
             case MenuStages.SELECT:
-                // for (const i in this.factions) {
-                //     const fact = this.factions[i];
-                //     if (!fact.faction.playable)
-                //         continue;
-                //     if (mPos.x >= fact.x && mPos.x <= fact.x + fact.w && mPos.y >= fact.y && mPos.y <= fact.y + fact.h) {
-                //         console.log(`Clicked ${fact.faction.name}`);
-                //         this.stage = MenuStages.FACTION;
-                //         this.selectedFaction = fact.faction;
-                //         this.squadUI.setDataContext(this.selectedFaction);
-                //         this.showUI(this.squadUI, this.selectedFaction);
-                //         this.selectedEnemy = factions.monsters;
-                //         break;
-                //     }
-                // }
                 break;
             case MenuStages.FACTION:
-                // Start Battle Button
-                if (mouseX >= 11 * RES_X / 20 && mouseX <= 4 * RES_X / 5 && mouseY >= this.btnOffset && mouseY <= this.btnOffset + 50) {
-                    // this.startBattle();
-                }
-                // Go Back Button
-                else if (mouseX >= RES_X / 5 && mouseX <= 9 * RES_X / 20 && mouseY >= this.btnOffset && mouseY <= this.btnOffset + 50) {
-                    // this.backToSelect();
-                }
                 break;
             case MenuStages.SETTINGS:
                 // TODO
                 // For now, click anywhere in settings to go back
                 this.stage = MenuStages.MAIN;
+                this.showUI(this.mainUI);
                 break;
             case MenuStages.VICTORY:
             case MenuStages.DEFEAT:
-                // TODO
-                // For now, click anywhere in settings to go to main menu
+                // For now, click anywhere in victory/defeat to go to main menu
                 this.stage = MenuStages.MAIN;
+                this.showUI(this.mainUI);
                 break;
         }
         return false;
@@ -584,14 +406,6 @@ class Menu extends Mode {
                 let ex = 1500;
                 let ey = 250;
                 const enemyFactionList = [];
-                // for (const squad of this.selectedEnemy.squads) {
-                //     enemyFactionList.push({ x: ex, y: ey, a: Math.PI, squad });
-                //     ey += 500;
-                //     if (ey > 1750) {
-                //         ey = 250;
-                //         ex += 250;
-                //     }
-                // }
                 let budget = 10_000 - this.startCurrency;
                 const available = Object.values(this.selectedEnemy.squads)
                     .filter(squad => squad.cost > 0 && squad.cost <= budget);
@@ -1129,40 +943,6 @@ class Siege extends CombatMode {
 
         return false;
     }
-}
-
-/**
- * Draw a main menu button
- * @param {number} x        x (left)
- * @param {number} y        y (top)
- * @param {number} w        width
- * @param {number} h        height
- * @param {string} txt      button text
- * @param {string} col      normal background color (hex)
- * @param {string} hoverCol hover background color (hex)
- */
-function drawMenuButton(x, y, w, h, txt, col, hoverCol) {
-    push();
-    translate(x, y);
-    strokeWeight(0);
-    // Angled edges, so the hover code is slightly different than a simple box
-    if (mouseY >= y && mouseY <= y + h && mouseX >= x + ((mouseY - y) / 2) && mouseX <= x + w - ((y + h - mouseY) / 2)) {
-        fill(hoverCol);
-    }
-    else {
-        fill(col);
-    }
-    beginShape();
-    vertex(0, 0);
-    vertex(h / 2, h);
-    vertex(w, h);
-    vertex(w - h / 2, 0);
-    endShape(CLOSE);
-    textSize(h / 2);
-    fill(255);
-    text(txt, w / 2, h / 2);
-
-    pop();
 }
 
 /**
