@@ -9,7 +9,7 @@
  */
 
 // Map cell sizes
-const CELL_SIZE = 600;
+const CELL_SIZE = 100;
 const SPACE_CELL_SIZE = 500;
 
 /**

@@ -1,24 +1,26 @@
 // Global Variables
 // Screen/Canvas Size
 const RESOLUTIONS = [
-    [800, 450],
-    [960, 540],
-    [1024, 576],
-    [1152, 648],
-    [1280, 720],
-    [1366, 700], // Starting
-    [1600, 900],
-    [1920, 1080],
-    [2560, 1440],
-    [3840, 2160]
+    [800, 450, 0.643],
+    [960, 540, 0.771],
+    [1024, 576, 0.823],
+    [1152, 648, 0.926],
+    [1280, 720, 1.029],
+    [1366, 700, 1], // Starting
+    [1600, 900, 1.286],
+    [1920, 1080, 1.543],
+    [2560, 1440, 2.057],
+    [3840, 2160, 3.086]
 ];
 
 let RES_X = 1366;
 let RES_Y = 700;
+let FONT_SCALE = 1;
 
-function resizeScreen(w = RES_X, h = RES_Y) {
+function resizeScreen(w = RES_X, h = RES_Y, f = FONT_SCALE) {
     RES_X = w;
     RES_Y = h;
+    FONT_SCALE = f;
     minZoom = Math.max(
         RES_X / MAP_W,
         RES_Y / MAP_H
@@ -29,7 +31,7 @@ function resizeScreen(w = RES_X, h = RES_Y) {
 
 function increaseResolution() {
     const currentIndex = RESOLUTIONS.findIndex(
-        ([w, h]) => w === RES_X && h === RES_Y
+        ([w, h, f]) => w === RES_X && h === RES_Y
     );
 
     const nextIndex = Math.min(
@@ -37,13 +39,13 @@ function increaseResolution() {
         RESOLUTIONS.length - 1
     );
 
-    const [w, h] = RESOLUTIONS[nextIndex];
-    resizeScreen(w, h);
+    const [w, h, f] = RESOLUTIONS[nextIndex];
+    resizeScreen(w, h, f);
 }
 
 function decreaseResolution() {
     const currentIndex = RESOLUTIONS.findIndex(
-        ([w, h]) => w === RES_X && h === RES_Y
+        ([w, h, f]) => w === RES_X && h === RES_Y
     );
 
     const nextIndex = Math.max(
@@ -51,8 +53,8 @@ function decreaseResolution() {
         0
     );
 
-    const [w, h] = RESOLUTIONS[nextIndex];
-    resizeScreen(w, h);
+    const [w, h, f] = RESOLUTIONS[nextIndex];
+    resizeScreen(w, h, f);
 }
 
 /**
@@ -366,7 +368,7 @@ class InterfaceTooltip extends InterfaceElement {
         this.origin = origin;
         this.header = header;
         this.lines = text;
-        this.fontSize = fontSize;
+        this.fontSize = fontSize * FONT_SCALE;
         this.baseMaxWidth = maxWidth;
         this.maxWidth = Math.min(maxWidth, RES_X - aPos.x);
         this.updateText();
@@ -526,7 +528,7 @@ class InterfaceTroopButton extends InterfaceElement {
      * @param {InterfaceFunction} onClick   function run when element is clicked
      */
     constructor(context, x, y, scale = 1, outline = true, tooltip = true, visible = () => true, enabled = () => true, onClick = () => true) {
-        super(x, y, 60 * scale, 60 * scale, visible, enabled, onClick);
+        super(x, y, scale * 60, scale * 60, visible, enabled, onClick);
         this.context = context;
         this.scale = scale;
         this.outline = outline;
@@ -786,7 +788,7 @@ class InterfaceText extends InterfaceElement {
         this.maxWidth = maxWidth;
         this.align = align;
         this.style = style;
-        this.size = size;
+        this.size = size * FONT_SCALE;
         this.colors = colors;
         textSize(this.size);
         textStyle(this.style);
@@ -933,7 +935,7 @@ class InterfaceButton extends InterfaceElement {
         super(x, y, w, h, visible, enabled, onClick);
         this.baseText = baseText;
         this.style = style;
-        this.size = size;
+        this.size = size * FONT_SCALE;
         this.colors = colors;
         textSize(this.size);
         textStyle(this.style);
@@ -1030,7 +1032,8 @@ class InterfaceMenuButton extends InterfaceButton {
      * @param {InterfaceFunction} onClick                  function used to decide if the element is visible
      */
     constructor(baseText, x, y, visible = () => true, enabled = () => true, onClick = () => true) {
-        super(baseText, x, y, 800, 80, BOLD, 40, [255], visible, enabled, onClick);
+        const val = RES_X * (800 / 1366);
+        super(baseText, x, y, val, val / 10, BOLD, 40, [255], visible, enabled, onClick);
     }
 
     /**
@@ -1220,7 +1223,7 @@ function resolveContextValue(dataContext, id = "") {
  * Parses formulas like '50%', '100% - 30', '50 + 10%', etc
  * @param {string|number} value value to parse
  * @param {number} base         base number, like parent value 
- * @returns 
+ * @returns {number}            parsed number
  */
 function parseDimension(value, base) {
     if (typeof value === "number") return value;
@@ -1228,16 +1231,21 @@ function parseDimension(value, base) {
 
     const expr = value.replace(/\s+/g, "");
 
-    // Numbers, optionally expressed as percentages, joined by + or -
-    if (!/^[+-]?(?:\d+\.?\d*|\.\d+)%?(?:[+-](?:\d+\.?\d*|\.\d+)%?)*$/.test(expr)) {
+    // Numbers, optionally expressed as percentages or scaled with *,
+    // joined by + or -
+    if (!/^[+-]?(?:\d+\.?\d*|\.\d+)%?\*?(?:[+-](?:\d+\.?\d*|\.\d+)%?\*?)*$/.test(expr)) {
         return Number(value) || 0;
     }
 
-    const terms = expr.match(/[+-]?(?:\d+\.?\d*|\.\d+)%?/g);
+    const terms = expr.match(/[+-]?(?:\d+\.?\d*|\.\d+)%?\*?/g);
 
     return terms.reduce((total, term) => {
-        const isPercent = term.endsWith("%");
-        const number = Number(isPercent ? term.slice(0, -1) : term);
+        const scaled = term.endsWith("*");
+        const cleanTerm = scaled ? term.slice(0, -1) : term;
+        const isPercent = cleanTerm.endsWith("%");
+        let number = Number(isPercent ? cleanTerm.slice(0, -1) : cleanTerm);
+
+        if (scaled) number *= FONT_SCALE;
 
         return total + (isPercent ? number / 100 * base : number);
     }, 0);
@@ -1269,8 +1277,12 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
 
     const x = parseDimension(json.x ?? 0, parentW);
     const y = parseDimension(json.y ?? 0, parentH);
+    const maxWidth = parseDimension(json.maxWidth ?? 0, parentW);
     const w = parseDimension(json.w ?? 0, parentW);
     const h = parseDimension(json.h ?? 0, parentH);
+    const scale = parseDimension(json.scale ?? 1, parentH);
+    const padding = parseDimension(json.padding ?? 0, parentW);
+    const spacing = parseDimension(json.spacing ?? 0, parentW);
 
     /*
      * Create the element.
@@ -1283,8 +1295,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 y,
                 w,
                 h,
-                json.padding ?? 0,
-                json.spacing ?? 0,
+                padding,
+                spacing,
                 json.visible ?? (() => true),
                 json.enabled ?? (() => true),
                 json.onClick ?? (() => true)
@@ -1297,8 +1309,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 y,
                 w,
                 h,
-                json.padding ?? 0,
-                json.spacing ?? 0,
+                padding,
+                spacing,
                 json.visible ?? (() => true),
                 json.enabled ?? (() => true),
                 json.onClick ?? (() => true)
@@ -1311,8 +1323,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 y,
                 w,
                 h,
-                json.padding ?? 0,
-                json.spacing ?? 0,
+                padding,
+                spacing,
                 json.visible ?? (() => true),
                 json.enabled ?? (() => true),
                 json.onClick ?? (() => true)
@@ -1325,7 +1337,7 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 y,
                 w,
                 h,
-                json.maxWidth ?? -1,
+                maxWidth,
                 json.align ?? LEFT,
                 json.style ?? NORMAL,
                 json.size ?? 12,
@@ -1344,7 +1356,7 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 y,
                 w,
                 h,
-                json.maxWidth ?? -1,
+                maxWidth,
                 json.align ?? LEFT,
                 json.style ?? NORMAL,
                 json.size ?? 12,
@@ -1407,7 +1419,7 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 y,
                 w,
                 h,
-                json.spacing ?? 0,
+                spacing,
                 factories,
                 json.direction ?? true,
                 json.visible ?? (() => true),
@@ -1420,7 +1432,7 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 json.troop ?? null,
                 x,
                 y,
-                json.scale ?? 1,
+                scale,
                 json.outline ?? true,
                 json.tooltip ?? true,
                 json.visible ?? (() => true),
@@ -1511,12 +1523,12 @@ const FACTION_LIST_W = 2 * RES_X / 5;
 const FACTION_SCREEN = {
     type: "window",
 
-    x: '10% - 40',
+    x: '10% - 40*',
     y: '50%',
-    w: '80% + 80',
-    h: 300,
-    padding: WINDOW_PADDING,
-    spacing: WINDOW_PADDING,
+    w: '80% + 80*',
+    h: '300*',
+    padding: '40*',
+    spacing: '40*',
     bgColorBase: "darkerColor",
     hvrBgColorBase: "darkerColor",
     children: [
@@ -1524,7 +1536,7 @@ const FACTION_SCREEN = {
             type: "text",
             text: "[name]",
             x: '50%',
-            y: WINDOW_PADDING,
+            y: '40*',
             align: 'center',
             style: 'bold',
             size: 64
@@ -1533,18 +1545,18 @@ const FACTION_SCREEN = {
             type: "text",
             text: "[desc]",
             x: '50%',
-            y: WINDOW_PADDING + 64,
+            y: '104*',
             align: 'center',
             size: 24,
-            maxWidth: FACTION_WINDOW_W - 2 * WINDOW_PADDING
+            maxWidth: '100% - 80*'
         },
         {
             type: "list",
             attribute: (context) => context.pros,
-            x: WINDOW_PADDING,
-            y: WINDOW_PADDING + 160,
+            x: '40*',
+            y: '200*',
             w: '50%',
-            h: 120,
+            h: '120*',
             block: false,
             children: [
                 {
@@ -1561,14 +1573,14 @@ const FACTION_SCREEN = {
             type: "list",
             attribute: (context) => context.cons,
             x: '50%',
-            y: WINDOW_PADDING + 160,
-            w: '50%',
-            h: 120,
+            y: '200*',
+            w: '50% - 40*',
+            h: '120*',
             children: [
                 {
                     type: "text",
                     text: "− []",
-                    x: '100% - 40',
+                    x: '100%',
                     y: 0,
                     align: 'right',
                     size: 24,
@@ -1580,17 +1592,17 @@ const FACTION_SCREEN = {
             type: "list",
             attribute: (context) => context.squads,
             x: '50%',
-            y: WINDOW_PADDING + 280,
+            y: '320*',
             w: -1,
-            h: 90,
+            h: '90*',
             direction: false,
-            spacing: 15,
+            spacing: '15*',
             children: [
                 {
                     type: "troopButton",
                     x: 0,
                     y: 0,
-                    scale: 1.5,
+                    scale: '1.5*',
                     bgColor: [149, 179, 120],
                     hvrBgColor: [149, 179, 120]
                 }
@@ -1600,9 +1612,9 @@ const FACTION_SCREEN = {
             type: "button",
             x: '25% + 10',
             // x: (FACTION_WINDOW_W + WINDOW_PADDING) / 4,
-            y: WINDOW_PADDING + 400,
-            w: '50% - 60',
-            h: 50,
+            y: '440*',
+            w: '50% - 60*',
+            h: '50*',
             size: 28,
             text: "Go Back",
             bgColorBase: "bgColor",
@@ -1615,9 +1627,9 @@ const FACTION_SCREEN = {
             type: "button",
             x: '75% - 10',
             // x: (3 * FACTION_WINDOW_W - WINDOW_PADDING) / 4,
-            y: WINDOW_PADDING + 400,
-            w: '50% - 60',
-            h: 50,
+            y: '440*',
+            w: '50% - 60*',
+            h: '50*',
             size: 28,
             text: "Start Battle",
             bgColorBase: "bgColor",
@@ -1633,12 +1645,12 @@ const SIDE_WINDOW_W = 250;
 const SQUAD_SCREEN = {
     type: "window",
 
-    x: '100% - 250',
+    x: '100% - 250*',
     y: '50%',
-    w: SIDE_WINDOW_W,
+    w: '250*',
     h: '60%',
-    padding: SIDE_WINDOW_PADDING,
-    spacing: SIDE_WINDOW_PADDING,
+    padding: '20*',
+    spacing: '20*',
     bgColor: [50],
     hvrBgColor: [50],
     children: [
@@ -1659,8 +1671,8 @@ const SQUAD_SCREEN = {
                     return context.base.pros;
                 return [];
             },
-            x: SIDE_WINDOW_PADDING,
-            w: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
+            x: '20*',
+            w: '100%',
             h: 0,
             padded: false,
             children: [
@@ -1671,7 +1683,7 @@ const SQUAD_SCREEN = {
                     x: 0,
                     y: 0,
                     size: 12,
-                    maxWidth: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
+                    maxWidth: '100%',
                     colors: [180, 255, 180],
                     lines: [
                         {
@@ -1691,8 +1703,8 @@ const SQUAD_SCREEN = {
                     return context.base.cons;
                 return [];
             },
-            x: SIDE_WINDOW_PADDING,
-            w: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
+            x: '20*',
+            w: '100%',
             h: 0,
             children: [
                 {
@@ -1702,7 +1714,7 @@ const SQUAD_SCREEN = {
                     x: 0,
                     y: 0,
                     size: 12,
-                    maxWidth: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
+                    maxWidth: '100%',
                     colors: [255, 180, 180],
                     lines: [
                         {
@@ -1717,7 +1729,7 @@ const SQUAD_SCREEN = {
                 //     x: 0,
                 //     y: 0,
                 //     size: 12,
-                //     maxWidth: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
+                //     maxWidth: '210*',
                 //     colors: [255, 180, 180]
                 // }
             ]
@@ -1738,15 +1750,15 @@ const SQUAD_SCREEN = {
                     })
                 }
             },
-            x: SIDE_WINDOW_PADDING,
-            w: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
-            spacing: 20,
+            x: '20*',
+            w: '210*',
+            spacing: '20*',
             children: [
                 {
                     type: "troopButton",
                     x: 0,
                     y: 0,
-                    scale: 1,
+                    scale: '1*',
                     attribute: (context) => context.base,
                     outline: false,
                     tooltip: false,
@@ -1754,7 +1766,7 @@ const SQUAD_SCREEN = {
                 {
                     type: "text",
                     text: "[base.name]",
-                    x: (SIDE_WINDOW_W + 60) / 2,
+                    x: '155*',
                     y: 0,
                     size: 14,
                     align: "center",
@@ -1763,16 +1775,16 @@ const SQUAD_SCREEN = {
                 {
                     type: "text",
                     text: "Kills",
-                    x: 80,
-                    y: 20,
+                    x: '80*',
+                    y: '20*',
                     size: 12,
                     colors: [255]
                 },
                 {
                     type: "text",
                     text: "[kills]",
-                    x: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
-                    y: 20,
+                    x: '210*',
+                    y: '20*',
                     size: 12,
                     updates: true,
                     align: "right",
@@ -1781,8 +1793,8 @@ const SQUAD_SCREEN = {
                 {
                     type: "text",
                     text: "Count",
-                    x: 80,
-                    y: 35,
+                    x: '80*',
+                    y: '35*',
                     size: 12,
                     colors: [255]
                 },
@@ -1790,8 +1802,8 @@ const SQUAD_SCREEN = {
                     type: "text",
                     text: "[count] / [maxCount]",
                     updates: true,
-                    x: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
-                    y: 35,
+                    x: '210*',
+                    y: '35*',
                     size: 12,
                     align: "right",
                     colors: [255]
@@ -1799,16 +1811,16 @@ const SQUAD_SCREEN = {
                 {
                     type: "text",
                     text: "Health",
-                    x: 80,
-                    y: 50,
+                    x: '80*',
+                    y: '50*',
                     size: 12,
                     colors: [255]
                 },
                 {
                     type: "text",
                     text: "[base.health][base.regenText][base.shieldText]",
-                    x: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
-                    y: 50,
+                    x: '210*',
+                    y: '50*',
                     size: 12,
                     align: "right",
                     colors: [255]
@@ -1816,8 +1828,8 @@ const SQUAD_SCREEN = {
                 {
                     type: "text_tooltip",
                     text: "Armor",
-                    x: 80,
-                    y: 65,
+                    x: '80*',
+                    y: '65*',
                     size: 12,
                     colors: [255],
                     header: "Armor: [base.armor]",
@@ -1831,8 +1843,8 @@ const SQUAD_SCREEN = {
                 {
                     type: "text_tooltip",
                     text: "[base.armor]",
-                    x: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
-                    y: 65,
+                    x: '210*',
+                    y: '65*',
                     size: 12,
                     align: "right",
                     colors: [255],
@@ -1847,16 +1859,16 @@ const SQUAD_SCREEN = {
                 // {
                 //     type: "text",
                 //     text: "Armor",
-                //     x: 80,
-                //     y: 65,
+                //     x: '80*',
+                //     y: '65*',
                 //     size: 12,
                 //     colors: [255]
                 // },
                 // {
                 //     type: "text",
                 //     text: "[base.armor]",
-                //     x: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
-                //     y: 65,
+                //     x: '210*',
+                //     y: '65*',
                 //     size: 12,
                 //     align: "right",
                 //     colors: [255]
@@ -1864,16 +1876,16 @@ const SQUAD_SCREEN = {
                 {
                     type: "text",
                     text: "Speed",
-                    x: 80,
-                    y: 80,
+                    x: '80*',
+                    y: '80*',
                     size: 12,
                     colors: [255]
                 },
                 {
                     type: "text",
                     text: "[base.speed][base.flyingText]",
-                    x: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
-                    y: 80,
+                    x: '210*',
+                    y: '80*',
                     size: 12,
                     align: "right",
                     colors: [255]
@@ -1881,12 +1893,12 @@ const SQUAD_SCREEN = {
                 {
                     type: "vbox",
                     attribute: (context) => context,
-                    w: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
+                    w: '210*',
                     x: 0,
-                    y: 95,
-                    h: 20,
+                    y: '95*',
+                    h: '20*',
                     padding: 0,
-                    spacing: 10,
+                    spacing: '10*',
                     children: [
                         {
                             type: "list",
@@ -1908,12 +1920,12 @@ const SQUAD_SCREEN = {
                                 }
                                 return arr;
                             },
-                            x: 80,
+                            x: '80*',
                             y: 0,
                             block: true,
-                            spacing: 3,
-                            w: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 80,
-                            h: 12,
+                            spacing: '3*',
+                            w: '150*',
+                            h: '12*',
                             children: [
                                 {
                                     type: "text_tooltip",
@@ -1926,14 +1938,14 @@ const SQUAD_SCREEN = {
                                             colors: [255]
                                         }
                                     ],
-                                    h: 12
+                                    h: '12*'
                                 }
                             ]
                         },
                         {
                             type: "line",
-                            x: SIDE_WINDOW_W / 2 - SIDE_WINDOW_PADDING,
-                            w: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
+                            x: '105*',
+                            w: '210*',
                             h: 1,
                             bgColor: [255],
                             hvrBgColor: [255],
@@ -1959,7 +1971,7 @@ const BATTLE_END_SCREEN = {
             type: "text",
             text: "[victory]",
             x: '50%',
-            y: '50% - 32',
+            y: '50% - 32*',
             align: 'center',
             style: 'bold',
             size: 64,
@@ -1969,17 +1981,17 @@ const BATTLE_END_SCREEN = {
             type: "window",
             x: 0,
             y: '50%',
-            w: SIDE_WINDOW_W,
+            w: '250*',
             h: '100% - 80',
-            padding: SIDE_WINDOW_PADDING,
-            spacing: SIDE_WINDOW_PADDING,
+            padding: '20*',
+            spacing: '20*',
             bgColor: [50],
             hvrBgColor: [50],
             children: [
                 {
                     type: "text",
                     text: "Player",
-                    x: SIDE_WINDOW_W / 2,
+                    x: '50%',
                     align: 'center',
                     style: 'bold',
                     size: 24
@@ -1987,15 +1999,15 @@ const BATTLE_END_SCREEN = {
                 {
                     type: "list",
                     attribute: (context) => context.playerSquads,
-                    x: SIDE_WINDOW_PADDING,
-                    w: SIDE_WINDOW_W - 2 * SIDE_WINDOW_PADDING,
-                    spacing: 15,
+                    x: '20*',
+                    w: '210*',
+                    spacing: '15*',
                     children: [
                         {
                             type: "troopButton",
                             x: 0,
                             y: 0,
-                            scale: 0.75,
+                            scale: '0.75*',
                             attribute: (context) => context.base,
                             outline: false,
                             tooltip: false,
@@ -2003,8 +2015,8 @@ const BATTLE_END_SCREEN = {
                         {
                             type: "text",
                             text: "[base.name]",
-                            x: 60,
-                            y: 1.5,
+                            x: '60*',
+                            y: '1.5*',
                             size: 12,
                             style: 'bold',
                             colors: [255]
@@ -2012,16 +2024,16 @@ const BATTLE_END_SCREEN = {
                         {
                             type: "text",
                             text: "Kills: [kills]",
-                            x: 60,
-                            y: 16.5,
+                            x: '60*',
+                            y: '16.5*',
                             size: 12,
                             colors: [255]
                         },
                         {
                             type: "text",
                             text: "Count: [count] / [maxCount]",
-                            x: 60,
-                            y: 31.5,
+                            x: '60*',
+                            y: '31.5*',
                             size: 12,
                             colors: [255]
                         }
@@ -2033,10 +2045,10 @@ const BATTLE_END_SCREEN = {
             type: "window",
             x: '100% - 250',
             y: '50%',
-            w: SIDE_WINDOW_W,
+            w: '250*',
             h: '100% - 80',
-            padding: SIDE_WINDOW_PADDING,
-            spacing: SIDE_WINDOW_PADDING,
+            padding: '20*',
+            spacing: '20*',
             bgColor: [50],
             hvrBgColor: [50],
             children: [
@@ -2052,15 +2064,15 @@ const BATTLE_END_SCREEN = {
                     type: "list",
                     attribute: (context) => context.enemySquads,
                     x: 0,
-                    w: '100% - 20',
-                    spacing: 15,
+                    w: '100% - 20*',
+                    spacing: '15*',
                     children: [
                         {
                             type: "troopButton",
-                            x: '100% - 80',
+                            x: '100% - 80*',
                             // x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
                             y: 0,
-                            scale: 0.75,
+                            scale: '0.75*',
                             attribute: (context) => context.base,
                             outline: false,
                             tooltip: false,
@@ -2068,10 +2080,10 @@ const BATTLE_END_SCREEN = {
                         {
                             type: "text",
                             text: "[base.name]",
-                            x: '100% - 80',
+                            x: '100% - 80*',
                             // x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
                             align: 'right',
-                            y: 1.5,
+                            y: '1.5*',
                             size: 12,
                             style: 'bold',
                             colors: [255]
@@ -2079,20 +2091,20 @@ const BATTLE_END_SCREEN = {
                         {
                             type: "text",
                             text: "Kills: [kills]",
-                            x: '100% - 80',
+                            x: '100% - 80*',
                             // x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
                             align: 'right',
-                            y: 16.5,
+                            y: '16.5*',
                             size: 12,
                             colors: [255]
                         },
                         {
                             type: "text",
                             text: "Count: [count] / [maxCount]",
-                            x: '100% - 80',
+                            x: '100% - 80*',
                             // x: SIDE_WINDOW_W - SIDE_WINDOW_PADDING - 60,
                             align: 'right',
-                            y: 31.5,
+                            y: '31.5*',
                             size: 12,
                             colors: [255]
                         }
@@ -2105,21 +2117,21 @@ const BATTLE_END_SCREEN = {
 
 const DEPLOY_SCREEN = {
     type: "window",
-    x: '20% - 10',
-    w: '60% + 20',
-    h: 110,
-    y: '100% - 55',
-    padding: 10,
-    spacing: 10,
+    x: '20% - 10*',
+    w: '60% + 20*',
+    h: '110*',
+    y: '100% - 55*',
+    padding: '10*',
+    spacing: '10*',
     bgColor: [50],
     hvrBgColor: [50],
     children: [
         {
             type: "text",
             text: "Currency: [currencyTxt]",
-            x: 10,
+            x: '10*',
             y: 0,
-            w: 100,
+            w: '100*',
             size: 16,
             updates: true,
             block: false,
@@ -2128,9 +2140,9 @@ const DEPLOY_SCREEN = {
         {
             type: "text",
             text: "Wave: [wave]",
-            x: '100% - 10',
+            x: '100% - 10*',
             y: 0,
-            w: 100,
+            w: '100*',
             size: 16,
             updates: true,
             block: false,
@@ -2139,12 +2151,12 @@ const DEPLOY_SCREEN = {
         },
         {
             type: "hbox",
-            h: 20,
+            h: '20*',
             x: '50%',
             y: 0,
-            w: 50,
+            w: '50*',
             updates: true,
-            spacing: 50,
+            spacing: '50*',
             children: [
                 {
                     type: "text",
@@ -2155,9 +2167,9 @@ const DEPLOY_SCREEN = {
                 },
                 {
                     type: "button",
-                    y: -2,
-                    w: 70,
-                    h: 20,
+                    y: '-2*',
+                    w: '70*',
+                    h: '20*',
                     size: 12,
                     text: "Start Early",
                     bgColor: [100],
@@ -2168,23 +2180,23 @@ const DEPLOY_SCREEN = {
         },
         {
             type: "hbox",
-            h: 60,
+            h: '60*',
             x: '50%',
             y: 0,
-            w: '60% - 20',
-            padding: 10,
-            spacing: 15,
+            w: '60% - 20*',
+            padding: '10*',
+            spacing: '15*',
             children: [
                 {
                     type: "vbox",
-                    w: 20,
-                    h: 60,
+                    w: '20*',
+                    h: '100%',
                     children: [
                         {
                             type: "button",
                             x: 0,
-                            w: 20,
-                            h: 20,
+                            w: '20*',
+                            h: '20*',
                             size: 16,
                             text: "⮝",
                             style: 'bold',
@@ -2200,9 +2212,9 @@ const DEPLOY_SCREEN = {
                             text: "[pauseBtn]",
                             x: 0,
                             y: 0,
-                            w: 20,
+                            w: '20*',
                             size: 12,
-                            h: 20,
+                            h: '20*',
                             align: 'center',
                             updates: true,
                             colors: [255]
@@ -2210,8 +2222,8 @@ const DEPLOY_SCREEN = {
                         {
                             type: "button",
                             x: 0,
-                            w: 20,
-                            h: 20,
+                            w: '20*',
+                            h: '20*',
                             size: 16,
                             text: "⮟",
                             style: 'bold',
@@ -2230,7 +2242,7 @@ const DEPLOY_SCREEN = {
                     x: 0,
                     y: 0,
                     w: -1,
-                    h: 60,
+                    h: '100%',
                     direction: false,
                     spacing: 15,
                     children: [
@@ -2238,7 +2250,7 @@ const DEPLOY_SCREEN = {
                             type: "troopButton",
                             x: 0,
                             y: 0,
-                            scale: 1,
+                            scale: '1*',
                             bgColor: [149, 179, 120],
                             hvrBgColor: [149, 179, 120],
                             updates: true,

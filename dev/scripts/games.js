@@ -736,6 +736,14 @@ class CombatMode extends Mode {
     }
 
     tickCombatEntities(dt) {
+        for (const squad of this.playerSquads) {
+            if (!this.finished && !this.paused)
+                squad.tick(dt);
+        }
+        for (const squad of this.enemySquads) {
+            if (!this.finished && !this.paused)
+                squad.tick(dt);
+        }
         for (const troop of this.enemyTroops) {
             if (!this.finished && !this.paused)
                 troop.tick(dt);
@@ -766,6 +774,41 @@ class CombatMode extends Mode {
         }
 
         return true;
+    }
+
+    /**
+     * Query for all squad troops in radius
+     * @param {Position} pos        base position
+     * @param {number} radius       radius
+     * @param {Squad} ownSquad      squad sending querying
+     * @param {boolean} specific    are we getting a specific team?
+     * @param {boolean} team        which team? true = player, false = enemy
+     */
+    queryPos(pos, radius, ownSquad = null, specific = true, team = true) {
+        const results = [];
+        if (specific) {
+            if (team) {
+                for (const squad of this.playerSquads) {
+                    results.push(...squad.queryPos(pos, radius));
+                }
+            } else {
+                for (const squad of this.enemySquads) {
+                    results.push(...squad.queryPos(pos, radius));
+                }
+            }
+        } else {
+            for (const squad of this.playerSquads) {
+                if (squad === ownSquad)
+                    continue;
+                results.push(...squad.queryPos(pos, radius));
+            }
+            for (const squad of this.enemySquads) {
+                if (squad === ownSquad)
+                    continue;
+                results.push(...squad.queryPos(pos, radius));
+            }
+        }
+        return results;
     }
 
     drawFlyingTroops() {

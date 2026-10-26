@@ -840,7 +840,8 @@ class Troop {
 			return;
 
 		// Get all potential targets
-		const searchArr = mode.grid.query(this.pos.x, this.pos.y, this.maxRange);
+		const searchArr = mode.queryPos(this.pos, this.maxRange, null, false);
+		// const searchArr = mode.grid.query(this.pos.x, this.pos.y, this.maxRange);
 
 		// Handle each weapon
 		for (const weapon of this.weapons) {
@@ -992,7 +993,8 @@ class Troop {
 		let dx = Math.cos(moveAngle) * movement;
 		let dy = Math.sin(moveAngle) * movement;
 		let newPos = new Position(this.pos.x + dx, this.pos.y + dy);
-		const searchArr = mode.grid.query(this.pos.x, this.pos.y, Math.max(this.base.size, this.base.sizeY) * 4);
+		const searchArr = mode.queryPos(this.pos, this.base.maxSize + movement, this.squad, false);
+		// const searchArr = mode.grid.query(this.pos.x, this.pos.y, Math.max(this.base.size, this.base.sizeY) * 4);
 		for (const trp of searchArr) {
 			if (trp.squad === this.squad || this.base.flying !== trp.base.flying)
 				continue;
@@ -1220,8 +1222,10 @@ class Troop {
 
 		// Get all possible targets (if needed)
 		let searchArr;
-		if (baseWeapon.type !== WeaponType.PROJECTILE)
-			searchArr = mode.grid.query(position.x, position.y, baseWeapon.range[2]);
+		if (baseWeapon.type !== WeaponType.PROJECTILE) {
+			searchArr = mode.queryPos(position, baseWeapon.range[2], null, true, baseWeapon.targetsAllies ? this.playerOwned : !this.playerOwned);
+			// searchArr = mode.grid.query(position.x, position.y, baseWeapon.range[2]);
+		}
 		switch (baseWeapon.type) {
 			case WeaponType.MELEE:
 				const wPos = this.getWeaponPosition(weapon);
@@ -1420,8 +1424,10 @@ class Troop {
 	 * @returns {Troop}			  			new target
 	 */
 	getTarget(weapon, baseWeapon, searchArr=null) {
-		if (!searchArr)
-			searchArr = mode.grid.query(this.pos.x, this.pos.y, baseWeapon.range[2]);
+		if (!searchArr) {
+			// searchArr = mode.grid.query(this.pos.x, this.pos.y, baseWeapon.range[2]);
+			searchArr = mode.queryPos(this.pos, baseWeapon.range[2], null, true, baseWeapon.targetsAllies ? this.playerOwned : !this.playerOwned);
+		}
 		let closest = undefined;
 		let bestValue = baseWeapon.targetsAllies ? -1 : Infinity;
 
@@ -1930,6 +1936,27 @@ class Squad {
 	}
 
 	/**
+	 * Run own move/AI code. Uses dt to determine how much time has passed/how much it should move/etc
+	 * @param {number} dt	delta time in seconds
+	 */
+	tick(dt) {
+		this.avgPos = this.currentPos;
+		this.disPos = 0;
+		for (const troop of this.troops) {
+			const dst = troop.pos.distanceTo(this.avgPos) + troop.getDirectionalRadius(this.avgPos);
+			if (dst > this.disPos)
+				this.disPos = dst;
+		}
+	}
+
+	queryPos(pos, radius) {
+		if (this.avgPos.distanceTo(pos) < this.disPos + radius) {
+			return this.troops;
+		}
+		return [];
+	}
+
+	/**
 	 * Order squad to move to this position
 	 * @param {number} x move to this x
 	 * @param {number} y move to this y
@@ -2058,11 +2085,12 @@ class ProjectileInstance {
 				));
 			}
 			else {
-				const searchArr = mode.grid.query(this.pos.x, this.pos.y, this.lifetime / 2 * this.base.speed);
+				const searchArr = mode.queryPos(this.pos, this.lifetime / 2 * this.base.speed, null, true, !this.team);
+				// const searchArr = mode.grid.query(this.pos.x, this.pos.y, this.lifetime / 2 * this.base.speed);
 				let minDistance = Infinity;
 				for (const troop of searchArr) {
-					if (troop.playerOwned === this.team || troop.health <= 0)
-						continue;
+					// if (troop.playerOwned === this.team || troop.health <= 0)
+					// 	continue;
 					const dst = troop.pos.distanceTo(this.pos);
 					if (dst < minDistance) {
 						minDistance = dst;
@@ -2081,14 +2109,16 @@ class ProjectileInstance {
 		this.pos.y += Math.sin(this.pos.angle) * this.base.speed * dt;
 
 		// Check if it hit any targets
-		const candidates = mode.grid.query(
-			(oldX + this.pos.x) / 2,
-			(oldY + this.pos.y) / 2,
-			this.base.speed * dt / 2 + this.base.r + this.base.areaRange
-		);
+		const testPos = new Position((oldX + this.pos.x) / 2, (oldY + this.pos.y) / 2);
+		const candidates = mode.queryPos(testPos, this.base.speed * dt / 2 + this.base.r + this.base.areaRange, null, true, !this.team);
+		// const candidates = mode.grid.query(
+		// 	(oldX + this.pos.x) / 2,
+		// 	(oldY + this.pos.y) / 2,
+		// 	this.base.speed * dt / 2 + this.base.r + this.base.areaRange
+		// );
 		for (const troop of candidates) {
-			if (troop.playerOwned === this.team || troop.health <= 0)
-				continue;
+			// if (troop.playerOwned === this.team || troop.health <= 0)
+			// 	continue;
 			const coll = segmentEllipseCollision(oldPos, this.pos, troop.pos, troop.base.size, troop.base.sizeY)
 			if (coll) {
 				this.hit(candidates, troop);
@@ -2686,14 +2716,15 @@ function getLaserTarget(origin, angle, targets, range, team) {
  */
 function getSquadAt(x, y, player = true) {
 	const mousePos = new Position(x, y);
-	const searchArr = mode.grid.query(x, y, clickRange);
+	const searchArr = mode.queryPos(mousePos, clickRange, null, !player, player);
+	// const searchArr = mode.grid.query(x, y, clickRange);
 	if (searchArr.length === 0)
 		return null;
 	let minTroop = null;
 	let minDistance = Infinity;
 	for (const troop of searchArr) {
-		if (!player && troop.playerOwned !== player)
-			continue;
+		// if (!player && troop.playerOwned !== player)
+		// 	continue;
 		const dst = Math.max(troop.pos.distanceTo(mousePos) - troop.getDirectionalRadius(mousePos), 0);
 		if (!minTroop || dst < minDistance || (dst === minDistance && minTroop.base.static)) {
 			minTroop = troop;
