@@ -53,10 +53,12 @@ const SPEEDS = Object.freeze({
 const MenuStages = Object.freeze({
     MAIN: 1,     // Main Menu
     SELECT: 2,   // Select Faction
-    FACTION: 3,  // Faction Details/Confirm Faction
-    SETTINGS: 4, // Settings (TODO)
-    VICTORY: 5,  // Post-Battle: Victory (ONLY REALLY WORKS FOR POST-FIELD BATTLE RN)
-    DEFEAT: 6    // Post-Battle: Defeat (ONLY REALLY WORKS FOR POST-FIELD BATTLE RN)
+    OWNFACTION: 3,      // Select own faction
+    ENEMYFACTION: 4,    // Select enemy faction
+    FACTION: 5,  // Faction Details/Confirm Faction
+    SETTINGS: 6, // Settings (TODO)
+    VICTORY: 7,  // Post-Battle: Victory (ONLY REALLY WORKS FOR POST-FIELD BATTLE RN)
+    DEFEAT: 8    // Post-Battle: Defeat (ONLY REALLY WORKS FOR POST-FIELD BATTLE RN)
 });
 
 /**
@@ -171,6 +173,14 @@ class Mode {
      * @returns {boolean} always false
      */
     mouseDragged() { return false; }
+
+    /**
+     * Resizes UI when RES_X/RES_Y are changed
+     */
+    resizeUI() {
+        this.uiElements = [];
+        this.tooltips.clear();
+    }
 }
 
 
@@ -198,6 +208,146 @@ class Menu extends Mode {
                 y += 100;
             return obj;
         });
+        this.squadUI = initializeInterface(FACTION_SCREEN, null, null, true);
+        this.enemyFactionUI = selectionScreen("Select Enemy Faction", [...this.factions.map(f => {
+            return {
+                text: f.faction.name,
+                bg: f.faction.bgColor,
+                hoverBg: f.faction.darkerColor,
+                onClick: () => {
+                    this.stage = MenuStages.FACTION;
+                    this.showUI(this.squadUI, true, this.selectedFaction);
+                    this.selectedEnemy = f.faction;
+                }
+            };
+        }), {
+            text: "Go Back",
+            bg: [52, 98, 173],
+            hoverBg: [39, 74, 130],
+            onClick: () => {
+                this.showUI(this.mainUI)
+            }
+        }]);
+        this.factionUI = selectionScreen("Select Faction", [...this.factions.filter(f => f.faction.playable).map(f => {
+            return {
+                text: f.faction.name,
+                bg: f.faction.bgColor,
+                hoverBg: f.faction.darkerColor,
+                onClick: () => {
+                    this.stage = MenuStages.ENEMYFACTION;
+                    this.selectedFaction = f.faction;
+                    // this.squadUI.setDataContext(f.faction);
+                    if (this.battleType === BattleType.BATTLE)
+                        this.showUI(this.enemyFactionUI);
+                    else {
+                        this.stage = MenuStages.FACTION;
+                        this.showUI(this.squadUI, true, this.selectedFaction);
+                        this.selectedEnemy = factions.monsters;
+                    }
+                }
+            };
+        }), {
+            text: "Go Back",
+            bg: [52, 98, 173],
+            hoverBg: [39, 74, 130],
+            onClick: () => {
+                this.showUI(this.mainUI)
+            }
+        }]);
+        this.settingsUI = selectionScreen("Settings", [
+            {
+                text: "Increase Resolution",
+                bg: [52, 98, 173],
+                hoverBg: [39, 74, 130],
+                onClick: () => {
+                    increaseResolution();
+                }
+            },
+            {
+                text: "Decrease Resolution",
+                bg: [154, 17, 21],
+                hoverBg: [115, 12, 15],
+                onClick: () => {
+                    decreaseResolution();
+                }
+            },
+            {
+                text: "Go Back",
+                bg: [52, 98, 173],
+                hoverBg: [39, 74, 130],
+                onClick: () => {
+                    this.showUI(this.mainUI)
+                }
+            }
+        ]);
+        this.difficultyUI = selectionScreen("Difficulty Level", [
+            {
+                text: "Easy",
+                bg: [52, 98, 173],
+                hoverBg: [39, 74, 130],
+                onClick: () => {
+                    this.startCurrency = 5000;
+                    this.stage = MenuStages.OWNFACTION;
+                    this.showUI(this.factionUI);
+                }
+            },
+            {
+                text: "Medium",
+                bg: [103, 57, 97],
+                hoverBg: [82, 45, 77],
+                onClick: () => {
+                    this.startCurrency = 2000;
+                    this.stage = MenuStages.OWNFACTION;
+                    this.showUI(this.factionUI);
+                }
+            },
+            {
+                text: "Hard",
+                bg: [154, 17, 21],
+                hoverBg: [115, 12, 15],
+                onClick: () => {
+                    this.startCurrency = 1000;
+                    this.stage = MenuStages.OWNFACTION;
+                    this.showUI(this.factionUI);
+                }
+            }
+        ]);
+        this.mainUI = selectionScreen("Main Menu", [
+            {
+                text: "Battle",
+                bg: [154, 17, 21],
+                hoverBg: [115, 12, 15],
+                onClick: () => {
+                    this.stage = MenuStages.SELECT;
+                    this.battleType = BattleType.BATTLE;
+                    this.showUI(this.difficultyUI);
+                }
+            },
+            {
+                text: "Siege",
+                bg: [154, 17, 21],
+                hoverBg: [115, 12, 15],
+                onClick: () => {
+                    this.stage = MenuStages.SELECT;
+                    this.battleType = BattleType.SIEGE;
+                    this.showUI(this.difficultyUI);
+                }
+            },
+            {
+                text: "Settings",
+                bg: [52, 98, 173],
+                hoverBg: [39, 74, 130],
+                onClick: () => {
+                    this.stage = MenuStages.SETTINGS;
+                    this.showUI(this.settingsUI);
+                }
+            }
+        ]);
+        this.showUI(this.mainUI);
+    }
+
+    resizeUI() {
+        super.resizeUI();
         this.squadUI = initializeInterface(FACTION_SCREEN, null, null, true);
         this.enemyFactionUI = selectionScreen("Select Enemy Faction", [...this.factions.map(f => {
             return {
@@ -306,20 +456,61 @@ class Menu extends Mode {
                 }
             }
         ]);
-        this.showUI(this.mainUI);
+        this.settingsUI = selectionScreen("Settings", [
+            {
+                text: "Increase Resolution",
+                bg: [52, 98, 173],
+                hoverBg: [39, 74, 130],
+                onClick: () => {
+                    increaseResolution();
+                }
+            },
+            {
+                text: "Decrease Resolution",
+                bg: [154, 17, 21],
+                hoverBg: [115, 12, 15],
+                onClick: () => {
+                    decreaseResolution();
+                }
+            },
+            {
+                text: "Go Back",
+                bg: [52, 98, 173],
+                hoverBg: [39, 74, 130],
+                onClick: () => {
+                    this.showUI(this.mainUI)
+                }
+            }
+        ]);
+        switch (this.stage) {
+            case MenuStages.MAIN:
+                this.showUI(this.mainUI);
+                break;
+            case MenuStages.SELECT:
+                this.showUI(this.difficultyUI);
+                break;
+            case MenuStages.FACTION:
+                this.showUI(this.squadUI);
+                break;
+            case MenuStages.ENEMYFACTION:
+                this.showUI(this.enemyFactionUI);
+                break;
+            case MenuStages.OWNFACTION:
+                this.showUI(this.factionUI);
+                break;
+            case MenuStages.SETTINGS:
+                this.showUI(this.settingsUI);
+                break;
+        }
     }
 
     tickBefore() {
         switch (this.stage) {
-            case MenuStages.MAIN:
-            case MenuStages.SETTINGS:
-            case MenuStages.SELECT:
-            case MenuStages.VICTORY:
-            case MenuStages.DEFEAT:
-                background(0);
-                break;
             case MenuStages.FACTION:
                 background(this.selectedFaction.col);
+                break;
+            default:
+                background(0);
                 break;
         }
     }
@@ -342,16 +533,18 @@ class Menu extends Mode {
                 break;
             case MenuStages.SETTINGS:
                 // TODO
-                textAlign(CENTER, CENTER);
-                fill(255);
-                strokeWeight(0);
-                textSize(80);
-                text('SETTINGS', RES_X / 2, RES_Y / 2);
+                // textAlign(CENTER, CENTER);
+                // fill(255);
+                // strokeWeight(0);
+                // textSize(80);
+                // text('SETTINGS', RES_X / 2, RES_Y / 2);
                 break;
             // Only real difference between next two is text in center of screen. Unfortunately, JS doesn't have fall through switches in the right way.
             case MenuStages.VICTORY: // Player squads on left, enemy on right
                 break;
             case MenuStages.DEFEAT: // Player squads on left, enemy on right
+                break;
+            default:
                 break;
         }
         return;
@@ -374,14 +567,16 @@ class Menu extends Mode {
             case MenuStages.SETTINGS:
                 // TODO
                 // For now, click anywhere in settings to go back
-                this.stage = MenuStages.MAIN;
-                this.showUI(this.mainUI);
+                // this.stage = MenuStages.MAIN;
+                // this.showUI(this.mainUI);
                 break;
             case MenuStages.VICTORY:
             case MenuStages.DEFEAT:
                 // For now, click anywhere in victory/defeat to go to main menu
                 this.stage = MenuStages.MAIN;
                 this.showUI(this.mainUI);
+                break;
+            default:
                 break;
         }
         return false;
@@ -481,6 +676,13 @@ class CombatMode extends Mode {
 
     get pauseBtn() {
         return SPEEDS[this.speed]?.name ?? 'ERROR';
+    }
+
+    resizeUI() {
+        super.resizeUI();
+        this.squadUI = initializeInterface(
+            SQUAD_SCREEN, null, this.selectedSquad, true
+        );
     }
 
     tickBefore() {
@@ -771,6 +973,15 @@ class Siege extends CombatMode {
         const remainingSeconds = seconds % 60;
 
         return `${String(minutes).padStart(1, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    }
+
+    resizeUI() {
+        super.resizeUI();
+        this.deployUI = initializeInterface(
+            DEPLOY_SCREEN, null, this, true
+        );
+        this.deployUI.setDataContext(this);
+        this.squadUI.setDataContext(this.selectedSquad ?? this.selectNewSquad);
     }
 
     tick(dt) {

@@ -179,7 +179,7 @@ class Mode {
      */
     resizeUI() {
         this.uiElements = [];
-        this.tooltips = [];
+        this.tooltips.clear();
     }
 }
 
@@ -254,6 +254,32 @@ class Menu extends Mode {
                 this.showUI(this.mainUI)
             }
         }]);
+        this.settingsUI = selectionScreen("Settings", [
+            {
+                text: "Increase Resolution",
+                bg: [52, 98, 173],
+                hoverBg: [39, 74, 130],
+                onClick: () => {
+                    increaseResolution();
+                }
+            },
+            {
+                text: "Decrease Resolution",
+                bg: [154, 17, 21],
+                hoverBg: [115, 12, 15],
+                onClick: () => {
+                    decreaseResolution();
+                }
+            },
+            {
+                text: "Go Back",
+                bg: [52, 98, 173],
+                hoverBg: [39, 74, 130],
+                onClick: () => {
+                    this.showUI(this.mainUI)
+                }
+            }
+        ]);
         this.difficultyUI = selectionScreen("Difficulty Level", [
             {
                 text: "Easy",
@@ -313,6 +339,7 @@ class Menu extends Mode {
                 hoverBg: [39, 74, 130],
                 onClick: () => {
                     this.stage = MenuStages.SETTINGS;
+                    this.showUI(this.settingsUI);
                 }
             }
         ]);
@@ -429,6 +456,32 @@ class Menu extends Mode {
                 }
             }
         ]);
+        this.settingsUI = selectionScreen("Settings", [
+            {
+                text: "Increase Resolution",
+                bg: [52, 98, 173],
+                hoverBg: [39, 74, 130],
+                onClick: () => {
+                    increaseResolution();
+                }
+            },
+            {
+                text: "Decrease Resolution",
+                bg: [154, 17, 21],
+                hoverBg: [115, 12, 15],
+                onClick: () => {
+                    decreaseResolution();
+                }
+            },
+            {
+                text: "Go Back",
+                bg: [52, 98, 173],
+                hoverBg: [39, 74, 130],
+                onClick: () => {
+                    this.showUI(this.mainUI)
+                }
+            }
+        ]);
         switch (this.stage) {
             case MenuStages.MAIN:
                 this.showUI(this.mainUI);
@@ -444,6 +497,9 @@ class Menu extends Mode {
                 break;
             case MenuStages.OWNFACTION:
                 this.showUI(this.factionUI);
+                break;
+            case MenuStages.SETTINGS:
+                this.showUI(this.settingsUI);
                 break;
         }
     }
@@ -477,11 +533,11 @@ class Menu extends Mode {
                 break;
             case MenuStages.SETTINGS:
                 // TODO
-                textAlign(CENTER, CENTER);
-                fill(255);
-                strokeWeight(0);
-                textSize(80);
-                text('SETTINGS', RES_X / 2, RES_Y / 2);
+                // textAlign(CENTER, CENTER);
+                // fill(255);
+                // strokeWeight(0);
+                // textSize(80);
+                // text('SETTINGS', RES_X / 2, RES_Y / 2);
                 break;
             // Only real difference between next two is text in center of screen. Unfortunately, JS doesn't have fall through switches in the right way.
             case MenuStages.VICTORY: // Player squads on left, enemy on right
@@ -511,8 +567,8 @@ class Menu extends Mode {
             case MenuStages.SETTINGS:
                 // TODO
                 // For now, click anywhere in settings to go back
-                this.stage = MenuStages.MAIN;
-                this.showUI(this.mainUI);
+                // this.stage = MenuStages.MAIN;
+                // this.showUI(this.mainUI);
                 break;
             case MenuStages.VICTORY:
             case MenuStages.DEFEAT:

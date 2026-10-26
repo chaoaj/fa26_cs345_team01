@@ -1,7 +1,59 @@
 // Global Variables
 // Screen/Canvas Size
+const RESOLUTIONS = [
+    [800, 450],
+    [960, 540],
+    [1024, 576],
+    [1152, 648],
+    [1280, 720],
+    [1366, 700], // Starting
+    [1600, 900],
+    [1920, 1080],
+    [2560, 1440],
+    [3840, 2160]
+];
+
 let RES_X = 1366;
 let RES_Y = 700;
+
+function resizeScreen(w = RES_X, h = RES_Y) {
+    RES_X = w;
+    RES_Y = h;
+    minZoom = Math.max(
+        RES_X / MAP_W,
+        RES_Y / MAP_H
+    );
+    mode.resizeUI();
+    resizeCanvas(w, h);
+}
+
+function increaseResolution() {
+    const currentIndex = RESOLUTIONS.findIndex(
+        ([w, h]) => w === RES_X && h === RES_Y
+    );
+
+    const nextIndex = Math.min(
+        currentIndex + 1,
+        RESOLUTIONS.length - 1
+    );
+
+    const [w, h] = RESOLUTIONS[nextIndex];
+    resizeScreen(w, h);
+}
+
+function decreaseResolution() {
+    const currentIndex = RESOLUTIONS.findIndex(
+        ([w, h]) => w === RES_X && h === RES_Y
+    );
+
+    const nextIndex = Math.max(
+        currentIndex - 1,
+        0
+    );
+
+    const [w, h] = RESOLUTIONS[nextIndex];
+    resizeScreen(w, h);
+}
 
 /**
  * Matches context expressions enclosed in square brackets, supporting property access,

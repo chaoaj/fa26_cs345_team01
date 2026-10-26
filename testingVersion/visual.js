@@ -38,7 +38,7 @@ const NO_VISUAL = { LOD0: [], LOD1: [], LOD2: [] };
 const CAMERA_SPEED = 500;
 
 // Can't zoom out beyond bounds of map
-const minZoom = Math.max(
+let minZoom = Math.max(
     RES_X / MAP_W,
     RES_Y / MAP_H
 );
