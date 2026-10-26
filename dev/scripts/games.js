@@ -1290,6 +1290,7 @@ class Map {
         this.background = [];
         this.foreground = [];
         this.collisions = [];
+        this.lines = [];
         this.alpha = 255;
 
         if (type === MapType.SPACE) {
@@ -1372,6 +1373,13 @@ class Map {
                 // Foliage is added to foreground, and so it is drawn above normal troops
                 
             }
+            const river = generateRiver(this, {
+                width: 35,
+                amplitude: 150
+            });
+
+            river.crossings = generateFords(river, 5, 400);
+            this.lines.push(river);
         }
         else if (type === MapType.OCEAN) {
             this.bgColor = [0, 157, 196];
@@ -1401,6 +1409,11 @@ class Map {
                 item.draw();
             }
         }
+        if (this.lines.length > 0) {
+            for (const item of this.lines) {
+                item.draw();
+            }
+        }
     }
 
     /**
@@ -1423,6 +1436,167 @@ class Map {
 }
 
 /**
+ * Generate a random river crossing the map.
+ * @param {Map} map
+ * @param {Object} config
+ * @returns {LineObject}
+ */
+function generateRiver(map, config = {}) {
+    const width = config.width ?? 35;
+    const segments = config.segments ?? 8;
+    const amplitude = config.amplitude ?? Math.min(map.width, map.height) * 0.15;
+
+    // Choose horizontal or vertical crossing.
+    const horizontal = Math.random() < 0.5;
+
+    let start, end;
+
+    if (horizontal) {
+        start = new Position(0, Math.random() * map.height);
+        end = new Position(map.width, Math.random() * map.height);
+    } else {
+        start = new Position(Math.random() * map.width, 0);
+        end = new Position(Math.random() * map.width, map.height);
+    }
+
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const length = Math.hypot(dx, dy);
+
+    // Unit vector perpendicular to the river's general direction.
+    const px = -dy / length;
+    const py = dx / length;
+
+    // Generate rough control points along the river.
+    const points = [start];
+
+    for (let i = 1; i < segments; i++) {
+        const t = i / segments;
+        const offset = (Math.random() * 2 - 1) * amplitude;
+
+        points.push(new Position(
+            Math.max(0, Math.min(map.width,
+                start.x + dx * t + px * offset
+            )),
+            Math.max(0, Math.min(map.height,
+                start.y + dy * t + py * offset
+            ))
+        ));
+    }
+
+    points.push(end);
+
+    // Smooth the path using Chaikin subdivision.
+    let smooth = points;
+
+    for (let iteration = 0; iteration < 3; iteration++) {
+        const next = [smooth[0]];
+
+        for (let i = 0; i < smooth.length - 1; i++) {
+            const a = smooth[i];
+            const b = smooth[i + 1];
+
+            next.push(new Position(
+                0.75 * a.x + 0.25 * b.x,
+                0.75 * a.y + 0.25 * b.y
+            ));
+
+            next.push(new Position(
+                0.25 * a.x + 0.75 * b.x,
+                0.25 * a.y + 0.75 * b.y
+            ));
+        }
+
+        next.push(smooth[smooth.length - 1]);
+        smooth = next;
+    }
+
+    return new LineObject(smooth, {
+        width,
+        solid: config.solid ?? false,
+        blocks: true,
+        cover: config.cover ?? 1,
+        visual: new Visual(function (x, y, cols, timeElapsed) {
+            push();
+            noFill();
+            stroke(40, 100, 150);
+            strokeWeight(width);
+            strokeCap(ROUND);
+            strokeJoin(ROUND);
+            beginShape();
+            for (const p of smooth) {
+                vertex(p.x, p.y);
+            }
+            endShape();
+        }, 255)
+    }, map);
+}
+
+/**
+ * Generate ford locations along a river.
+ * @param {LineObject} river
+ * @param {number} count
+ * @param {number} minSpacing Minimum distance between fords
+ */
+function generateFords(river, count = 2, minSpacing = 300) {
+    const points = river.points;
+    const segments = [];
+    let totalLength = 0;
+
+    for (let i = 0; i < points.length - 1; i++) {
+        const a = points[i];
+        const b = points[i + 1];
+        const length = Math.hypot(b.x - a.x, b.y - a.y);
+
+        segments.push({ a, b, length, start: totalLength });
+        totalLength += length;
+    }
+
+    const distances = [];
+
+    for (let attempt = 0; attempt < count * 20 && distances.length < count; attempt++) {
+        const distance = river.width + Math.random() *
+            Math.max(0, totalLength - river.width * 2);
+
+        if (distances.every(d => Math.abs(d - distance) >= minSpacing))
+            distances.push(distance);
+    }
+
+    return distances.map(distance => {
+        const segment = segments.find(s =>
+            distance >= s.start && distance <= s.start + s.length
+        );
+
+        if (!segment) return null;
+
+        const t = (distance - segment.start) / segment.length;
+        const dx = segment.b.x - segment.a.x;
+        const dy = segment.b.y - segment.a.y;
+        const length = segment.length;
+
+        const angle = Math.atan2(dy, dx);
+        const w = river.width + 30;
+        return {
+            x: segment.a.x + dx * t,
+            y: segment.a.y + dy * t,
+            angle: angle,
+            width: w,
+            visual: new Visual(function(x, y, cols, timeElapsed) {
+                push();
+                translate(x, y);
+                rotate(angle + Math.PI / 2);
+                noStroke();
+                fill(176, 125, 55);
+                rectMode(CENTER);
+                rect(0, 0, w, w * 1.1);
+                pop();
+            }, 255),
+            colors: STOCK_COLORS.WOOD
+        };
+    }).filter(Boolean);
+}
+
+/**
  * Represents a collision object
  */
 class MapObject {
@@ -1439,6 +1613,7 @@ class MapObject {
         this.size = size;
         this.cover = config.cover ?? 1;
         this.solid = config.solid ?? true;
+        this.blocks = config.blocks ? config.blocks : (config.solid ?? true);
         this.sizeX = config.sizeX ?? size;
         this.sizeY = config.sizeY ?? size;
         this.visual = config.visual ?? null;
@@ -1554,11 +1729,176 @@ class MapObject {
      * Check if there's a collision between it and another item at pos with radius.
      * Fairly simple, needs to later be adapted to account for directional radius
      * @param {Position} pos    position of object
-     * @param {number} radius   radius of object 
+     * @param {Troop} obj       item colliding with 
      * @returns 
      */
-    collides(pos, radius) {
+    collides(pos, obj) {
+        return pos.distanceTo(this.pos) < obj.getDirectionalRadius(this.pos) + this.getDirectionalRadius(pos);
         const r = Math.max(this.sizeX, this.sizeY) + radius;
         return Math.hypot(pos.x - this.pos.x, pos.y - this.pos.y) <= r;
+    }
+
+    resolveCollision(pos, unit) {
+        const radius = unit.getDirectionalRadius(this.pos)
+            + this.getDirectionalRadius(pos);
+
+        const dx = pos.x - this.pos.x;
+        const dy = pos.y - this.pos.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist >= radius)
+            return pos;
+
+        // Push away from the collision object's center.
+        if (dist === 0) {
+            return new Position(
+                pos.x + radius,
+                pos.y,
+                pos.angle
+            );
+        }
+
+        return new Position(
+            this.pos.x + dx / dist * radius,
+            this.pos.y + dy / dist * radius,
+            pos.angle
+        );
+    }
+}
+
+/**
+ * Represents a line-shaped map object, such as a river or wall.
+ */
+class LineObject {
+    /**
+     * @param {Position[]} points Points along the line
+     * @param {Object} config
+     * @param {Map} map
+     */
+    constructor(points, config = {}, map = mode.map) {
+        this.points = points;
+        this.width = config.width ?? 20;
+        this.solid = config.solid ?? true;
+        this.blocks = config.blocks ? config.blocks : (config.solid ?? true);
+        this.cover = config.cover ?? 1;
+        this.visual = config.visual ?? null;
+        this.colors = config.colors ?? [40, 100, 150];
+        this.crossings = config.crossings ?? [];
+        this.map = map;
+
+        // Bounding-box center, useful for spatial indexing.
+        const xs = points.map(p => p.x);
+        const ys = points.map(p => p.y);
+
+        this.pos = new Position(
+            (Math.min(...xs) + Math.max(...xs)) / 2,
+            (Math.min(...ys) + Math.max(...ys)) / 2
+        );
+
+        this.sizeX = (Math.max(...xs) - Math.min(...xs)) / 2;
+        this.sizeY = (Math.max(...ys) - Math.min(...ys)) / 2;
+        this.size = Math.max(this.sizeX, this.sizeY) + this.width / 2;
+    }
+
+    draw() {
+        if (!camera.isInBounds(
+            this.pos.x,
+            this.pos.y,
+            this.size
+        )) return;
+
+        this.visual.draw(0, 0, [], 0);
+        // Draw fords over the river
+        for (const crossing of this.crossings) {
+            crossing.visual.draw(crossing.x, crossing.y, [], 0);
+        }
+        pop();
+    }
+
+    /**
+     * Check whether a circular/elliptical unit overlaps this line.
+     * @param {Position} pos Candidate unit position
+     * @param {Troop} obj Unit being moved
+     */
+    collides(pos, obj) {
+        for (let i = 0; i < this.points.length - 1; i++) {
+            const a = this.points[i];
+            const b = this.points[i + 1];
+
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            const lengthSq = dx * dx + dy * dy;
+
+            const t = lengthSq === 0 ? 0 : Math.max(0, Math.min(1,
+                ((pos.x - a.x) * dx + (pos.y - a.y) * dy) / lengthSq
+            ));
+
+            const closestX = a.x + t * dx;
+            const closestY = a.y + t * dy;
+
+            const closest = new Position(closestX, closestY);
+            const radius = obj.getDirectionalRadius(closest);
+
+            if (pos.distanceTo(closest) < this.width / 2 + radius) {
+                const atFord = this.crossings.some(crossing => Math.hypot(closestX - crossing.x, closestY - crossing.y) < crossing.width / 2);
+                if (atFord)
+                    return false;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    resolveCollision(pos, unit) {
+        const radius = this.width / 2 + unit.base.size;
+        let closestX = pos.x;
+        let closestY = pos.y;
+        let minDistSq = Infinity;
+
+        for (let i = 0; i < this.points.length - 1; i++) {
+            const a = this.points[i];
+            const b = this.points[i + 1];
+
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            const lenSq = dx * dx + dy * dy;
+
+            const t = lenSq === 0 ? 0 : Math.max(0, Math.min(1,
+                ((pos.x - a.x) * dx + (pos.y - a.y) * dy) / lenSq
+            ));
+
+            const x = a.x + t * dx;
+            const y = a.y + t * dy;
+            const distSq = (pos.x - x) ** 2 + (pos.y - y) ** 2;
+
+            if (distSq < minDistSq) {
+                minDistSq = distSq;
+                closestX = x;
+                closestY = y;
+            }
+        }
+
+        const dist = Math.sqrt(minDistSq);
+
+        if (dist >= radius) return pos;
+
+        // Push away from the closest point.
+        let nx = pos.x - closestX;
+        let ny = pos.y - closestY;
+
+        if (dist > 0) {
+            nx /= dist;
+            ny /= dist;
+        } else {
+            // Fallback if exactly on the line.
+            nx = 1;
+            ny = 0;
+        }
+
+        return new Position(
+            closestX + nx * radius,
+            closestY + ny * radius
+        );
     }
 }

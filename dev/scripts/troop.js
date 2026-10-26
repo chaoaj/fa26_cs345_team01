@@ -1054,29 +1054,33 @@ class Troop {
 		}
 		// If not a flying unit, consider map collisions as well
 		if (!this.base.flying) {
-			const mapSearchArr = mode.map.grid.query(this.pos.x, this.pos.y, this.base.maxSize + movement);
+			const mapSearchArr = [
+				...mode.map.grid.query(
+					this.pos.x,
+					this.pos.y,
+					this.base.maxSize + movement
+				),
+				...mode.map.lines
+			];
+
 			for (const mpobj of mapSearchArr) {
-				if (!mpobj.solid)
+				if (!mpobj.blocks)
 					continue;
+
 				if (mpobj.destructible && this.base.mass > mpobj.destructible) {
 					mpobj.destroy();
 					continue;
 				}
-				if (newPos.distanceTo(mpobj.pos) < this.getDirectionalRadius(mpobj.pos) + mpobj.getDirectionalRadius(this.pos)) {
-					const overlaps = findCircleIntersections(this.pos, movement, mpobj.pos, this.base.size + mpobj.size);
-					if (overlaps.length > 0) {
-						newPos = this.pos;
-						for (const pt of overlaps) {
-							if (pt.distanceTo(this.moveLoc) < newPos.distanceTo(this.moveLoc)) {
-								newPos = pt;
-							}
-						}
-						let diff = newPos.subtract(this.pos);
-						dx = diff.x;
-						dy = diff.y;
-					}
+
+				if (mpobj.collides(newPos, this)) {
+					newPos = mpobj.resolveCollision(newPos, this);
+
+					const diff = newPos.subtract(this.pos);
+					dx = diff.x;
+					dy = diff.y;
 				}
-				if (this.moveLoc.distanceTo(mpobj.pos) < this.getDirectionalRadius(mpobj.pos) + mpobj.getDirectionalRadius(this.moveLoc)) {
+
+				if (mpobj.collides(this.moveLoc, this)) {
 					canMoveTo = false;
 				}
 			}
