@@ -3162,6 +3162,7 @@ const definitions = {
             armor: 20,
             size: 25,
             sizeY: 30,
+            mass: 42_000,
             speed: 80,
             turnRate: Math.PI / 4,
 
@@ -3242,6 +3243,7 @@ const definitions = {
             armor: 15,
             size: 20,
             sizeY: 40,
+            mass: 40_000,
             speed: 80,
             turnRate: Math.PI / 4,
 
@@ -3329,6 +3331,7 @@ const definitions = {
             sizeY: 28,
             speed: 100,
             turnRate: Math.PI / 4,
+            mass: 50_000,
             moveVisual: [ TANK_MOVING_VISUAL ],
             moveOverrides: true,
             weapons: [

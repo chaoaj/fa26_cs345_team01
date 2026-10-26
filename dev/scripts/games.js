@@ -1346,24 +1346,31 @@ class Map {
                         }
                     }
                 }
-
+                const assoc = [
+                    {
+                        fg: true,
+                        i: this.foreground.push({
+                            x: x, y: y, r: ro, v: new Visual(function (alpha) {
+                                strokeWeight(0);
+                                fill(fol[0], fol[1], fol[2], alpha);
+                                ellipse(0, 0, ro, ro);
+                            })
+                        }) - 1
+                    }
+                ];
                 // Add tree trunk as a collision object
                 this.collisions.push(
                     new MapObject(x, y, 5, {
                         size: 5,
                         cover: 1,
                         solid: true,
+                        assoc: assoc,
+                        destructible: 5_000,
                         visual: CircleVisual(10, 10, 0, 0, 255, 0, [113, 83, 41, 255])
-                    })
+                    }, this)
                 );
                 // Foliage is added to foreground, and so it is drawn above normal troops
-                this.foreground.push({
-                    x: x, y: y, r: ro, v: new Visual(function (alpha) {
-                        strokeWeight(0);
-                        fill(fol[0], fol[1], fol[2], alpha);
-                        ellipse(0, 0, ro, ro);
-                    })
-                });
+                
             }
         }
         else if (type === MapType.OCEAN) {
@@ -1425,8 +1432,9 @@ class MapObject {
      * @param {number} y            center y
      * @param {number} size         radius
      * @param {Object} config       any additional values
+     * @param {Map} map             map part of
      */
-    constructor(x, y, size, config = {}, grid) {
+    constructor(x, y, size, config = {}, map = mode.map) {
         this.pos = new Position(x, y, config.angle ?? 0);
         this.size = size;
         this.cover = config.cover ?? 1;
@@ -1434,7 +1442,47 @@ class MapObject {
         this.sizeX = config.sizeX ?? size;
         this.sizeY = config.sizeY ?? size;
         this.visual = config.visual ?? null;
+        this.map = map;
         this.foreground = config.foreground ?? false;
+        this.assoc = config.assoc ?? null;
+        this.destructible = config.destructible ?? false;
+    }
+
+    /**
+     * Destroy a destructible collision object
+     * @returns {boolean}   if successful
+     */
+    destroy() {
+        if (this.destructible !== 0 && !this.destructible)
+            return false;
+        const i = this.map.collisions.indexOf(this);
+        this.map.collisions.splice(i, 1);
+        if (!this.assoc)
+            return;
+        for (const item of this.assoc) {
+            if (item.fg) {
+                this.map.foreground.splice(item.i, 1);
+                for (const c of this.map.collisions) {
+                    if (!c.assoc || !c.assoc.length)
+                        continue;
+                    for (const a of c.assoc) {
+                        if (a.fg && a.i >= item.i)
+                            a.i--;
+                    }
+                }
+            } else {
+                this.map.background.splice(item.i, 1);
+                for (const c of this.map.collisions) {
+                    if (!c.assoc || !c.assoc.length)
+                        continue;
+                    for (const a of c.assoc) {
+                        if (!a.fg && a.i >= item.i)
+                            a.i--;
+                    }
+                }
+            }
+        }
+        this.destroyed = true;
     }
 
     /**

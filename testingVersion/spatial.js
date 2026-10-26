@@ -235,8 +235,9 @@ class StaticKDTree {
         const y = item.pos.y;
 
         if (
-            x >= minX && x <= maxX &&
-            y >= minY && y <= maxY
+            x + item.sizeX >= minX && x - item.sizeX <= maxX &&
+            y + item.sizeY >= minY && y - item.sizeY <= maxY &&
+            !item.destroyed
         ) {
             result.push(item);
         }
@@ -263,7 +264,7 @@ class StaticKDTree {
         );
 
         return candidates.filter(
-            item => item.solid && item.collides(pos, radius)
+            item => !item.destroyed && item.solid && item.collides(pos, radius)
         );
     }
 }

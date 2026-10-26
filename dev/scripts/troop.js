@@ -511,6 +511,7 @@ class TroopBase {
 
 		this.size = config.size ?? 5;					// Horizontal radius
 		this.sizeY = config.sizeY ?? config.size ?? 5;	// Vertical Radius
+		this.mass = config.mass ? config.mass : this.size * this.sizeY * 3;
 		this.maxSize = Math.max(this.size, this.sizeY);
 		this.speed = config.speed ?? 20;				// Move speed
 		this.turnRate = config.turnRate ?? Math.PI;		// Turn speed
@@ -611,13 +612,6 @@ class TroopBase {
 			pop();
 		}
 		pop();
-	}
-
-	/**
-	 * Not actual mass, but used for collisions finding who should be pushed aside
-	 */
-	get mass() {
-		return this.size * this.sizeY;
 	}
 }
 
@@ -994,7 +988,7 @@ class Troop {
 		let dy = Math.sin(moveAngle) * movement;
 		let newPos = new Position(this.pos.x + dx, this.pos.y + dy);
 		const searchArr = mode.queryPos(this.pos, this.base.maxSize + movement, this.squad, false);
-		// const searchArr = mode.grid.query(this.pos.x, this.pos.y, Math.max(this.base.size, this.base.sizeY) * 4);
+		// const searchArr = mode.grid.query(this.pos.x, this.pos.y, this.base.maxSize + movement);
 		for (const trp of searchArr) {
 			if (trp.squad === this.squad || this.base.flying !== trp.base.flying)
 				continue;
@@ -1060,10 +1054,14 @@ class Troop {
 		}
 		// If not a flying unit, consider map collisions as well
 		if (!this.base.flying) {
-			const mapSearchArr = mode.map.grid.query(this.pos.x, this.pos.y, Math.max(this.base.size, this.base.sizeY) * 4);
+			const mapSearchArr = mode.map.grid.query(this.pos.x, this.pos.y, this.base.maxSize + movement);
 			for (const mpobj of mapSearchArr) {
 				if (!mpobj.solid)
 					continue;
+				if (mpobj.destructible && this.base.mass > mpobj.destructible) {
+					mpobj.destroy();
+					continue;
+				}
 				if (newPos.distanceTo(mpobj.pos) < this.getDirectionalRadius(mpobj.pos) + mpobj.getDirectionalRadius(this.pos)) {
 					const overlaps = findCircleIntersections(this.pos, movement, mpobj.pos, this.base.size + mpobj.size);
 					if (overlaps.length > 0) {
@@ -2110,16 +2108,19 @@ class ProjectileInstance {
 
 		// Check if it hit any targets
 		const testPos = new Position((oldX + this.pos.x) / 2, (oldY + this.pos.y) / 2);
-		const candidates = mode.queryPos(testPos, this.base.speed * dt / 2 + this.base.r + this.base.areaRange, null, true, !this.team);
+		const range = this.base.speed * dt / 2 + this.base.r + this.base.areaRange;
+		const candidates = mode.queryPos(testPos, range, null, true, !this.team);
+		const mapObjects = mode.map.grid.query(this.pos.x, this.pos.y, range);
 		// const candidates = mode.grid.query(
 		// 	(oldX + this.pos.x) / 2,
 		// 	(oldY + this.pos.y) / 2,
 		// 	this.base.speed * dt / 2 + this.base.r + this.base.areaRange
 		// );
-		for (const troop of candidates) {
+		for (const troop of [...candidates, ...mapObjects]) {
 			// if (troop.playerOwned === this.team || troop.health <= 0)
 			// 	continue;
-			const coll = segmentEllipseCollision(oldPos, this.pos, troop.pos, troop.base.size, troop.base.sizeY)
+			const b = troop instanceof Troop ? troop.base : troop;
+			const coll = segmentEllipseCollision(oldPos, this.pos, troop.pos, b.size, b.sizeY)
 			if (coll) {
 				this.hit(candidates, troop);
 				if (this.base.type !== ProjectileType.PIERCE) {
@@ -2153,18 +2154,20 @@ class ProjectileInstance {
 
 		switch (this.base.type) {
 			case ProjectileType.PIERCE:
-				damageTroop(this.shooter, troop, this.base.dmg, this.base.ap, this.baseWeapon);
+				if (!troop instanceof MapObject)
+					damageTroop(this.shooter, troop, this.base.dmg, this.base.ap, this.baseWeapon);
 				this.hits.push(troop);
 				break;
 			case ProjectileType.BULLET:
-				damageTroop(this.shooter, troop, this.base.dmg, this.base.ap, this.baseWeapon);
+				if (!troop instanceof MapObject)
+					damageTroop(this.shooter, troop, this.base.dmg, this.base.ap, this.baseWeapon);
 				break;
 			case ProjectileType.MISSILE:
 			case ProjectileType.AREA:
 				switch (this.base.areaType) {
 					case AreaType.CIRCLE:
 						for (const target of searchArr) {
-							if (target.health <= 0 || target.playerOwned === this.team) continue;
+							if (target instanceof MapObject || target.health <= 0 || target.playerOwned === this.team) continue;
 							const dst = this.pos.distanceTo(target.pos)
 							const maxRange = this.base.areaRange + target.getDirectionalRadius(this.pos);
 							if (dst <= maxRange) {
@@ -2179,7 +2182,7 @@ class ProjectileInstance {
 						const cosHalfAngle = Math.cos(halfAngle);
 						let hitTg = false;
 						for (const target of searchArr) {
-							if (target.health <= 0 || target.playerOwned === this.team) continue;
+							if (target instanceof MapObject || target.health <= 0 || target.playerOwned === this.team) continue;
 
 							const difference = target.pos.subtract(this.pos);
 							const dst = difference.distance;
@@ -2215,7 +2218,7 @@ class ProjectileInstance {
 
 						const halfWidth = this.base.areaAngle / 2;
 						for (const target of searchArr) {
-							if (target.health <= 0 || target.playerOwned === this.team) continue;
+							if (target instanceof MapObject || target.health <= 0 || target.playerOwned === this.team) continue;
 
 							// Distance along the projectile's direction
 							const difference = target.pos.subtract(this.pos);
