@@ -1,7 +1,7 @@
 // Global Variables
 // Screen/Canvas Size
-const RES_X = 1366;
-const RES_Y = 700;
+let RES_X = 1366;
+let RES_Y = 700;
 
 /**
  * Matches context expressions enclosed in square brackets, supporting property access,
@@ -1185,7 +1185,20 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
      */
     if (context === null && parent)
         context = parent.dataContext;
-
+    let x = json.x ?? 0;
+    if (typeof x === 'string') {
+        const num = Number(x.slice(0, -1));
+        if (x.endsWith('%')) {
+            x = num / 100 * (parent ? parent.w : RES_X);
+        }
+    }
+    let y = json.y ?? 0;
+    if (typeof y === 'string') {
+        const num = Number(y.slice(0, -1));
+        if (y.endsWith('%')) {
+            y = num / 100 * (parent ? parent.w : RES_X);
+        }
+    }
     /*
      * Create the element.
      */
@@ -1193,8 +1206,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
         case "window": // Window
             element = new InterfaceWindow(
                 json.context ?? context,
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.w ?? 0,
                 json.h ?? 0,
                 json.padding ?? 0,
@@ -1207,8 +1220,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
         case "hbox":
             element = new InterfaceHBox(
                 json.context ?? context,
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.w ?? 0,
                 json.h ?? 0,
                 json.padding ?? 0,
@@ -1221,8 +1234,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
         case "vbox":
             element = new InterfaceVBox(
                 json.context ?? context,
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.w ?? 0,
                 json.h ?? 0,
                 json.padding ?? 0,
@@ -1235,8 +1248,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
         case "text": // Text
             element = new InterfaceText(
                 json.text ?? "",
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.w ?? 0,
                 json.h ?? 0,
                 json.maxWidth ?? -1,
@@ -1254,8 +1267,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
                 json.text ?? "",
                 json.header ?? "",
                 json.lines ?? [],
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.w ?? 0,
                 json.h ?? 0,
                 json.maxWidth ?? -1,
@@ -1271,8 +1284,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
         case "button": // Button
             element = new InterfaceButton(
                 json.text ?? "",
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.w ?? 0,
                 json.h ?? 0,
                 json.style ?? NORMAL,
@@ -1286,8 +1299,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
         case "menu_button": // Main Menu Button
             element = new InterfaceMenuButton(
                 json.text ?? "",
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.visible ?? (() => true),
                 json.enabled ?? (() => true),
                 json.onClick ?? (() => true)
@@ -1316,8 +1329,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
 
             element = new InterfaceList(
                 (context) => { context },
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.w ?? 0,
                 json.h ?? 0,
                 json.spacing ?? 0,
@@ -1331,8 +1344,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
         case "troopButton": // Troop Button
             element = new InterfaceTroopButton(
                 json.troop ?? null,
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.scale ?? 1,
                 json.outline ?? true,
                 json.tooltip ?? true,
@@ -1344,8 +1357,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
             break;
         case "line":
             element = new InterfaceLine(
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.w ?? 0,
                 json.h ?? 0,
                 json.visible ?? (() => true)
@@ -1354,8 +1367,8 @@ function initializeInterface(json, parent = null, context = null, registerRoot =
         case "element": // Generic Element
         default:
             element = new InterfaceElement(
-                json.x ?? 0,
-                json.y ?? 0,
+                x,
+                y,
                 json.w ?? 0,
                 json.h ?? 0,
                 json.visible ?? (() => true),
