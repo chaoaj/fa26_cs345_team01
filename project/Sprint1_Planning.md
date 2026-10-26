@@ -7,7 +7,7 @@
 | Field                      | Your answer                                                                                       |
 | -------------------------- | ------------------------------------------------------------------------------------------------- |
 | Team name                  | Team 1                                                                                            |
-| Team members               | Yony Woube, Amaya Cranford, Caden Cole VanValkenburg, Parker Giles , Angelina Yoha, Parash Khanal |
+| Team members               | Yony Woube, Amaya Cranford, Caden Cole VanValkenburg, Parker Giles, Angelina Yoha, Parash Khanal |
 | Project                    | Team 1 Project (WIP)                                                                              |
 | Sprint                     | Sprint 1                                                                                          |
 | Sprint start date          | 2026-10-26                                                                                        |
@@ -23,18 +23,16 @@ Goal: Develop the core game initialization flow, allowing players to navigate fr
 
 ### 1.1 Value to Stakeholders
 
-✏️ *Explain who benefits from this goal and why it matters to them.*
-
 Who benefits from this goal?: This goal benefits all stakeholders, from users to developers, as core UI aspects & fundamental are addressed so further implementation can focus on gameplay. 
 
 ### 2. GitHub Projects Setup Checklist
 
 ✏️ *Check each box once it is done in GitHub Projects. Change `[ ]` to `[x]`.*
 
-- [ ] Created a new Sprint (iteration) named "Sprint 1" in GitHub Projects
-- [ ] Moved every Sprint Backlog Item into Sprint 1
+- [x] Created a new Sprint (iteration) named "Sprint 1" in GitHub Projects
+- [x] Moved every Sprint Backlog Item into Sprint 1
 - [ ] Every Sprint Backlog Item has a story-point estimate
-- [ ] Every Sprint Backlog Item has acceptance criteria
+- [x] Every Sprint Backlog Item has acceptance criteria
 - [ ] Every Sprint Backlog Item has tasks with hour estimates and assigned team members, listed in the item's comments
 - [ ] **Started the sprint:** set every Sprint Backlog Item to **In Progress**
 
@@ -44,9 +42,10 @@ Who benefits from this goal?: This goal benefits all stakeholders, from users to
 
 | # | Sprint Backlog Item (user story) | Story points | GitHub issue |
 | --- | --- | --- | --- |
-| 1 | As a [user], I want [feature] so that [benefit]. | [pts] | [#issue] |
-| 2 | As a [user], I want [feature] so that [benefit]. | [pts] | [#issue] |
-| 3 | As a [user], I want [feature] so that [benefit]. | [pts] | [#issue] |
+| 1 | As a user, I want to click a "Start Game" button on the startup menu so that I can transition from the title screen and begin setting up a new game session. | [pts] | issue #3 |
+| 2 | As a User, I want to select a difficulty level (Easy, Medium, or Hard) from a dedicated menu so that the game configures parameters according to my preferred challenge. | [pts] | [issue #4] |
+| 3 | As a User, I want to select my faction after choosing my difficulty so that my game session initializes with the correct faction attributes. | [pts] | [issue #5] |
+| 4 | As a User, I want the base game screen to display a task bar, game units, and an environment background once setup is complete so that I can begin playing. | [pts] | [issue #6] |
 | | **Total story points** | **[total]** | |
 
 ## 4. Work Distribution
@@ -61,7 +60,7 @@ Who benefits from this goal?: This goal benefits all stakeholders, from users to
 | [Name 4] | [count] | [hrs] |
 | **Team total** | **[count]** | **[hrs]** |
 
-**Is the work split fairly?** [Yes / No. If not, explain why, for example "Name 2 has fewer hours because they are also setting up the repository."]
+**Is the work split fairly?** [Yes / No. If not, explain why, for example, "Name 2 has fewer hours because they are also setting up the repository."]
 
 ## ============================================================================
 ## Example (delete before submitting)
