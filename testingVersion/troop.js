@@ -650,7 +650,7 @@ class Troop {
 
 		// Position / orientation
 		this.pos = new Position(constrain(x, this.base.size, MAP_W - this.base.size), constrain(y, this.base.sizeY, MAP_H - this.base.sizeY), angle);
-		mode.grid.insert(this);
+		// mode.grid.insert(this);
 		this.moveLoc = undefined;
 		this.moving = false;
 
@@ -816,27 +816,27 @@ class Troop {
 		}
 
 		// Change grid cell if needed
-		const newCellIndex = mode.grid.getCellIndex(
-			this.pos.x,
-			this.pos.y
-		);
-		if (newCellIndex != this.gridIndex) {
-			if (this.gridIndex >= 0) {
-				const oldCell = mode.grid.cells[this.gridIndex];
-				if (oldCell) {
-					const i = oldCell.indexOf(this);
-					if (i >= 0)
-						oldCell.splice(i, 1);
-				}
-			}
-			if (newCellIndex >= 0) {
-				mode.grid.insertIndex(this, newCellIndex);
-			}
-			this.gridIndex = newCellIndex;
-		}
+		// const newCellIndex = mode.grid.getCellIndex(
+		// 	this.pos.x,
+		// 	this.pos.y
+		// );
+		// if (newCellIndex != this.gridIndex) {
+		// 	if (this.gridIndex >= 0) {
+		// 		const oldCell = mode.grid.cells[this.gridIndex];
+		// 		if (oldCell) {
+		// 			const i = oldCell.indexOf(this);
+		// 			if (i >= 0)
+		// 				oldCell.splice(i, 1);
+		// 		}
+		// 	}
+		// 	if (newCellIndex >= 0) {
+		// 		mode.grid.insertIndex(this, newCellIndex);
+		// 	}
+		// 	this.gridIndex = newCellIndex;
+		// }
 
 		// End if we've swapped modes because battle ended
-		if (!mode.grid)
+		if (!(mode instanceof CombatMode))
 			return;
 
 		// Get all potential targets
@@ -1783,14 +1783,14 @@ class Troop {
 			}
 		}
 		// Remove from spatial grid
-		if (this.gridIndex >= 0) {
-			const oldCell = mode.grid.cells[this.gridIndex];
-			if (oldCell) {
-				const i = oldCell.indexOf(this);
-				if (i >= 0)
-					oldCell.splice(i, 1);
-			}
-		}
+		// if (this.gridIndex >= 0) {
+		// 	const oldCell = mode.grid.cells[this.gridIndex];
+		// 	if (oldCell) {
+		// 		const i = oldCell.indexOf(this);
+		// 		if (i >= 0)
+		// 			oldCell.splice(i, 1);
+		// 	}
+		// }
 		if (this.base.dieVisual)
 			this.base.dieVisual(this.pos.x, this.pos.y, this.pos.angle);
 		// End the battle if the mode hit it's checkOver condition

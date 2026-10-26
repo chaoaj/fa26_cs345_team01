@@ -145,3 +145,125 @@ class SpatialGrid {
         return result;
     }
 }
+
+
+/**
+ * Static 2D k-d tree for objects that do not move.
+ * Build once after map generation, then query repeatedly.
+ */
+class StaticKDTree {
+    constructor(items = []) {
+        this.root = null;
+        this.maxSize = 0;
+
+        if (items.length > 0)
+            this.rebuild(items);
+    }
+
+    /**
+     * Build a balanced tree from all objects.
+     * @param {(MapObject)[]} items
+     */
+    rebuild(items) {
+        this.maxSize = 0;
+
+        for (const item of items) {
+            this.maxSize = Math.max(
+                this.maxSize,
+                item.sizeX,
+                item.sizeY
+            );
+        }
+
+        this.root = this.#build(items.slice(), 0);
+    }
+
+    #build(items, depth) {
+        if (items.length === 0)
+            return null;
+
+        const axis = depth % 2 === 0 ? "x" : "y";
+
+        items.sort((a, b) => a.pos[axis] - b.pos[axis]);
+
+        const mid = Math.floor(items.length / 2);
+        const item = items[mid];
+
+        return {
+            item,
+            axis,
+            left: this.#build(items.slice(0, mid), depth + 1),
+            right: this.#build(items.slice(mid + 1), depth + 1)
+        };
+    }
+
+    /**
+     * Return objects whose centers fall within the query rectangle.
+     * This is a broad-phase query; use collides() for exact checks.
+     *
+     * @param {number} x
+     * @param {number} y
+     * @param {number} range
+     * @returns {MapObject[]}
+     */
+    query(x, y, range) {
+        if (!Number.isFinite(x) || !Number.isFinite(y))
+            return [];
+
+        if (!Number.isFinite(range) || range < 0)
+            range = 0;
+
+        const result = [];
+        this.#query(
+            this.root,
+            x - range,
+            y - range,
+            x + range,
+            y + range,
+            result
+        );
+
+        return result;
+    }
+
+    #query(node, minX, minY, maxX, maxY, result) {
+        if (!node)
+            return;
+
+        const { item, axis, left, right } = node;
+        const x = item.pos.x;
+        const y = item.pos.y;
+
+        if (
+            x >= minX && x <= maxX &&
+            y >= minY && y <= maxY
+        ) {
+            result.push(item);
+        }
+
+        const min = axis === "x" ? minX : minY;
+        const max = axis === "x" ? maxX : maxY;
+        const split = item.pos[axis];
+
+        if (min <= split)
+            this.#query(left, minX, minY, maxX, maxY, result);
+
+        if (max >= split)
+            this.#query(right, minX, minY, maxX, maxY, result);
+    }
+
+    /**
+     * Query potential collisions, accounting for object size.
+     */
+    queryCollisions(pos, radius) {
+        const candidates = this.query(
+            pos.x,
+            pos.y,
+            radius + this.maxSize
+        );
+
+        return candidates.filter(
+            item => item.solid && item.collides(pos, radius)
+        );
+    }
+}

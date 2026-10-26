@@ -652,7 +652,7 @@ class CombatMode extends Mode {
             ? CELL_SIZE
             : SPACE_CELL_SIZE;
 
-        this.grid = new SpatialGrid(MAP_W, MAP_H, cellSize);
+        // this.grid = new SpatialGrid(MAP_W, MAP_H, cellSize);
         this.map = new Map(mapType, siege);
 
         this.finished = false;
@@ -1285,7 +1285,7 @@ class Map {
 
         this.type = type;
 
-        this.grid = new SpatialGrid(MAP_W, MAP_H, 200);
+        // this.grid = new SpatialGrid(MAP_W, MAP_H, 200);
 
         this.background = [];
         this.foreground = [];
@@ -1354,7 +1354,7 @@ class Map {
                         cover: 1,
                         solid: true,
                         visual: CircleVisual(10, 10, 0, 0, 255, 0, [113, 83, 41, 255])
-                    }, this.grid)
+                    })
                 );
                 // Foliage is added to foreground, and so it is drawn above normal troops
                 this.foreground.push({
@@ -1372,6 +1372,7 @@ class Map {
         else {
             this.bgColor = [0, 0, 0];
         }
+        this.grid = new StaticKDTree(this.collisions);
     }
 
     /**
@@ -1424,7 +1425,6 @@ class MapObject {
      * @param {number} y            center y
      * @param {number} size         radius
      * @param {Object} config       any additional values
-     * @param {SpatialGrid} grid    grid where this is stored 
      */
     constructor(x, y, size, config = {}, grid) {
         this.pos = new Position(x, y, config.angle ?? 0);
@@ -1435,7 +1435,6 @@ class MapObject {
         this.sizeY = config.sizeY ?? size;
         this.visual = config.visual ?? null;
         this.foreground = config.foreground ?? false;
-        grid.insert(this);
     }
 
     /**
