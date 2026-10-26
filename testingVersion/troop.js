@@ -2158,12 +2158,12 @@ class ProjectileInstance {
 
 		switch (this.base.type) {
 			case ProjectileType.PIERCE:
-				if (!troop instanceof MapObject)
+				if (!(troop instanceof MapObject))
 					damageTroop(this.shooter, troop, this.base.dmg, this.base.ap, this.baseWeapon);
 				this.hits.push(troop);
 				break;
 			case ProjectileType.BULLET:
-				if (!troop instanceof MapObject)
+				if (!(troop instanceof MapObject))
 					damageTroop(this.shooter, troop, this.base.dmg, this.base.ap, this.baseWeapon);
 				break;
 			case ProjectileType.MISSILE:
