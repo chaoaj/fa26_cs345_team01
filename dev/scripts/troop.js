@@ -645,7 +645,7 @@ class Troop {
 		// Position / orientation
 		this.pos = new Position(constrain(x, this.base.size, MAP_W - this.base.size), constrain(y, this.base.sizeY, MAP_H - this.base.sizeY), angle);
 		// mode.grid.insert(this);
-		this.moveLoc = undefined;
+		this.moves = [];
 		this.moving = false;
 
 		// Instance stats
@@ -673,6 +673,28 @@ class Troop {
 		this.calcDMG = 1;
 		this.statusEffects = [];
 		this.moveTime = 0;
+	}
+
+	/**
+	 * Return next position to move to
+	 */
+	get moveLoc() {
+		if (this.moves.length) {
+			return this.moves.at(-1);
+		}
+		return undefined;
+	}
+
+	/**
+	 * Orders move and calculates path as needed
+	 * @param {Position} position target position
+	 */
+	orderMove(position) {
+		this.moves.push(position);
+	}
+
+	finishMove() {
+		return this.moves.pop();
 	}
 
 	/**
@@ -1013,7 +1035,7 @@ class Troop {
 					const push = movement * Math.min(massRatio - 1, 2);
 					const angleDiff = (this.pos.angleTo(trp.pos) - moveAngle) * 1.5;
 					if (!trp.moveLoc) {
-						trp.moveLoc = new Position(trp.pos.x, trp.pos.y, trp.pos.angle);
+						trp.moves.push(new Position(trp.pos.x, trp.pos.y, trp.pos.angle));
 					}
 					trp.pos.x += Math.cos(moveAngle + angleDiff) * push + 1;
 					trp.pos.y += Math.sin(moveAngle + angleDiff) * push + 1;
@@ -1091,7 +1113,7 @@ class Troop {
 			if (canMoveTo) {
 				this.pos.x = this.moveLoc.x;
 				this.pos.y = this.moveLoc.y;
-				this.moveLoc = undefined;
+				this.finishMove();
 			}
 			// this.moveTime = 0;
 			return false;
@@ -1976,7 +1998,8 @@ class Squad {
 		this.pos = newPos;
 		// Order all troops to move to the correct move location
 		for (let i = 0; i < this.troops.length; i++) {
-			this.troops[i].moveLoc = this.getFormationPosition(i);
+			this.troops[i].orderMove(this.getFormationPosition(i));
+			// this.troops[i].moveLoc = this.getFormationPosition(i);
 		}
 	}
 
