@@ -690,7 +690,8 @@ class Troop {
 	 * @param {Position} position target position
 	 */
 	orderMove(position) {
-		this.moves.push(position);
+		this.moves.push(...findPath(this, position));
+		// this.moves.push(position);
 	}
 
 	finishMove() {

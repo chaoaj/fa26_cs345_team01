@@ -1581,9 +1581,7 @@ function generateFords(river, count = 2, minSpacing = 300) {
         const angle = Math.atan2(dy, dx);
         const w = river.width + 30;
         return {
-            x: segment.a.x + dx * t,
-            y: segment.a.y + dy * t,
-            angle: angle,
+            pos: new Position(segment.a.x + dx * t, segment.a.y + dy * t, angle),
             width: w,
             visual: new Visual(function(x, y, cols, timeElapsed) {
                 push();
@@ -1814,7 +1812,7 @@ class LineObject {
         this.visual.draw(0, 0, [], 0);
         // Draw fords over the river
         for (const crossing of this.crossings) {
-            crossing.visual.draw(crossing.x, crossing.y, [], 0);
+            crossing.visual.draw(crossing.pos.x, crossing.pos.y, [], 0);
         }
         pop();
     }
@@ -1844,7 +1842,7 @@ class LineObject {
             const radius = obj.getDirectionalRadius(closest);
 
             if (pos.distanceTo(closest) < this.width / 2 + radius) {
-                const atFord = this.crossings.some(crossing => Math.hypot(closestX - crossing.x, closestY - crossing.y) < crossing.width / 2);
+                const atFord = this.crossings.some(crossing => Math.hypot(closestX - crossing.pos.x, closestY - crossing.pos.y) < crossing.width / 2);
                 if (atFord)
                     return false;
                 return true;
@@ -1905,4 +1903,49 @@ class LineObject {
             closestY + ny * radius
         );
     }
+
+    closestCrossing(troop, pos, tPos) {
+        let distance = tPos.distanceTo(pos);
+        const to = new Position(pos.x, pos.y, pos.angleTo(tPos));
+        const increment = Math.max(troop.base.maxSize, this.width);
+        let coll = false;
+        for (let i = 0; i < distance; i += increment) {
+            const p = to.addOffset(i);
+            if (this.collides(p, troop)) {
+                coll = true;
+                break;
+            }
+        }
+        if (!coll) {
+            return null;
+        }
+        let closest = null;
+        let closestDistance = Infinity;
+        for (const crossing of this.crossings) {
+            const p = getClosestPointOnSegment(crossing.pos, pos, tPos);
+            const dst = p.distanceTo(crossing.pos);
+            if (dst < closestDistance) {
+                closestDistance = dst;
+                closest = crossing;
+            }
+            if (dst < crossing.width) {
+                return null;
+            }
+        }
+        return closest;
+    }
+}
+
+function getClosestPointOnSegment(p, a, b) {
+    const atob = { x: b.x - a.x, y: b.y - a.y };
+    const atop = { x: p.x - a.x, y: p.y - a.y };
+    
+    const lenSq = atob.x * atob.x + atob.y * atob.y;
+    let dot = atop.x * atob.x + atop.y * atob.y;
+    
+    // Clamp t to the 0..1 range to stay on the line segment AB
+    let t = lenSq !== 0 ? dot / lenSq : 0;
+    t = Math.max(0, Math.min(1, t));
+    
+    return new Position(a.x + atob.x * t, a.y + atob.y * t);
 }
