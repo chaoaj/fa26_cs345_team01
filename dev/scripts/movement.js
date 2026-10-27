@@ -10,7 +10,9 @@ function findPath(troop, pos) {
     for (const line of mode.map.lines) {
         if (!line.blocks)
             continue;
+        console.log(line);
         const crossing = line.closestCrossing(troop, current, pos);
+        console.log(crossing);
         if (crossing) // Null if no collision
             results.push(crossing.pos);
     }

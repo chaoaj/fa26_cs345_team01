@@ -1375,7 +1375,7 @@ class Map {
                     }, this)
                 );
                 // Foliage is added to foreground, and so it is drawn above normal troops
-                
+
             }
             const river = generateRiver(this, {
                 width: 35,
@@ -1583,7 +1583,7 @@ function generateFords(river, count = 2, minSpacing = 300) {
         return {
             pos: new Position(segment.a.x + dx * t, segment.a.y + dy * t, angle),
             width: w,
-            visual: new Visual(function(x, y, cols, timeElapsed) {
+            visual: new Visual(function (x, y, cols, timeElapsed) {
                 push();
                 translate(x, y);
                 rotate(angle + Math.PI / 2);
@@ -1839,7 +1839,10 @@ class LineObject {
             const closestY = a.y + t * dy;
 
             const closest = new Position(closestX, closestY);
-            const radius = obj.getDirectionalRadius(closest);
+
+            const radius = pos.distanceTo(closest) > 0
+                ? obj.getDirectionalRadius(closest)
+                : obj.base.maxSize;
 
             if (pos.distanceTo(closest) < this.width / 2 + radius) {
                 const atFord = this.crossings.some(crossing => Math.hypot(closestX - crossing.pos.x, closestY - crossing.pos.y) < crossing.width / 2);
@@ -1905,31 +1908,34 @@ class LineObject {
     }
 
     closestCrossing(troop, pos, tPos) {
-        let distance = tPos.distanceTo(pos);
-        const to = new Position(pos.x, pos.y, pos.angleTo(tPos));
-        const increment = Math.max(troop.base.maxSize, this.width);
+        const dx = tPos.x - pos.x;
+        const dy = tPos.y - pos.y;
+        const distance = Math.hypot(dx, dy);
+        const increment = Math.max(1, Math.min(troop.base.maxSize, this.width));
         let coll = false;
-        for (let i = 0; i < distance; i += increment) {
-            const p = to.addOffset(i);
+        for (let i = 0; i <= distance; i += increment) {
+            const t = Math.min(i / (distance || 1), 1);
+            const p = new Position(
+                pos.x + dx * t,
+                pos.y + dy * t
+            );
+
             if (this.collides(p, troop)) {
                 coll = true;
                 break;
             }
         }
-        if (!coll) {
+        if (!coll)
             return null;
-        }
         let closest = null;
         let closestDistance = Infinity;
         for (const crossing of this.crossings) {
             const p = getClosestPointOnSegment(crossing.pos, pos, tPos);
             const dst = p.distanceTo(crossing.pos);
+
             if (dst < closestDistance) {
                 closestDistance = dst;
                 closest = crossing;
-            }
-            if (dst < crossing.width) {
-                return null;
             }
         }
         return closest;
@@ -1939,13 +1945,13 @@ class LineObject {
 function getClosestPointOnSegment(p, a, b) {
     const atob = { x: b.x - a.x, y: b.y - a.y };
     const atop = { x: p.x - a.x, y: p.y - a.y };
-    
+
     const lenSq = atob.x * atob.x + atob.y * atob.y;
     let dot = atop.x * atob.x + atop.y * atob.y;
-    
+
     // Clamp t to the 0..1 range to stay on the line segment AB
     let t = lenSq !== 0 ? dot / lenSq : 0;
     t = Math.max(0, Math.min(1, t));
-    
+
     return new Position(a.x + atob.x * t, a.y + atob.y * t);
 }

@@ -679,7 +679,7 @@ class Troop {
 	 * Return next position to move to
 	 */
 	get moveLoc() {
-		if (this.moves.length) {
+		if (this.moves.length > 0) {
 			return this.moves.at(-1);
 		}
 		return undefined;
@@ -690,7 +690,10 @@ class Troop {
 	 * @param {Position} position target position
 	 */
 	orderMove(position) {
-		this.moves.push(...findPath(this, position));
+		const path = findPath(this, position);
+		console.log(path);
+		this.moves.push(...path);
+
 		// this.moves.push(position);
 	}
 
@@ -978,11 +981,12 @@ class Troop {
 	move(dt) {
 		if (this.base.static) // Can't move if static
 			return false;
-		if (!this.moveLoc) { // Can't move if not moving towards something
+		const moveLoc = this.moveLoc;
+		if (!moveLoc) { // Can't move if not moving towards something
 			return false;
 		}
 
-		const difference = this.moveLoc.subtract(this.pos);
+		const difference = moveLoc.subtract(this.pos);
 		const moveAngle = difference.direction;
 		const distance = difference.distance;
 
@@ -1059,7 +1063,7 @@ class Troop {
 						newPos = this.pos;
 
 						for (const pt of overlaps) {
-							if (pt.distanceTo(this.moveLoc) < newPos.distanceTo(this.moveLoc)) {
+							if (pt.distanceTo(moveLoc) < newPos.distanceTo(moveLoc)) {
 								newPos = pt;
 							}
 						}
@@ -1071,7 +1075,7 @@ class Troop {
 				}
 			}
 			// Can't move to destination if destination is filled by other unit
-			if (this.moveLoc.distanceTo(trp.pos) < this.getDirectionalRadius(trp.pos) + trp.getDirectionalRadius(this.moveLoc)) {
+			if (moveLoc.distanceTo(trp.pos) < this.getDirectionalRadius(trp.pos) + trp.getDirectionalRadius(moveLoc)) {
 				canMoveTo = false;
 			}
 		}
@@ -1103,7 +1107,7 @@ class Troop {
 					dy = diff.y;
 				}
 
-				if (mpobj.collides(this.moveLoc, this)) {
+				if (mpobj.collides(moveLoc, this)) {
 					canMoveTo = false;
 				}
 			}
@@ -1112,8 +1116,8 @@ class Troop {
 		// Move to end if it can
 		if (distance <= movement) {
 			if (canMoveTo) {
-				this.pos.x = this.moveLoc.x;
-				this.pos.y = this.moveLoc.y;
+				this.pos.x = moveLoc.x;
+				this.pos.y = moveLoc.y;
 				this.finishMove();
 			}
 			// this.moveTime = 0;
