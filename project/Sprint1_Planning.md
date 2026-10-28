@@ -27,10 +27,10 @@
 
 - [x] Created a new Sprint (iteration) named "Sprint 1" in GitHub Projects
 - [x] Moved every Sprint Backlog Item into Sprint 1
-- [ ] Every Sprint Backlog Item has a story-point estimate
+- [x] Every Sprint Backlog Item has a story-point estimate
 - [x] Every Sprint Backlog Item has acceptance criteria
-- [ ] Every Sprint Backlog Item has tasks with hour estimates and assigned team members, listed in the item's comments
-- [ ] **Started the sprint:** set every Sprint Backlog Item to **In Progress**
+- [] Every Sprint Backlog Item has tasks with hour estimates and assigned team members, listed in the item's comments
+- [] **Started the sprint:** set every Sprint Backlog Item to **In Progress**
 
 ## 3. Sprint Backlog Summary
 
@@ -38,11 +38,11 @@
 
 | # | Sprint Backlog Item (user story) | Story points | GitHub issue |
 | --- | --- | --- | --- |
-| 1 | As a user, I want to click a "Start Game" button on the startup menu so that I can transition from the title screen and begin setting up a new game session. | [pts] | issue #3 |
-| 2 | As a User, I want to select a difficulty level (Easy, Medium, or Hard) from a dedicated menu so that the game configures parameters according to my preferred challenge. | [pts] | [issue #4] |
-| 3 | As a User, I want to select my faction after choosing my difficulty so that my game session initializes with the correct faction attributes. | [pts] | [issue #5] |
-| 4 | As a User, I want the base game screen to display a task bar, game units, and an environment background once setup is complete so that I can begin playing. | [pts] | [issue #6] |
-| | **Total story points** | **[total]** | |
+| 1 | As a user, I want to click a "Start Game" button on the startup menu so that I can transition from the title screen and begin setting up a new game session. | 1 | issue #3 |
+| 2 | As a User, I want to select a difficulty level (Easy, Medium, or Hard) from a dedicated menu so that the game configures parameters according to my preferred challenge. | 1 | issue #4 |
+| 3 | As a User, I want to select my faction after choosing my difficulty so that my game session initializes with the correct faction attributes. | 1 | issue #5 |
+| 4 | As a User, I want the base game screen to display a task bar, game units, and an environment background once setup is complete so that I can begin playing. | 1| issue #6 |
+| | **Total story points** | **4** | |
 
 ## 4. Work Distribution
 
