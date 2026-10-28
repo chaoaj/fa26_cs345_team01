@@ -5,24 +5,25 @@
 // function draw() {
 //   background(220);
 // }
-
+let RES_X = 1280;
+let RES_Y = 720;
 // Team colors, set to defaults to begin
 const TEAMS = {
     PLAYER: [80, 120, 255],
     ENEMY: [255, 90, 90]
 };
 // Mouse position on map (using world coordinates)
-let mPos = new Position();
+//let mPos = new Position();
 // Current game mode
 let mode;
 
 // Initialize all
 function setup() {
     createCanvas(RES_X, RES_Y);
-    camera = new Camera(MAP_W / 2, MAP_H / 2);
-    document.oncontextmenu = () => false; // Right click
-    initializeAll(definitions);
-    new Menu();
+    // camera = new Camera(MAP_W / 2, MAP_H / 2);
+    // document.oncontextmenu = () => false; // Right click
+    // initializeAll(definitions);
+    mode = new StartScreen();
 }
 
 /**
@@ -32,10 +33,10 @@ function draw() {
     textStyle(NORMAL);
     mode.tickBefore();
     const dt = deltaTime * 0.001;
-    camera.update(dt);
-    camera.begin();
+    // camera.update(dt);
+    // camera.begin();
     mode.tick(dt * mode.speed);
-    camera.end();
+    // camera.end();
     mode.drawAfter();
 }
 
@@ -45,13 +46,19 @@ function mousePressed() {
 }
 
 function mouseClicked() {
-    return mode.mouseClicked();
+    if (mode && typeof mode.mouseClicked === 'function') {
+        return mode.mouseClicked();
+    }
 }
 
 function mouseReleased() {
-    return mode.mouseReleased();
+    if (mode && typeof mode.mouseReleased === 'function') {
+        return mode.mouseReleased();
+    }
 }
 
 function mouseDragged() {
-    return mode.mouseDragged();
+    if (mode && typeof mode.mouseDragged === 'function') {
+        return mode.mouseDragged();
+    }
 }
