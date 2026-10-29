@@ -53,7 +53,7 @@
 | Team member | Tasks assigned (count) | Total hours |
 | --- | --- | --- |
 | Yony | 1 | 1hr |
-| Cole | 1 | 1hr |
+| Caden | 1 | 1hr |
 | Amaya | 1 | 1hr |
 | Angleina | 1 | 1hr |
 | Parash | 1 | 1hr |
@@ -61,6 +61,6 @@
 | **Team total** | ** 6 ** | ** 6 ** |
 
 **Is the work split fairly?** [Yes / No. If not, explain why, for example, "Name 2 has fewer hours because they are also setting up the repository."]
-Yes, the work is fairly distributed; each team member was assigned a page of the startup session (start, difficulty, faction, game environment). The product owner (Cole) decided to create issues for further backlog items for future sprints and position storing for items, and the scrum master (Yony) arranged a meeting to follow up on the work being done & created the sprint plan. 
+Yes, the work is fairly distributed; each team member was assigned a page of the startup session (start, difficulty, faction, game environment). The product owner (Caden) decided to create issues for further backlog items for future sprints and position storing for items, and the scrum master (Yony) arranged a meeting to follow up on the work being done & created the sprint plan. 
 ## ============================================================================
 .
