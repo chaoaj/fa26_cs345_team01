@@ -29,8 +29,8 @@
 - [x] Moved every Sprint Backlog Item into Sprint 1
 - [x] Every Sprint Backlog Item has a story-point estimate
 - [x] Every Sprint Backlog Item has acceptance criteria
-- [] Every Sprint Backlog Item has tasks with hour estimates and assigned team members, listed in the item's comments
-- [] **Started the sprint:** set every Sprint Backlog Item to **In Progress**
+- [x] Every Sprint Backlog Item has tasks with hour estimates and assigned team members, listed in the item's comments
+- [x] **Started the sprint:** set every Sprint Backlog Item to **In Progress**
 
 ## 3. Sprint Backlog Summary
 
@@ -41,8 +41,10 @@
 | 1 | As a user, I want to click a "Start Game" button on the startup menu so that I can transition from the title screen and begin setting up a new game session. | 1 | issue #3 |
 | 2 | As a User, I want to select a difficulty level (Easy, Medium, or Hard) from a dedicated menu so that the game configures parameters according to my preferred challenge. | 1 | issue #4 |
 | 3 | As a User, I want to select my faction after choosing my difficulty so that my game session initializes with the correct faction attributes. | 1 | issue #5 |
-| 4 | As a User, I want the base game screen to display a task bar, game units, and an environment background once setup is complete so that I can begin playing. | 1| issue #6 |
-| | **Total story points** | **4** | |
+| 4 | As a User, I want the base game screen to display a task bar, game units, and an environment background once setup is complete so that I can begin playing. | 1 | issue #6 |
+| 5 | [As Scrum Master] Establish the planning baseline for our project, configure the GitHub Projects board for Sprint 1, and set up tracking metrics during the initial Sprint. | 1 | issue #6 |
+| 6 | [As Product Owner] Flesh out and initialize the first issue and populate the backlog with issues to help guide future sprints. | 1 | issue #20 |
+| | **Total story points** | **6** | |
 
 ## 4. Work Distribution
 
@@ -50,39 +52,15 @@
 
 | Team member | Tasks assigned (count) | Total hours |
 | --- | --- | --- |
-| [Name 1] | [count] | [hrs] |
-| [Name 2] | [count] | [hrs] |
-| [Name 3] | [count] | [hrs] |
-| [Name 4] | [count] | [hrs] |
-| **Team total** | **[count]** | **[hrs]** |
+| Yony | 1 | 1hr |
+| Cole | 1 | 1hr |
+| Amaya | 1 | 1hr |
+| Angleina | 1 | 1hr |
+| Parash | 1 | 1hr |
+| Parker | 1 | 1hr |
+| **Team total** | ** 6 ** | ** 6 ** |
 
 **Is the work split fairly?** [Yes / No. If not, explain why, for example, "Name 2 has fewer hours because they are also setting up the repository."]
-
+Yes, the work is fairly distributed; each team member was assigned a page of the startup session (start, difficulty, faction, game environment). The product owner (Cole) decided to create issues for further backlog items for future sprints and position storing for items, and the scrum master (Yony) arranged a meeting to follow up on the work being done & created the sprint plan. 
 ## ============================================================================
-## Example (delete before submitting)
-
-This example shows one completed Sprint Backlog Item.
-
-### Item 1: Application logo
-
-**User story:** As a user, I want the app to display an application logo at the top of the screen so that I know which app I am using.
-
-**Story points:** 2
-
-**GitHub issue:** #4
-
-**Acceptance criteria:**
-
-1. As a user, I can see an application logo at the top of the screen.
-2. The logo has alternative text that names the app.
-
-**Tasks:**
-
-| Task | Estimate (hours) | Assigned to |
-| --- | --- | --- |
-| Create logo artwork | 2 | Clark Kent |
-| Write code to display the logo | 1 | Diana Prince |
-| Review code | 1 | Bruce Wayne |
-| **Total for this item** | **4** | |
-
-These tasks are enough to complete the item, and each one can be done independently.
+.
