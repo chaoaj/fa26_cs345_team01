@@ -1,6 +1,6 @@
 | Sprint | Project Owner | Scrum Master | Developer | Developer | Developer | Developer |
 | ------ | ------------- | ------------ | --------- | --------- | --------- | --------- |
-| 1      | Caden VanV    |              |           |           |           |           |
+| 1      | Caden VanV    |Yony W              | Parash K          |  Parker G         |  Amaya C         |  Angelina Y         |
 | 2      |               | Caden VanV   |           |           |           |           |
 | 3      |               |              | Caden VanV|           |           |           |
 | 4      |               |              |           | Caden VanV|           |           |
