@@ -6,8 +6,8 @@
 
 | Field | Your answer |
 | --- | --- |
-| Team name | [Team name] |
-| Team members | [Name 1], [Name 2], [Name 3], [Name 4] |
+| Team name | Team 1 |
+| Team members | Yony, Caden, Amaya, Parker, Angelina|
 | Sprint | Sprint [N] |
 | Sprint dates | [YYYY-MM-DD] to [YYYY-MM-DD] |
 | Scrum Master for this sprint | [Name] |
@@ -37,12 +37,12 @@ At the Sprint Review you demonstrate your product to the stakeholder (your instr
 
 ✏️ *Change `[ ]` to `[x]` for each item that is true. Do not demo until every box is checked.*
 
-- [ ] All of our tasks are marked done in GitHub Projects
-- [ ] All of our Sprint Backlog Items meet their acceptance criteria
-- [ ] All of our code is committed and pushed to GitHub
-- [ ] The production URL loads the same version we will demonstrate (we refreshed it after the last push)
+- [x] All of our tasks are marked done in GitHub Projects
+- [x] All of our Sprint Backlog Items meet their acceptance criteria
+- [x] All of our code is committed and pushed to GitHub
+- [x] The production URL loads the same version we will demonstrate (we refreshed it after the last push)
 - [ ] The commit ID above matches the commit we are demonstrating
-- [ ] Our demo person has the product loaded and ready to go
+- [x] Our demo person has the product loaded and ready to go
 
 ## 1.3 Sprint Backlog Results
 
@@ -89,10 +89,10 @@ At the Sprint Review you demonstrate your product to the stakeholder (your instr
 
 ✏️ *Do these steps before your retrospective meeting.*
 
-- [ ] Every task we completed is marked done
-- [ ] Every completed Sprint Backlog Item is moved to the **Done** (Closed) column, and its issue is closed
-- [ ] Every unfinished item is left open with a comment explaining what is left
-- [ ] The sprint is finished in GitHub Projects
+- [x] Every task we completed is marked done
+- [x] Every completed Sprint Backlog Item is moved to the **Done** (Closed) column, and its issue is closed
+- [x] Every unfinished item is left open with a comment explaining what is left
+- [?] The sprint is finished in GitHub Projects
 
 ## 2.2 Retrospective: More Of, Less Of, Same As
 
@@ -102,15 +102,15 @@ At the Sprint Review you demonstrate your product to the stakeholder (your instr
 
 ✏️ *Things we would like to do more often in future sprints.*
 
-- [Item]
-- [Item]
+- Better planning & starting on Sprint day 
+- Soft Deadlines
 - [Item]
 
 ### Less Of
 
 ✏️ *Things we would like to do less often in future sprints.*
 
-- [Item]
+- Less cramming 
 - [Item]
 - [Item]
 
@@ -118,13 +118,14 @@ At the Sprint Review you demonstrate your product to the stakeholder (your instr
 
 ✏️ *Things we are already doing well and want to keep doing.*
 
-- [Item]
-- [Item]
-- [Item]
+- Communicating 
+- Meeting up together
+- 
 
 ## 2.3 Team Summary
 
 ✏️ *In a few sentences, describe honestly how the team thinks the sprint went, beyond what is in the retrospective. Include what went well and any trouble you had. You will not lose points for reporting problems.*
+- First sprint everything went pretty well; we need to be more prepared for the start 
 
 [Team summary]
 
@@ -132,8 +133,8 @@ At the Sprint Review you demonstrate your product to the stakeholder (your instr
 
 | Field | Your answer |
 | --- | --- |
-| Date of retrospective meeting | [YYYY-MM-DD] |
-| Team members present | [Names] |
+| Date of retrospective meeting | 10/30/26 |
+| Team members present | Yony, Cadne, Parker, Anglina, Amaya, Parash |
 
 # Part 3: Self-Check Before Submitting
 
@@ -141,12 +142,12 @@ At the Sprint Review you demonstrate your product to the stakeholder (your instr
 
 | Grading question | Our answer |
 | --- | --- |
-| Is our sprint identical to what we started with? | [Yes / No] |
-| Did we complete our tasks? | [Yes / Partly / No] |
-| Did we complete our backlog items, as shown by their acceptance criteria? | [Yes / Partly / No] |
-| Did we meet our Sprint Goal? | [Yes / Partly / No] |
-| Is our code committed and pushed? | [Yes / No] |
-| Is our code free of large show-stopper bugs? | [Yes / No] |
+| Is our sprint identical to what we started with? | No |
+| Did we complete our tasks? | Yes |
+| Did we complete our backlog items, as shown by their acceptance criteria? | Yes |
+| Did we meet our Sprint Goal? | Yes |
+| Is our code committed and pushed? | Yes |
+| Is our code free of large show-stopper bugs? | Yes |
 | Did we write a reasonable retrospective (2–3 items in each category)? | [Yes / No] |
 | Did we write a thoughtful summary of our sprint? | [Yes / No] |
 
