@@ -123,7 +123,7 @@ class FactionSelectScreen {
         if (this.selected !== null && this.isOver(this.btnX, this.btnY, this.btnWidth, this.btnHeight)) {
             // Transition to the game screen
             // gameState.faction = this.selected;
-            // mode = new GameScreen();
+            mode = new GameScreen();
             console.log("Faction selected: " + this.selected.name);
         }
     }

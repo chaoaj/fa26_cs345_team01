@@ -68,8 +68,8 @@ class StartScreen {
 
         if (buttonClicked) {
             // Transition to the difficulty selection screen
-            // mode = new DifficultySelectionScreen();
-            console.log("Start button clicked, difficulty selection placeholder.");
+            mode = new DifficultySelectScreen();
+            console.log("Start button clicked, difficulty selection screen initialized.");
         }
     }
 
