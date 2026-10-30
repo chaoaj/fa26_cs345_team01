@@ -1,67 +1,174 @@
-# Sprint 1 Plan
+# Sprint [N] Review and Retrospective
+
+> **How to use this template:** Make a copy named for your sprint (for example `Sprint1Retro.md`). Replace every `[bracketed placeholder]` with your team's information. Delete the instruction lines (they start with ✏️) and the example at the end before you submit. Commit and push this file with your final code.
 
 ## Team and Sprint Information
 
-| Field                      | Your answer                                                                                       |
-| -------------------------- | ------------------------------------------------------------------------------------------------- |
-| Team name                  | Team 1                                                                                            |
-| Team members               | Yony Woube, Amaya Cranford, Caden Cole VanValkenburg, Parker Giles, Angelina Yoha, Parash Khanal |
-| Project                    | Team 1 Project (WIP)                                                                              |
-| Sprint                     | Sprint 1                                                                                          |
-| Sprint start date          | 2026-10-26                                                                                        |
-| Sprint end date (demo day) | 2026-10-30                                                                                        |
-| GitHub Projects link       | https://github.com/users/chaoaj/projects/5/views/1                                                |
+| Field | Your answer |
+| --- | --- |
+| Team name | [Team name] |
+| Team members | [Name 1], [Name 2], [Name 3], [Name 4] |
+| Sprint | Sprint [N] |
+| Sprint dates | [YYYY-MM-DD] to [YYYY-MM-DD] |
+| Scrum Master for this sprint | [Name] |
+| Sprint Goal (copied exactly from your Sprint Plan) | [Sprint Goal] |
 
-## 1. Sprint Goal
+# Part 1: Sprint Review
 
-**Sprint Goal:** 
-**Goal:** Develop the core game initialization flow, allowing players to navigate from the main menu through a series of difficulty and faction selections into the active game environment 
+At the Sprint Review you demonstrate your product to the stakeholder (your instructor). The version you demonstrate must be committed and pushed to GitHub, and it must be identical to what is running at your production URL.
 
-### 1.1 Value to Stakeholders
+## 1.1 Product Increment
 
-**Who benefits from this goal?:** This goal benefits all stakeholders, from users to developers, as core UI aspects & fundamental are addressed so further implementation can focus on gameplay. 
+✏️ *When your product is "ready" (see the checklist in 1.2), record the commit you will demonstrate.*
 
-### 2. GitHub Projects Setup Checklist
+✏️ *To find the commit ID:*
+- *In GitHub Desktop, open the **History** tab, select your latest commit, and copy its ID (right-click the commit and choose **Copy SHA**).*
+- *On GitHub.com, go to your repository, select **Commits**, and use the copy button next to the commit.*
+- *From a terminal in your repository, run `git rev-parse HEAD`.*
 
-✏️ *Check each box once it is done in GitHub Projects. Change `[ ]` to `[x]`.*
+| Field | Your answer |
+| --- | --- |
+| Commit ID of the demonstrated product | [Full commit ID, for example 3f2a9c1e...] |
+| Link to the commit on GitHub | [https://github.com/OWNER/REPO/commit/COMMIT-ID] |
+| Production URL | [https://chaoaj.github.io/REPO/] |
+| Team member giving the demo | [Name] |
 
-- [x] Created a new Sprint (iteration) named "Sprint 1" in GitHub Projects
-- [x] Moved every Sprint Backlog Item into Sprint 1
-- [x] Every Sprint Backlog Item has a story-point estimate
-- [x] Every Sprint Backlog Item has acceptance criteria
-- [x] Every Sprint Backlog Item has tasks with hour estimates and assigned team members, listed in the item's comments
-- [x] **Started the sprint:** set every Sprint Backlog Item to **In Progress**
+## 1.2 "Ready for Review" Checklist
 
-## 3. Sprint Backlog Summary
+✏️ *Change `[ ]` to `[x]` for each item that is true. Do not demo until every box is checked.*
 
-✏️ *List every item in this sprint. Write each item from the stakeholder's point of view ("As a [type of user], I want [something] so that [benefit]").*
+- [ ] All of our tasks are marked done in GitHub Projects
+- [ ] All of our Sprint Backlog Items meet their acceptance criteria
+- [ ] All of our code is committed and pushed to GitHub
+- [ ] The production URL loads the same version we will demonstrate (we refreshed it after the last push)
+- [ ] The commit ID above matches the commit we are demonstrating
+- [ ] Our demo person has the product loaded and ready to go
 
-| # | Sprint Backlog Item (user story) | Story points | GitHub issue |
-| --- | --- | --- | --- |
-| 1 | As a user, I want to click a "Start Game" button on the startup menu so that I can transition from the title screen and begin setting up a new game session. | 1 | issue #3 |
-| 2 | As a User, I want to select a difficulty level (Easy, Medium, or Hard) from a dedicated menu so that the game configures parameters according to my preferred challenge. | 1 | issue #4 |
-| 3 | As a User, I want to select my faction after choosing my difficulty so that my game session initializes with the correct faction attributes. | 1 | issue #5 |
-| 4 | As a User, I want the base game screen to display a task bar, game units, and an environment background once setup is complete so that I can begin playing. | 1 | issue #6 |
-| 5 | [As Scrum Master] Establish the planning baseline for our project, configure the GitHub Projects board for Sprint 1, and set up tracking metrics during the initial Sprint. | 1 | issue #6 |
-| 6 | [As Product Owner] Flesh out and initialize the first issue and populate the backlog with issues to help guide future sprints. | 1 | issue #20 |
-| | **Total story points** | **6** | |
+## 1.3 Sprint Backlog Results
 
-## 4. Work Distribution
+✏️ *List every Sprint Backlog Item that was in the sprint when it started. For each one, say whether every acceptance criterion was met.*
 
-✏️ *Add up each person's task hours from Section 4. Hours should be split roughly evenly.*
+| # | Sprint Backlog Item | GitHub issue | Story points | All acceptance criteria met? | Final status |
+| --- | --- | --- | --- | --- | --- |
+| 1 | [Item title] | [#issue] | [pts] | [Yes / No] | [Done / Not done] |
+| 2 | [Item title] | [#issue] | [pts] | [Yes / No] | [Done / Not done] |
+| 3 | [Item title] | [#issue] | [pts] | [Yes / No] | [Done / Not done] |
+| | **Totals** | | **[planned pts]** | | **[completed pts] completed** |
 
-| Team member | Tasks assigned (count) | Total hours |
+### Items Not Completed
+
+✏️ *For each item that is not done, explain which acceptance criteria were not met and why. Write "None" if every item was completed.*
+
+[None / Item, unmet criteria, and reason]
+
+## 1.4 Sprint Scope
+
+✏️ *Your sprint should be identical to what you started with. Adding, removing, or editing Sprint Backlog Items during the sprint is not proper Scrum practice.*
+
+**Did the Sprint Backlog stay the same as it was at Sprint Planning?** [Yes / No]
+
+[If No, list every item that was added, removed, or edited, and explain why.]
+
+## 1.5 Sprint Goal
+
+**Did we meet our Sprint Goal?** [Yes / Partly / No]
+
+[Explain in one or two sentences, pointing to what you demonstrated.]
+
+## 1.6 Known Bugs
+
+✏️ *List any bugs you know about in the demonstrated version. Mark any that stop the product from working (a "show-stopper"). Write "None known" if there are none.*
+
+| Bug | Show-stopper? | GitHub issue |
 | --- | --- | --- |
-| Yony | 1 | 1hr |
-| Caden | 1 | 1hr |
-| Amaya | 1 | 1hr |
-| Angleina | 1 | 1hr |
-| Parash | 1 | 1hr |
-| Parker | 1 | 1hr |
-| **Team total** | ** 6 ** | ** 6 ** |
+| [Describe the bug] | [Yes / No] | [#issue or "not yet filed"] |
 
-**Is the work split fairly?** [Yes / No. If not, explain why, for example, "Name 2 has fewer hours because they are also setting up the repository."]
-Yes, the work is fairly distributed; each team member was assigned a page of the startup session (start, difficulty, faction, game environment). The product owner (Caden) decided to create issues for further backlog items for future sprints and position storing for items, and the scrum master (Yony) arranged a meeting to follow up on the work being done & created the sprint plan. 
-## ============================================================================
-.
+# Part 2: Sprint Retrospective
 
+## 2.1 Close Out the Sprint in GitHub Projects
+
+✏️ *Do these steps before your retrospective meeting.*
+
+- [ ] Every task we completed is marked done
+- [ ] Every completed Sprint Backlog Item is moved to the **Done** (Closed) column, and its issue is closed
+- [ ] Every unfinished item is left open with a comment explaining what is left
+- [ ] The sprint is finished in GitHub Projects
+
+## 2.2 Retrospective: More Of, Less Of, Same As
+
+✏️ *Hold your retrospective meeting as a team. List two or three things in each category.*
+
+### More Of
+
+✏️ *Things we would like to do more often in future sprints.*
+
+- [Item]
+- [Item]
+- [Item]
+
+### Less Of
+
+✏️ *Things we would like to do less often in future sprints.*
+
+- [Item]
+- [Item]
+- [Item]
+
+### Same As
+
+✏️ *Things we are already doing well and want to keep doing.*
+
+- [Item]
+- [Item]
+- [Item]
+
+## 2.3 Team Summary
+
+✏️ *In a few sentences, describe honestly how the team thinks the sprint went, beyond what is in the retrospective. Include what went well and any trouble you had. You will not lose points for reporting problems.*
+
+[Team summary]
+
+## 2.4 Retrospective Meeting Record
+
+| Field | Your answer |
+| --- | --- |
+| Date of retrospective meeting | [YYYY-MM-DD] |
+| Team members present | [Names] |
+
+# Part 3: Self-Check Before Submitting
+
+✏️ *These questions match how the sprint will be graded. Answer each one honestly.*
+
+| Grading question | Our answer |
+| --- | --- |
+| Is our sprint identical to what we started with? | [Yes / No] |
+| Did we complete our tasks? | [Yes / Partly / No] |
+| Did we complete our backlog items, as shown by their acceptance criteria? | [Yes / Partly / No] |
+| Did we meet our Sprint Goal? | [Yes / Partly / No] |
+| Is our code committed and pushed? | [Yes / No] |
+| Is our code free of large show-stopper bugs? | [Yes / No] |
+| Did we write a reasonable retrospective (2–3 items in each category)? | [Yes / No] |
+| Did we write a thoughtful summary of our sprint? | [Yes / No] |
+
+## Example Retrospective (delete before submitting)
+
+### More Of
+
+- Regular meetings
+- Being on time
+
+### Less Of
+
+- Coding after midnight
+- Debug statements left in committed code
+
+### Same As
+
+- Respectful communication
+- Donuts
+
+**ScrumMaster:** Diana Prince
+
+**Commit ID:** 3f2a9c1e7b4d5a6f8e9c0b1a2d3e4f5a6b7c8d9e
+
+**Team summary:** We finished three of our four backlog items and met our Sprint Goal of a playable board. The scoreboard item slipped because we underestimated how long the HTML layout would take, and two of us were out sick midweek. Next sprint we will break large items into smaller tasks and check progress at a mid-sprint meeting.
