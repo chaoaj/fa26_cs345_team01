@@ -1,5 +1,3 @@
-You're right — each person should rotate through all six positions, with everyone moving one position each sprint. Here's the corrected rotation, keeping the Sprint 1 assignments as the starting point.
-
 | Sprint | Project Owner | Scrum Master | Developer  | Developer  | Developer  | Developer  |
 | ------ | ------------- | ------------ | ---------- | ---------- | ---------- | ---------- |
 | 1      | Caden V       | Yony W       | Parash K   | Parker G   | Amaya C    | Angelina Y |
