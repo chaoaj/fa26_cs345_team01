@@ -19,8 +19,7 @@
 ✏️ *Explain who benefits from this goal and why it matters to them.*
 A
  good game requires a strong foundation 
-### 2. GitHub Projects Setup Checklist. WeIf we can't make a working engine,
- we won't be able to build on it in the future.
+### 2. GitHub Projects Setup Checklist.
 ✏️ *Check each box once it is done in GitHub Projects. Change `[ ]` to `[x]`.*
 
 - [x] Created a new Sprint (iteration) named "Sprint 2" in GitHub Projects
