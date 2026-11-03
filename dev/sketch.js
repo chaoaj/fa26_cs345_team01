@@ -20,6 +20,7 @@ let mode;
 // Initialize all
 function setup() {
     createCanvas(RES_X, RES_Y);
+    defineItems();
     // camera = new Camera(MAP_W / 2, MAP_H / 2);
     // document.oncontextmenu = () => false; // Right click
     // initializeAll(definitions);

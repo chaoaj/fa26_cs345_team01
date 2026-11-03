@@ -125,3 +125,16 @@ class Position {
 		);
 	}
 }
+
+/**
+ * Normalizes angle to be between -PI and PI
+ * 
+ * @param {number} angle angle
+ * @returns {number}	 same angle but between -PI and PI
+ */
+function normalizeAngle(angle) {
+	if (!Number.isFinite(angle)) {
+		throw new Error("NAN");
+	}
+	return Math.atan2(Math.sin(angle), Math.cos(angle));
+}
