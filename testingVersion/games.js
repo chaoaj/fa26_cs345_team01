@@ -1696,7 +1696,7 @@ class MapObject {
         const sin = Math.sin(angle);
 
         return Math.sqrt(
-            this.size * this.size * cos * cos +
+            this.sizeX * this.sizeX * cos * cos +
             this.sizeY * this.sizeY * sin * sin
         );
     }
@@ -1823,6 +1823,9 @@ class LineObject {
      * @param {Troop} obj Unit being moved
      */
     collides(pos, obj) {
+        if (obj.base.maxSize > this.width * 2) {
+            return false;
+        }
         for (let i = 0; i < this.points.length - 1; i++) {
             const a = this.points[i];
             const b = this.points[i + 1];
@@ -1911,10 +1914,28 @@ class LineObject {
         const dx = tPos.x - pos.x;
         const dy = tPos.y - pos.y;
         const distance = Math.hypot(dx, dy);
-        const increment = Math.max(1, Math.min(troop.base.maxSize, this.width));
+
+        if (Number.isNaN(distance) || !Number.isFinite(distance))
+            return null;
+
+        const increment = Math.max(
+            1,
+            Math.max(troop.base.maxSize, this.width)
+        );
+
+        if (!Number.isFinite(increment))
+            return null;
+
+        const steps = Math.max(Math.min(
+            1000,
+            Math.ceil(distance / increment)
+        ), 0);
+
         let coll = false;
-        for (let i = 0; i <= distance; i += increment) {
-            const t = Math.min(i / (distance || 1), 1);
+
+        for (let i = 0; i <= steps; i++) {
+            const t = steps === 0 ? 0 : i / steps;
+
             const p = new Position(
                 pos.x + dx * t,
                 pos.y + dy * t
@@ -1925,12 +1946,20 @@ class LineObject {
                 break;
             }
         }
-        if (!coll)
+
+        if (!coll || this.crossings.length === 0)
             return null;
+
         let closest = null;
         let closestDistance = Infinity;
+
         for (const crossing of this.crossings) {
-            const p = getClosestPointOnSegment(crossing.pos, pos, tPos);
+            const p = getClosestPointOnSegment(
+                crossing.pos,
+                pos,
+                tPos
+            );
+
             const dst = p.distanceTo(crossing.pos);
 
             if (dst < closestDistance) {
@@ -1938,6 +1967,7 @@ class LineObject {
                 closest = crossing;
             }
         }
+
         return closest;
     }
 }

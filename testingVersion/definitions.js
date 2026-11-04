@@ -2230,6 +2230,7 @@ const definitions = {
             speed: 80,
             turnRate: Math.PI / 6,
             regen: 4,
+            mass: 60_000,
             moveVisual: (x, y, a) => {
                 const visual = new TemporaryVisual(function () {
                     push();
