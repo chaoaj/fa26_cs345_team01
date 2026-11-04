@@ -1,6 +1,9 @@
 const WEAPON_DEFS = {
     weapon_id: {
-
+      name: 'Basic',
+      damage: 1,
+      attackSpeed: 1,
+      // unfinished 
     }
 }
 
