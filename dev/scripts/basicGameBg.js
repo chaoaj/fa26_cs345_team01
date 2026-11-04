@@ -1,10 +1,35 @@
 
-
 class GameScreen {
     constructor() {
         this.btnWidth = 100;
         this.btnHeight = 40;
         this.selected = "None";
+
+        this.towerX = RES_X / 2;
+        this.towerY = RES_Y / 2;
+
+        // Create randomized river
+        this.river = [];
+
+        // Randomly choose whether river is on left or right side
+        this.riverOnLeft = random() < 0.5;
+
+        let baseRiverX = this.riverOnLeft ? RES_X * 0.2 : RES_X * 0.8;
+        let riverSeed = random(1000);
+
+        for (let y = -20; y <= RES_Y + 20; y += 8) {
+            let offset = map(noise(riverSeed + y * 0.02), 0, 1, -50, 50);
+            let x = baseRiverX + offset;
+
+            // Keep river away from the tower
+            if (this.riverOnLeft) {
+                x = constrain(x, 35, this.towerX - 120);
+            } else {
+                x = constrain(x, this.towerX + 120, RES_X - 35);
+            }
+
+            this.river.push({ x, y });
+        }
 
         // Create random trees
         this.trees = [];
@@ -13,13 +38,45 @@ class GameScreen {
             let x = random(30, RES_X - 30);
             let y = random(70, RES_Y - 30);
             let size = random(30, 60);
-            let green = random(100, 160);
+            let treeGreen = random(100, 160);
 
-            // Keep trees away from the middle tower
-            if (dist(x, y, RES_X / 2, RES_Y / 2) > 100) {
-                this.trees.push({x, y, size, green});
+            let nearTower = dist(x, y, this.towerX, this.towerY) < 100;
+            let nearRiver = this.isNearRiver(x, y, size / 2 + 18);
+
+            // Only add tree if it's not too close to the tower or river
+            if (!nearTower && !nearRiver) {
+                this.trees.push({ x, y, size, treeGreen });
             }
         }
+
+        // Create random rocks
+        this.rocks = [];
+
+        for (let i = 0; i < 14; i++) {
+            let x = random(25, RES_X - 25);
+            let y = random(70, RES_Y - 25);
+            let w = random(14, 28);
+            let h = random(10, 22);
+            let gray = random(110, 170);
+
+            let nearTower = dist(x, y, this.towerX, this.towerY) < 90;
+            let nearRiver = this.isNearRiver(x, y, max(w, h) / 2 + 10);
+
+            // Only add rock if it's not too close to the tower or river
+            if (!nearTower && !nearRiver) {
+                this.rocks.push({ x, y, w, h, gray });
+            }
+        }
+    }
+
+    // Helper function: checks if an object is near the river
+    isNearRiver(x, y, buffer) {
+        for (let point of this.river) {
+            if (dist(x, y, point.x, point.y) < buffer + 20) {
+                return true;
+            }
+        }
+        return false;
     }
 
     tickBefore() {
@@ -27,17 +84,60 @@ class GameScreen {
         background(100, 170, 80);
     }
 
+    drawRiver() {
+        noFill();
+
+        // River bank
+        stroke(70, 140, 100);
+        strokeWeight(42);
+        beginShape();
+        for (let point of this.river) {
+            vertex(point.x, point.y);
+        }
+        endShape();
+
+        // Water
+        stroke(50, 130, 220);
+        strokeWeight(32);
+        beginShape();
+        for (let point of this.river) {
+            vertex(point.x, point.y);
+        }
+        endShape();
+
+        noStroke();
+    }
+
+    drawRocks() {
+        for (let rock of this.rocks) {
+            fill(rock.gray);
+            stroke(90);
+            ellipse(rock.x, rock.y, rock.w, rock.h);
+
+            // small highlight
+            noStroke();
+            fill(rock.gray + 20);
+            ellipse(rock.x - rock.w * 0.15, rock.y - rock.h * 0.15, rock.w * 0.35, rock.h * 0.35);
+        }
+    }
+
     tick(dt) {
+        // Draw river first
+        this.drawRiver();
+
+        // Draw rocks
+        this.drawRocks();
+
         // Draw trees
         for (let tree of this.trees) {
             noStroke();
-            fill(30, tree.green, 40);
+            fill(30, tree.treeGreen, 40);
             circle(tree.x, tree.y, tree.size);
         }
 
         // Draw Tower in center
-        let towerX = RES_X / 2;
-        let towerY = RES_Y / 2;
+        let towerX = this.towerX;
+        let towerY = this.towerY;
 
         // Tower body
         fill(120);
