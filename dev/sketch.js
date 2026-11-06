@@ -7,6 +7,10 @@
 // }
 let RES_X = 1280;
 let RES_Y = 720;
+
+let mapSprites;
+let assetsLoaded = false;
+
 // Team colors, set to defaults to begin
 const TEAMS = {
     PLAYER: [80, 120, 255],
@@ -18,13 +22,32 @@ const TEAMS = {
 let mode;
 
 // Initialize all
-function setup() {
+async function setup() {
     createCanvas(RES_X, RES_Y);
+    noSmooth();
+    try {
+        mapSprites = await loadImageAsync('./assets/mapObjects.png'); // or standard loadImage with a callback/promise if preferred
+        assetsLoaded = true;
+        console.log("Sprite sheet loaded successfully!");
+    } catch (err) {
+        console.error("Failed to load mapObjects.png:", err);
+    }
     defineItems();
     // camera = new Camera(MAP_W / 2, MAP_H / 2);
     // document.oncontextmenu = () => false; // Right click
     // initializeAll(definitions);
     mode = new StartScreen();
+}
+
+// Helper promise wrapper for loadImage in p5 2.0 if needed,
+// or use the callback style below if loadImage supports it:
+function loadImageAsync(path) {
+    return new Promise((resolve, reject) => {
+        loadImage(path,
+            img => resolve(img),
+            err => reject(err)
+        );
+    });
 }
 
 /**
