@@ -1,10 +1,29 @@
 const WEAPON_DEFS = {
-    weapon_id: {
-      name: 'Basic',
-      damage: 1,
-      attackSpeed: 1,
-      // unfinished
-    }
+  sword : {
+    name: 'Sword',
+    type: 'melee',
+    damage: 3,
+    attackSpeed: 1.5,
+    range: 10,
+    visual: new Visual(function(cols) {
+      strokeWeight(0);
+      fill(...cols);
+      // TODO: Draw basic sword blade
+    })
+  },
+
+  bow: {
+    name: 'Bow',
+    type: 'projectile',
+    damage: 2,
+    attackSpeed: 0.5,
+    range: 100,
+    visual: new Visual(function(cols) {
+      strokeWeight(0);
+      fill(...cols);
+      // TODO: Draw basic bow
+    })
+  }
 }
 
 const TROOP_DEFS = {
@@ -21,7 +40,7 @@ const TROOP_DEFS = {
         }),
         weapons: [
             {
-                weapon: 'weapon_id',
+                weapon: 'Sword',
                 offset: new Position(0, 0),
                 startingAngle: 0,
                 turnRange: [ -Math.PI, Math.PI ]
