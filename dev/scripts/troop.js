@@ -48,7 +48,9 @@ class Troop {
 
 function defineItems() {
     for (const [id, data] of Object.entries(WEAPON_DEFS)) {
-        // REGISTER WEAPONS
+        for (const [id, data] of Object.entries(WEAPON_DEFS)) {
+          new Weapon(id, data);
+        }
     }
     for (const [id, data] of Object.entries(TROOP_DEFS)) {
         const troop = new TroopBase(id, data);
