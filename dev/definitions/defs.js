@@ -3,7 +3,7 @@ const WEAPON_DEFS = {
       name: 'Basic',
       damage: 1,
       attackSpeed: 1,
-      // unfinished 
+      // unfinished
     }
 }
 

@@ -1,5 +1,4 @@
 const troopBases = {};
-const weaponBases = {};
 
 class TroopBase {
     constructor (id, data) {
