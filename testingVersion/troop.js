@@ -513,6 +513,7 @@ class TroopBase {
 		this.sizeY = config.sizeY ?? config.size ?? 5;	// Vertical Radius
 		this.mass = config.mass ? config.mass : this.size * this.sizeY * 3;
 		this.maxSize = Math.max(this.size, this.sizeY);
+		this.minSize = Math.min(this.size, this.sizeY);
 		this.speed = config.speed ?? 20;				// Move speed
 		this.turnRate = config.turnRate ?? Math.PI;		// Turn speed
 		this.static = config.static ?? false;			// Can it move/turn?
