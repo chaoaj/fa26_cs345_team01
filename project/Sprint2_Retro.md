@@ -28,8 +28,8 @@ At the Sprint Review you demonstrate your product to the stakeholder (your instr
 
 | Field | Your answer |
 | --- | --- |
-| Commit ID of the demonstrated product | [Full commit ID, for example 3f2a9c1e...] |
-| Link to the commit on GitHub | [https://github.com/OWNER/REPO/commit/COMMIT-ID] |
+| Commit ID of the demonstrated product | 35d8eaf735d8cbeae7490bfe506ba4d3c82e9e1e |
+| Link to the commit on GitHub | https://github.com/chaoaj/fa26_cs345_team01/commit/35d8eaf735d8cbeae7490bfe506ba4d3c82e9e1e |
 | Production URL | https://chaoaj.github.io/fa26_cs345_team01/ |
 | Team member giving the demo | Caden VanValkenburg |
 
