@@ -44,7 +44,7 @@ A good game requires a strong foundation, and the basic building blocks are requ
 | Yony Woube| 1 | 2 |
 | Parker Giles | 2 | 2 |
 | Angelina Yoha | 1 | 1 |
-| Parash Khanal| [count] | [hrs] |
+| Parash Khanal| 2 | 2 |
 
 **Is the work split fairly?**
 Yes. Everyone took an equal task, and guessed how long it would take them in accordance with their own schedule
