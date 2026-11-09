@@ -7,7 +7,7 @@ const WEAPON_DEFS = {
     range: 10,
     visual: new Visual(function(cols) {
       strokeWeight(0);
-      fill(...cols);
+      fill(50);
       rect(0, -0.5, 10, 1);
       // TODO: Draw basic sword blade
     })
@@ -43,7 +43,7 @@ const TROOP_DEFS = {
         weapons: [
             {
                 weapon: 'sword',
-                offset: new Position(0, 0),
+                offset: new Position(1, -12),
                 startingAngle: 0,
                 turnRange: [ -Math.PI, Math.PI ]
             }

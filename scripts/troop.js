@@ -24,7 +24,7 @@ class Troop {
         this.team = team;
         this.visual = base.visual;
         this.weapons = base.weapons.map(w => ({
-            weapon: w,
+            mount: w,
             angle: w.startingAngle,
             reload: 0,
             target: null
@@ -40,8 +40,9 @@ class Troop {
         // this.visual.draw(this.team.colors);
         for (const wep of this.weapons) {
             push()
+            translate(wep.mount.offset.x, wep.mount.offset.y);
             rotate(wep.angle);
-            wep.weapon.visual.draw([255, 0, 0]);
+            wep.mount.weapon.visual.draw([255, 0, 0]);
             pop();
         }
         pop();
