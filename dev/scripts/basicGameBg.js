@@ -30,6 +30,8 @@ class GameScreen {
         this.btnWidth = 100;
         this.btnHeight = 40;
         this.selected = "None";
+        this.troops = [];
+        this.playerTeam = { colors: TEAMS.PLAYER };
 
         this.towerX = RES_X / 2;
         this.towerY = RES_Y / 2;
@@ -313,7 +315,9 @@ class GameScreen {
         text("Selected: " + this.selected, 15, RES_Y - 20);
     }
     drawAfter() {
-        // place for any post-draw operations if needed
+        for (const troop of this.troops) {
+            troop.draw();
+        }
     }
 
     drawButton(label, x) {
@@ -345,6 +349,10 @@ class GameScreen {
     }
 
     mousePressed() {
+        if (mouseButton !== LEFT) {
+            return;
+        }
+
         if (mouseY >= 10 && mouseY <= 50) {
             if (mouseX >= 20 && mouseX <= 120) {
                 this.selected = "Build";
@@ -356,6 +364,20 @@ class GameScreen {
                 this.selected = "Settings";
             }
         }
+
+        if (mouseY < 60) {
+            return;
+        }
+
+        this.spawnTroop(new Position(mouseX, mouseY));
         console.log("Total objects successfully generated:", this.mapObjects.length);
+    }
+
+    spawnTroop(position) {
+        const base = troopBases["basic"];
+
+        const troop = new Troop(position, this.playerTeam, base);
+        this.troops.push(troop);
+        return troop;
     }
 }

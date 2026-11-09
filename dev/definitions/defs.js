@@ -32,8 +32,10 @@ const TROOP_DEFS = {
         health: 10,
         armor: 1,
         speed: 50,
+        moveTo: null,
         size: 10,
         visual: new Visual(function(cols) {
+
             strokeWeight(0);
             fill(...cols);
             ellipse(0, 0, 5, 10);
@@ -46,5 +48,18 @@ const TROOP_DEFS = {
                 turnRange: [ -Math.PI, Math.PI ]
             }
         ]
+    },
+    keep: { // the base or "keep" to  defend
+        name: 'Keep',
+        health: 100,
+        armor: 0,
+        speed: 0,
+        size: 100,
+        visual: new Visual(function(cols) {
+            strokeWeight(0);
+            fill(...cols);
+            rect(0, 0, 100, 100);
+        }),
+        weapons: []
     }
 };
