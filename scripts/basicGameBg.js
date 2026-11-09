@@ -349,7 +349,7 @@ class GameScreen {
     }
 
     mousePressed() {
-        if (mouseButton !== LEFT) {
+        if (!mouseButton.left) {
             return;
         }
 

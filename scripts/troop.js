@@ -36,7 +36,8 @@ class Troop {
         push();
         translate(this.position.x, this.position.y);
         rotate(this.position.angle);
-        this.visual.draw(this.team.colors);
+        this.visual.draw([255, 0, 0]);
+        // this.visual.draw(this.team.colors);
         pop();
     }
 

@@ -35,10 +35,9 @@ const TROOP_DEFS = {
         moveTo: null,
         size: 10,
         visual: new Visual(function(cols) {
-
             strokeWeight(0);
             fill(...cols);
-            ellipse(0, 0, 5, 10);
+            ellipse(0, 0, 15, 30);
         }),
         weapons: [
             {
@@ -58,7 +57,7 @@ const TROOP_DEFS = {
         visual: new Visual(function(cols) {
             strokeWeight(0);
             fill(...cols);
-            rect(0, 0, 100, 100);
+            rect(0, 0, 200, 200);
         }),
         weapons: []
     }
