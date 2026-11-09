@@ -38,6 +38,12 @@ class Troop {
         rotate(this.position.angle);
         this.visual.draw([255, 0, 0]);
         // this.visual.draw(this.team.colors);
+        for (const wep of this.weapons) {
+            push()
+            rotate(wep.angle);
+            wep.weapon.visual.draw([255, 0, 0]);
+            pop();
+        }
         pop();
     }
 
