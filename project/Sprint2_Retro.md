@@ -30,8 +30,8 @@ At the Sprint Review you demonstrate your product to the stakeholder (your instr
 | --- | --- |
 | Commit ID of the demonstrated product | [Full commit ID, for example 3f2a9c1e...] |
 | Link to the commit on GitHub | [https://github.com/OWNER/REPO/commit/COMMIT-ID] |
-| Production URL | [https://chaoaj.github.io/REPO/] |
-| Team member giving the demo | [Name] |
+| Production URL | https://chaoaj.github.io/fa26_cs345_team01/ |
+| Team member giving the demo | Caden VanValkenburg |
 
 ## 1.2 "Ready for Review" Checklist
 
