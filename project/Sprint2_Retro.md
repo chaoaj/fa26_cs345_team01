@@ -17,7 +17,7 @@ https://farmos.org/# Sprint 2 Review and Retrospective
 # Part 1: Sprint Review
 At the Sprint Review you demonstrate your product to the stakeholder (your instructor). The version you demonstrate must be committed and pushed to GitHub, and it must be identical to what is running at your production URL.
 
-## 1.1 Product Increment*
+## 1.1 Product Increment
 
 | Field | Your answer |
 | --- | --- |
@@ -51,7 +51,8 @@ None
 ## 1.4 Sprint Scope
 Yes
 
-**Did we meet our Sprint Goal?** Yes
+**Did we meet our Sprint Goal?**
+Yes
 
 We created the basic building blocks like map objects, positions, weapons, troops, etc.
 ## 1.6 Known Bugs
@@ -71,55 +72,29 @@ We created the basic building blocks like map objects, positions, weapons, troop
 - Regular check-ins on issue work
 - Reassigning people if needed or if they finish early
 ### Less Of
-
-✏️ *Things we would like to do less often in future sprints.*
 - Starting late
 - Being out of town
-
-
-✏️ *Things 
+### Same As
 - Communicating
-Organized folder structure
+- Organized folder structure
 
-✏️ *In a few senten
+## 2.3 Team Summary
 I think we did well. This sprint was hamstrung by various people being out of town for large parts of it, but we managed to get everything done, even if we cut it very close.ective Meeting Record
 
+## 2.4 Retrospective Meeting Record
 | Field | Your answer |
 | --- | --- |
-| Date of retrospective meeting | [YYYY-MM-DD] |
-| Team members present | [Names] |
-2026-11-09
-# Part 3: Self-Check BefoCaden VanValkenburg, Amaya Crawford, Yony Woube, Parker Giles, Angelina Yohai tting
+| Date of retrospective meeting | 2026-11-09 |
+| Team members present | Caden VanValkenburg, Amaya Crawford, Yony Woube, Parker Giles, Angelina Yoha |
 
-✏️ *These questions match how the spri| --- | --- |
-| Is our sprint identical to what we started with? | [Yes / No] |
-| Did we complete our tasks? | [Yes / Partly / No] |
-| Did we complete our backlog items, as shown by their acceptance criteria? | [Yes / Partly / No] |
-| Did we meet our Sprint Goal? | [Yes / Partly / No] |
-| Is our code committed and pushed? | [Yes / No] |
-| Is our code free of large show-stopper bugs? | [Yes / No] |
-| Did we write a reasonable retrospective (2–3 items in each category)? | [Yes / No] |
-| Did we write a thoughtful summary of our sprint? | [Yes / No] |
-
-## Example Retrospective (delete before submitting)
-
-### More Of
-
-- Regular meetings
-- Being on time
-
-### Less Of
-
-- Coding after midnight
-- Debug statements left in committed code
-
-### Same As
-
-- Respectful communication
-- Donuts
-
-**ScrumMaster:** Diana Prince
-
-**Commit ID:** 3f2a9c1e7b4d5a6f8e9c0b1a2d3e4f5a6b7c8d9e
-
-**Team summary:** We finished three of our four backlog items and met our Sprint Goal of a playable board. The scoreboard item slipped because we underestimated how long the HTML layout would take, and two of us were out sick midweek. Next sprint we will break large items into smaller tasks and check progress at a mid-sprint meeting.
+# Part 3: Self-Check Before Submitting
+| Grading question | Our answer |
+| --- | --- |
+| Is our sprint identical to what we started with? | Ye |
+| Did we complete our tasks? | Yes |
+| Did we complete our backlog items, as shown by their acceptance criteria? | Yes |
+| Did we meet our Sprint Goal? | Yes |
+| Is our code committed and pushed? | Yes |
+| Is our code free of large show-stopper bugs? | Yes |
+| Did we write a reasonable retrospective (2–3 items in each category)? | Yes |
+| Did we write a thoughtful summary of our sprint? | Yes |
