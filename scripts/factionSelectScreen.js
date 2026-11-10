@@ -1,22 +1,58 @@
 // Faction selection screen.
 // To show it (e.g. after difficulty is confirmed):
 //     mode = new FactionSelectScreen();
-// On Confirm, the chosen faction is in this.selected: { id, name, desc, col }
+// On Confirm, the chosen Faction is in this.selected
+
+
+/**
+ * A playable faction
+ * @param {string} id          lowercase, no spaces
+ * @param {string} name        name shown on the card
+ * @param {string} desc        brief description shown on the card
+ * @param {number[]} primary   main color as [r, g, b]
+ * @param {number[]} accent    secondary color as [r, g, b]
+ * @param {string[]} squads    squad IDs (placeholders until squads exist)
+ */
+class Faction {
+    constructor(id, name, desc, primary, accent, squads = []) {
+        this.id = id;
+        this.name = name;
+        this.desc = desc;
+        this.colors = { primary, accent };
+        this.squads = squads;
+    }
+}
 
 
 class FactionSelectScreen {
     constructor() {
         this.speed = 1;
 
-        // Placeholder factions until real ones are designed
+        // The three playable factions and the themes that inspired them:
+        //   Imperial    - a conquering war machine (Noxus in League of Legends, the Cabal in Destiny 2)
+        //   Spiritbound - nature and spirit (Ionia in League of Legends, the Dryad in Terraria)
+        //   Steampunk   - brass-and-steam inventors (Piltover in League of Legends)
+
+        // In the squads, the archetypes I was aiming for 
+        // Basic expendable troops
+        // Juggernaut class
+        // Tank class
+        // Marksmen class
+        // Speciality class
+        // Assassin class
+        // Something similar to this was what I was aiming for
         this.factions = [
-            { id: "faction_a", name: "Faction A", desc: "Placeholder description for Faction A.", col: [80, 120, 255] },
-            { id: "faction_b", name: "Faction B", desc: "Placeholder description for Faction B.", col: [255, 90, 90] }
+            new Faction("imperial", "Imperial", "A ruthless war machine that wins through brute strength.",
+                [178, 34, 34], [24, 24, 28], ["legionnaires", "shock_troops", "war_beasts"]),
+            new Faction("spiritbound", "Spiritbound", "Swift warriors who fight in harmony with nature and spirit.",
+                [94, 201, 140], [244, 143, 177], ["blade_dancers", "spirit_archers", "shrine_guardians"]),
+            new Faction("steampunk", "Steampunk", "Inventors who outgun their enemies with brass and steam.",
+                [46, 110, 184], [212, 175, 55], ["riflemen", "gear_walkers", "steam_cannons"])
         ];
 
         this.cardWidth = 700;
-        this.cardHeight = 160;
-        this.cardGap = 30;
+        this.cardHeight = 130;
+        this.cardGap = 20;
         this.cardX = RES_X / 2 - this.cardWidth / 2;
 
         // Stack the cards vertically, one below the other
@@ -65,10 +101,13 @@ class FactionSelectScreen {
             rect(this.cardX, faction.y, this.cardWidth, this.cardHeight, 10);
             strokeWeight(1);
 
-            // Color swatch on the left
+            // Color swatch on the left: accent ring around the primary color
+            let swatchY = faction.y + this.cardHeight / 2;
             noStroke();
-            fill(faction.col);
-            circle(this.cardX + 90, faction.y + this.cardHeight / 2, 100);
+            fill(faction.colors.accent);
+            circle(this.cardX + 90, swatchY, 100);
+            fill(faction.colors.primary);
+            circle(this.cardX + 90, swatchY, 76);
 
             // Name and description to the right of the swatch
             fill(255);
@@ -122,7 +161,6 @@ class FactionSelectScreen {
 
         if (this.selected !== null && this.isOver(this.btnX, this.btnY, this.btnWidth, this.btnHeight)) {
             // Transition to the game screen
-            // gameState.faction = this.selected;
             mode = new GameScreen();
             console.log("Faction selected: " + this.selected.name);
         }
