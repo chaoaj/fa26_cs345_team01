@@ -22,7 +22,9 @@ const MAP_OBJECTS = {
     flatRock:        { x: 224, y: 64, w: 32, h: 32 },
 
     grassTuft1:      { x: 64,  y: 96, w: 32, h: 32 },
-    grassTuft2:      { x: 96,  y: 96, w: 32, h: 32 }
+    grassTuft2:      { x: 96,  y: 96, w: 32, h: 32 },
+
+    tower:           { x: 0,   y: 128, w: 64, h: 108 }
 };
 
 class GameScreen {
@@ -271,30 +273,18 @@ class GameScreen {
             image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
         }
 
-        // Draw Tower in center
-        let towerX = this.towerX;
-        let towerY = this.towerY;
+        // Draw tower
+        let cut = MAP_OBJECTS['tower'];
+        let scaleFactor = 2;
 
-        // Tower body
-        fill(120);
-        stroke(60);
-        rect(towerX - 15, towerY - 20, 30, 45);
+        let destW = cut.w * scaleFactor;
+        let destH = cut.h * scaleFactor;
+        let drawX = this.towerX - destW / 2;
+        let drawY = this.towerY - destH / 2; // Centers
 
-        // Tower roof
-        fill(80);
-        triangle(
-            towerX - 20, towerY - 20,
-            towerX, towerY - 40,
-            towerX + 20, towerY - 20
-        );
-
-        // Tower door
-        fill(90, 60, 30);
-        rect(towerX - 5, towerY + 10, 10, 15);
-
-        // Tower window
-        fill(180, 220, 255);
-        rect(towerX - 5, towerY - 10, 10, 10);
+        if (typeof mapSprites !== 'undefined' && mapSprites && mapSprites.width > 0) {
+            image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+        }
 
         // Draw top taskbar
         noStroke();
