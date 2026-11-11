@@ -3,15 +3,15 @@
 SCRUM MASTER: ANGELINA. PLEASE REVIEW/EDIT
 ## Team and Sprint Information
 
-| Field | Your answer |
-| --- | --- |
-| Team name | Team 1 |
-| Team members | Caden VanValkenburg, Amaya Crawford, Yony Woube, Parker Giles, Angelina Yoha, Parash Khanal |
-| Project | Tower Defense game |
-| Sprint | Sprint 3 |
-| Sprint start date | 2026-11-11 |
-| Sprint end date (demo day) | 2026-11-18 |
-| GitHub Projects link | https://github.com/users/chaoaj/projects/5 |
+| Field                      | Your answer                                                                                      |
+| -------------------------- | ------------------------------------------------------------------------------------------------ |
+| Team name                  | Team 1                                                                                           |
+| Team members               | Yony Woube, Amaya Cranford, Caden Cole VanValkenburg, Parker Giles, Angelina Yoha, Parash Khanal |
+| Project                    | Team 1 Project (WIP)                                                                             |
+| Sprint                     | Sprint 3                                                                                         |
+| Sprint start date          | 2026-11-11                                                                                       |
+| Sprint end date (demo day) | 2026-11-18                                                                                       |
+| GitHub Projects link       | https://github.com/users/chaoaj/projects/5/views/1                                               |
 
 ## 1. Sprint Goal
 **Sprint Goal:**
@@ -45,7 +45,7 @@ Every game must have the core gameplay loop. If the Users cannot actually intera
 
 | Team member | Tasks assigned (count) | Total hours |
 | --- | --- | --- |
-| [Name 1] | [count] | [hrs] |
+| Caden VanValkenburg | 2 | 2 |
 | [Name 2] | [count] | [hrs] |
 | [Name 3] | [count] | [hrs] |
 | [Name 4] | [count] | [hrs] |
