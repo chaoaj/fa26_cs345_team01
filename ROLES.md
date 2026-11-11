@@ -1,4 +1,4 @@
-| Sprint | Project Owner | Scrum Master | Developer  | Developer  | Developer  | Developer  |
+| Sprint | Developer | Scrum Master | Developer  | Developer  | Developer  | Developer  |
 | ------ | ------------- | ------------ | ---------- | ---------- | ---------- | ---------- |
 | 1      | Caden V       | Yony W       | Parash K   | Parker G   | Amaya C    | Angelina Y |
 | 2      | Angelina Y    | Caden V      | Yony W     | Parash K   | Parker G   | Amaya C    |
