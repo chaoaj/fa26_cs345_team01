@@ -117,7 +117,12 @@ class GameScreen {
                 x = leftSpace > rightSpace ? random(edgePadding, currentRiverX - riverBuffer) : random(currentRiverX + riverBuffer, RES_X - edgePadding);
             }
 
-            let nearTower = dist(x, y, this.towerX, this.towerY) < 110;
+            let towerLeft = this.towerX - 75;
+            let towerRight = this.towerX + 75;
+            let towerTop = this.towerY - 115;
+            let towerBottom = this.towerY + 115;
+
+            let nearTower = (x >= towerLeft && x <= towerRight && y >= towerTop && y <= towerBottom);
 
             let tooClose = false;
             for (let existing of this.mapObjects) {
@@ -158,7 +163,13 @@ class GameScreen {
                 x = leftSpace > rightSpace ? random(edgePadding, currentRiverX - riverBuffer) : random(currentRiverX + riverBuffer, RES_X - edgePadding);
             }
 
-            let nearTower = dist(x, y, this.towerX, this.towerY) < 90;
+            let towerLeft = this.towerX - 75;
+            let towerRight = this.towerX + 75;
+            let towerTop = this.towerY - 115;
+            let towerBottom = this.towerY + 115;
+
+            let nearTower = (x >= towerLeft && x <= towerRight && y >= towerTop && y <= towerBottom);
+
             if (!nearTower) {
                 let type = random(['grassTuft1', 'grassTuft2']);
                 this.grassObjects.push({ x, y, type });
@@ -166,37 +177,10 @@ class GameScreen {
         }
         this.mapObjects.sort((a, b) => a.y - b.y);
         this.grassObjects.sort((a, b) => a.y - b.y);
-        /* Create random rocks
-        this.rocks = [];
 
-        for (let i = 0; i < 14; i++) {
-            let x = random(25, RES_X - 25);
-            let y = random(70, RES_Y - 25);
-            let w = random(14, 28);
-            let h = random(10, 22);
-            let gray = random(110, 170);
-
-            let nearTower = dist(x, y, this.towerX, this.towerY) < 90;
-            let nearRiver = this.isNearRiver(x, y, max(w, h) / 2 + 10);
-
-            // Only add rock if it's not too close to the tower or river
-            if (!nearTower && !nearRiver) {
-                this.rocks.push({ x, y, w, h, gray });
-            }
-        }
-            */
     }
 
-    // Helper function: checks if an object is near the river
-    /* isNearRiver(x, y, buffer) {
-        for (let point of this.river) {
-            if (dist(x, y, point.x, point.y) < buffer) {
-                return true;
-            }
-        }
-        return false;
-    }
-        */
+
 
     tickBefore() {
         // Green grass background
@@ -227,23 +211,23 @@ class GameScreen {
         noStroke();
     }
 
-    /* drawRocks() {
-        for (let rock of this.rocks) {
-            fill(rock.gray);
-            stroke(90);
-            ellipse(rock.x, rock.y, rock.w, rock.h);
-
-            // small highlight
-            noStroke();
-            fill(rock.gray + 20);
-            ellipse(rock.x - rock.w * 0.15, rock.y - rock.h * 0.15, rock.w * 0.35, rock.h * 0.35);
-        }
-    }
-        */
 
     tick(dt) {
         // Draw river first
         this.drawRiver();
+
+        // Draw tower
+        let cut = MAP_OBJECTS['tower'];
+        let scaleFactor = 2;
+
+        let destW = cut.w * scaleFactor;
+        let destH = cut.h * scaleFactor;
+        let drawX = this.towerX - destW / 2;
+        let drawY = this.towerY - destH / 2; // Centers
+
+        if (typeof mapSprites !== 'undefined' && mapSprites && mapSprites.width > 0) {
+            image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+        }
 
         for (let obj of this.grassObjects) {
             let cut = MAP_OBJECTS[obj.type];
@@ -273,18 +257,6 @@ class GameScreen {
             image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
         }
 
-        // Draw tower
-        let cut = MAP_OBJECTS['tower'];
-        let scaleFactor = 2;
-
-        let destW = cut.w * scaleFactor;
-        let destH = cut.h * scaleFactor;
-        let drawX = this.towerX - destW / 2;
-        let drawY = this.towerY - destH / 2; // Centers
-
-        if (typeof mapSprites !== 'undefined' && mapSprites && mapSprites.width > 0) {
-            image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
-        }
 
         // Draw top taskbar
         noStroke();
