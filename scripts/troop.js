@@ -129,4 +129,36 @@ function defineItems() {
             turnRange: w.turnRange
         }));
     }
+	// SQUADS
+	for (const [id, config] of Object.entries(SQUAD_DEFS)) {
+		const squad = new SquadBase(
+			id,
+			config.name,
+			config
+		);
+		squad.startingTroops = config.troops.map(
+			troopId => {
+				const trp = troopId;
+				trp.troop = troopBases[trp.troop]
+				return trp;
+			}
+		);
+		let totalCount = 0;
+		let count = -1;
+		let highest = null;
+		for (const troop of squad.startingTroops) {
+			if (troop.count > count) {
+				highest = troop;
+				count = troop.count;
+			}
+			totalCount += troop.count;
+		}
+		squad.curPer = squad.cost / totalCount;
+		squad.iconicTroop = squad.iconicTroop ? troopBases[squad.iconicTroop] : highest.troop;
+	}
+	// SQUADS
+	for (const faction of Object.values(factions)) {
+		faction.base = squadBases[faction.base];
+		faction.squads = faction.squads.map(s => squadBases[s]);
+	}
 }
