@@ -22,7 +22,7 @@ class WeaponBase {
   
   class Weapon {
     /**
-    * Constructor for a Weaon mounted on a troop
+    * Constructor for a Weapon mounted on a troop
     * @param {WeaponBase} base weapon type
     * @param {number} mount troops entry for this weapon {offset, startingAngle, turnRange}
     */
