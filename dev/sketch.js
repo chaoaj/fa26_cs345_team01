@@ -34,7 +34,7 @@ async function setup() {
     }
     defineItems();
     // camera = new Camera(MAP_W / 2, MAP_H / 2);
-    // document.oncontextmenu = () => false; // Right click
+    document.oncontextmenu = () => false; // Right click
     // initializeAll(definitions);
     mode = new StartScreen();
 }

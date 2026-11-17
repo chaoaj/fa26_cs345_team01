@@ -32,6 +32,39 @@ class Troop {
         this.moveTo = base.moveTo;
     }
 
+    orderMove(position) {
+        this.moveTo = new Position(position.x, position.y, position.angle);
+    }
+
+    updateMovement(dt) {
+
+        if (this.moveTo === null) {
+            return;
+        }
+
+        const dx = this.moveTo.x - this.position.x;
+        const dy = this.moveTo.y - this.position.y;
+        const distance = Math.hypot(dx, dy);
+
+        // Stop when destination is reached
+        if (distance <= 1) {
+            this.position.x = this.moveTo.x;
+            this.position.y = this.moveTo.y;
+            this.position.angle = this.moveTo.angle;
+            this.moveTo = null;
+            return;
+        }
+
+        // Calculate distance to move this frame
+        const step = Math.min(this.base.speed * dt, distance);
+
+        this.position.x += (dx / distance) * step;
+        this.position.y += (dy / distance) * step;
+
+        // Face movement direction
+        this.position.angle = Math.atan2(dy, dx);
+    }
+
     draw() {
         push();
         translate(this.position.x, this.position.y);
