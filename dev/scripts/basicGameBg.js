@@ -22,7 +22,8 @@ const MAP_OBJECTS = {
     flatRock:        { x: 224, y: 64, w: 32, h: 32 },
 
     grassTuft1:      { x: 64,  y: 96, w: 32, h: 32 },
-    grassTuft2:      { x: 96,  y: 96, w: 32, h: 32 }
+    grassTuft2:      { x: 96,  y: 96, w: 32, h: 32 },
+    tower:           { x: 0, y: 128, w: 64, h: 108 }
 };
 
 class GameScreen {
@@ -124,9 +125,14 @@ class GameScreen {
                 x = leftSpace > rightSpace ? random(edgePadding, currentRiverX - riverBuffer) : random(currentRiverX + riverBuffer, RES_X - edgePadding);
             }
 
-            let nearTower = dist(x, y, this.towerX, this.towerY) < 110;
+            let towerLeft = this.towerX - 75;
+            let towerRight = this.towerX + 75;
+            let towerTop = this.towerY - 115;
+            let towerBottom = this.towerY + 160;
 
+            let nearTower = (x >= towerLeft && x <= towerRight && y >= towerTop && y <= towerBottom);
             let tooClose = false;
+
             for (let existing of this.mapObjects) {
                 if (dist(x, y, existing.x, existing.y) < 65) { // Minimum spacing distance
                     tooClose = true;
@@ -165,7 +171,13 @@ class GameScreen {
                 x = leftSpace > rightSpace ? random(edgePadding, currentRiverX - riverBuffer) : random(currentRiverX + riverBuffer, RES_X - edgePadding);
             }
 
-            let nearTower = dist(x, y, this.towerX, this.towerY) < 90;
+            let towerLeft = this.towerX - 75;
+            let towerRight = this.towerX + 75;
+            let towerTop = this.towerY - 115;
+            let towerBottom = this.towerY + 160;
+
+            let nearTower = (x >= towerLeft && x <= towerRight && y >= towerTop && y <= towerBottom);
+
             if (!nearTower) {
                 let type = random(['grassTuft1', 'grassTuft2']);
                 this.grassObjects.push({ x, y, type });
@@ -173,37 +185,7 @@ class GameScreen {
         }
         this.mapObjects.sort((a, b) => a.y - b.y);
         this.grassObjects.sort((a, b) => a.y - b.y);
-        /* Create random rocks
-        this.rocks = [];
-
-        for (let i = 0; i < 14; i++) {
-            let x = random(25, RES_X - 25);
-            let y = random(70, RES_Y - 25);
-            let w = random(14, 28);
-            let h = random(10, 22);
-            let gray = random(110, 170);
-
-            let nearTower = dist(x, y, this.towerX, this.towerY) < 90;
-            let nearRiver = this.isNearRiver(x, y, max(w, h) / 2 + 10);
-
-            // Only add rock if it's not too close to the tower or river
-            if (!nearTower && !nearRiver) {
-                this.rocks.push({ x, y, w, h, gray });
-            }
-        }
-            */
     }
-
-    // Helper function: checks if an object is near the river
-    /* isNearRiver(x, y, buffer) {
-        for (let point of this.river) {
-            if (dist(x, y, point.x, point.y) < buffer) {
-                return true;
-            }
-        }
-        return false;
-    }
-        */
 
     tickBefore() {
         // Green grass background
@@ -234,19 +216,6 @@ class GameScreen {
         noStroke();
     }
 
-    /* drawRocks() {
-        for (let rock of this.rocks) {
-            fill(rock.gray);
-            stroke(90);
-            ellipse(rock.x, rock.y, rock.w, rock.h);
-
-            // small highlight
-            noStroke();
-            fill(rock.gray + 20);
-            ellipse(rock.x - rock.w * 0.15, rock.y - rock.h * 0.15, rock.w * 0.35, rock.h * 0.35);
-        }
-    }
-        */
 
     tick(dt) {
         let dx = 0;
@@ -298,37 +267,19 @@ class GameScreen {
             image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
         }
 
-        // Draw Tower in center
-        let towerX = this.towerX;
-        let towerY = this.towerY;
+        // Draw tower
+        let cut = MAP_OBJECTS['tower'];
+        let scaleFactor = 2;
 
-        // Tower body
-        fill(120);
-        stroke(60);
-        rect(towerX - 15, towerY - 20, 30, 45);
+        let destW = cut.w * scaleFactor;
+        let destH = cut.h * scaleFactor;
+        let drawX = this.towerX - destW / 2;
+        let drawY = this.towerY - destH / 2; // Centers
 
-        // Tower roof
-        fill(80);
-        triangle(
-            towerX - 20, towerY - 20,
-            towerX, towerY - 40,
-            towerX + 20, towerY - 20
-        );
-
-        // Tower door
-        fill(90, 60, 30);
-        rect(towerX - 5, towerY + 10, 10, 15);
-
-        // Tower window
-        fill(180, 220, 255);
-        rect(towerX - 5, towerY - 10, 10, 10);
-        if (this.selectedSquad) {
-            for (const troop of this.selectedSquad.troops) {
-                fill(255, 215, 0, 100);
-                strokeWeight(0);
-                ellipse(troop.position.x, troop.position.y, troop.base.size);
-            }
+        if (typeof mapSprites !== 'undefined' && mapSprites && mapSprites.width > 0) {
+            image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
         }
+
         for (const troop of this.troops) {
             troop.draw();
         }
@@ -386,7 +337,7 @@ class GameScreen {
     }
 
     mousePressed() {
-        // check if battle UI is pressed 
+        // check if battle UI is pressed
         if (this.ui.mousePressed()) {
             return;
         }
