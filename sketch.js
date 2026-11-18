@@ -25,8 +25,8 @@ async function setup() {
     createCanvas(RES_X, RES_Y);
     noSmooth();
     try {
-        mapSprites = await loadImageAsync('../assets/mapObjects.png');
-        troopSprites = await loadImageAsync('../assets/troopObjects.png');
+        mapSprites = await loadImageAsync('./assets/mapObjects.png');
+        troopSprites = await loadImageAsync('./assets/troopObjects.png');
         assetsLoaded = true;
         console.log("All sprite sheets loaded successfully!");
     } catch (err) {
