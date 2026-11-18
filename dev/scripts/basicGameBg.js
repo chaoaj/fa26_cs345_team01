@@ -249,6 +249,9 @@ class GameScreen {
         */
 
     tick(dt) {
+        // battle interface make timer tick down 
+        this.ui.waveTime = Math.max(0, this.ui.waveTime - dt);
+        
         let dx = 0;
         let dy = 0;
         const dC = dt * 400 / camera.zoom;
