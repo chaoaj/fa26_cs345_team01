@@ -316,6 +316,13 @@ class GameScreen {
         }
 
 
+        if (this.selectedSquad) {
+            for (const troop of this.selectedSquad.troops) {
+                fill(255, 215, 0, 100);
+                strokeWeight(0);
+                ellipse(troop.position.x, troop.position.y, troop.base.size);
+            }
+        }
         for (const troop of this.troops) {
             troop.draw();
         }

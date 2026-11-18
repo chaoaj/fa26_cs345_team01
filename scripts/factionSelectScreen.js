@@ -4,7 +4,6 @@
 // On Confirm, the chosen Faction is in this.selected
 const factions = {};
 
-
 /**
  * A playable faction
  * @param {string} id          lowercase, no spaces

@@ -7,6 +7,7 @@
 // }
 
 let mapSprites;
+let troopSprites;
 let assetsLoaded = false;
 
 // Team colors, set to defaults to begin
@@ -24,15 +25,16 @@ async function setup() {
     createCanvas(RES_X, RES_Y);
     noSmooth();
     try {
-        mapSprites = await loadImageAsync('./assets/mapObjects.png'); // or standard loadImage with a callback/promise if preferred
+        mapSprites = await loadImageAsync('../assets/mapObjects.png');
+        troopSprites = await loadImageAsync('../assets/troopObjects.png');
         assetsLoaded = true;
-        console.log("Sprite sheet loaded successfully!");
+        console.log("All sprite sheets loaded successfully!");
     } catch (err) {
         console.error("Failed to load mapObjects.png:", err);
     }
     defineItems();
     camera = new Camera(MAP_W / 2, MAP_H / 2);
-    // document.oncontextmenu = () => false; // Right click
+    document.oncontextmenu = () => false; // Right click
     // initializeAll(definitions);
     mode = new StartScreen();
 }
@@ -76,6 +78,12 @@ function mouseClicked() {
 function mouseReleased() {
     if (mode && typeof mode.mouseReleased === 'function') {
         return mode.mouseReleased();
+    }
+}
+
+function keyPressed() {
+    if (mode && typeof mode.keyPressed === 'function') {
+        return mode.keyPressed();
     }
 }
 

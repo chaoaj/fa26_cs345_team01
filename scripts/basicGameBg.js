@@ -22,7 +22,8 @@ const MAP_OBJECTS = {
     flatRock:        { x: 224, y: 64, w: 32, h: 32 },
 
     grassTuft1:      { x: 64,  y: 96, w: 32, h: 32 },
-    grassTuft2:      { x: 96,  y: 96, w: 32, h: 32 }
+    grassTuft2:      { x: 96,  y: 96, w: 32, h: 32 },
+    tower:           { x: 0, y: 128, w: 64, h: 108 }
 };
 
 class GameScreen {
@@ -35,6 +36,19 @@ class GameScreen {
         this.enemySquads = new Set();
         this.playerTeam = { colors: TEAMS.PLAYER };
 
+        // Game speed. Game logic uses dt * timeScale, so pausing freezes the battle and
+        // wave timer while the camera and UI keep working with the real dt
+        this.speed = 1;
+        this.paused = false;
+
+        // added battle interface UI to be loaded
+        this.ui = new BattleInterfaceUI(this.playerTeam, this);
+
+        // Squad clicked on the map. The battle UI shows its stats
+        this.selectedSquad = null;
+        this.ui.currency = 100;
+        this.ui.wave = 1;
+        this.ui.waveTime = 90;
         this.towerX = RES_X / 2;
         this.towerY = RES_Y / 2;
 
@@ -117,8 +131,12 @@ class GameScreen {
                 x = leftSpace > rightSpace ? random(edgePadding, currentRiverX - riverBuffer) : random(currentRiverX + riverBuffer, RES_X - edgePadding);
             }
 
-            let nearTower = dist(x, y, this.towerX, this.towerY) < 110;
+            let towerLeft = this.towerX - 75;
+            let towerRight = this.towerX + 75;
+            let towerTop = this.towerY - 115;
+            let towerBottom = this.towerY + 160;
 
+            let nearTower = (x >= towerLeft && x <= towerRight && y >= towerTop && y <= towerBottom);
             let tooClose = false;
             for (let existing of this.mapObjects) {
                 if (dist(x, y, existing.x, existing.y) < 65) { // Minimum spacing distance
@@ -158,7 +176,12 @@ class GameScreen {
                 x = leftSpace > rightSpace ? random(edgePadding, currentRiverX - riverBuffer) : random(currentRiverX + riverBuffer, RES_X - edgePadding);
             }
 
-            let nearTower = dist(x, y, this.towerX, this.towerY) < 90;
+            let towerLeft = this.towerX - 75;
+            let towerRight = this.towerX + 75;
+            let towerTop = this.towerY - 115;
+            let towerBottom = this.towerY + 160;
+
+            let nearTower = (x >= towerLeft && x <= towerRight && y >= towerTop && y <= towerBottom);
             if (!nearTower) {
                 let type = random(['grassTuft1', 'grassTuft2']);
                 this.grassObjects.push({ x, y, type });
@@ -166,7 +189,7 @@ class GameScreen {
         }
         this.mapObjects.sort((a, b) => a.y - b.y);
         this.grassObjects.sort((a, b) => a.y - b.y);
-        /* Create random rocks
+        /* Creates random rocks
         this.rocks = [];
 
         for (let i = 0; i < 14; i++) {
@@ -197,6 +220,26 @@ class GameScreen {
         return false;
     }
         */
+
+    /**
+     * Multiplier for game time: 0 while paused, otherwise the current speed
+     * @returns {number}
+     */
+    get timeScale() {
+        return this.paused ? 0 : this.speed;
+    }
+
+    togglePause() {
+        this.paused = !this.paused;
+    }
+
+    keyPressed() {
+        // Space toggles pause
+        if (key === ' ') {
+            this.togglePause();
+            return false;
+        }
+    }
 
     tickBefore() {
         // Green grass background
@@ -242,6 +285,13 @@ class GameScreen {
         */
 
     tick(dt) {
+        // Game time: scaled by speed, 0 while paused. Use gameDt for anything that should
+        // freeze on pause (timers, troop movement, attacks). Camera movement keeps the real dt
+        const gameDt = dt * this.timeScale;
+
+        // battle interface make timer tick down
+        this.ui.waveTime = Math.max(0, this.ui.waveTime - gameDt);
+
         let dx = 0;
         let dy = 0;
         const dC = dt * 400 / camera.zoom;
@@ -262,6 +312,20 @@ class GameScreen {
         }
         // Draw river first
         this.drawRiver();
+
+        // Draw tower
+        let cut = MAP_OBJECTS['tower'];
+        let scaleFactor = 2;
+
+        let destW = cut.w * scaleFactor;
+        let destH = cut.h * scaleFactor;
+        let drawX = this.towerX - destW / 2;
+        let drawY = this.towerY - destH / 2; // Centers
+
+        if (typeof mapSprites !== 'undefined' && mapSprites && mapSprites.width > 0) {
+            image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+        }
+
 
         for (let obj of this.grassObjects) {
             let cut = MAP_OBJECTS[obj.type];
@@ -291,30 +355,6 @@ class GameScreen {
             image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
         }
 
-        // Draw Tower in center
-        let towerX = this.towerX;
-        let towerY = this.towerY;
-
-        // Tower body
-        fill(120);
-        stroke(60);
-        rect(towerX - 15, towerY - 20, 30, 45);
-
-        // Tower roof
-        fill(80);
-        triangle(
-            towerX - 20, towerY - 20,
-            towerX, towerY - 40,
-            towerX + 20, towerY - 20
-        );
-
-        // Tower door
-        fill(90, 60, 30);
-        rect(towerX - 5, towerY + 10, 10, 15);
-
-        // Tower window
-        fill(180, 220, 255);
-        rect(towerX - 5, towerY - 10, 10, 10);
         if (this.selectedSquad) {
             for (const troop of this.selectedSquad.troops) {
                 fill(255, 215, 0, 100);
@@ -344,6 +384,30 @@ class GameScreen {
         textAlign(LEFT, CENTER);
         textSize(16);
         text("Selected: " + this.selected, 15, RES_Y - 20);
+
+        if (this.paused) {
+            this.drawPausedOverlay();
+        }
+
+        // battle interface UI
+        this.ui.draw();
+
+    }
+
+    /**
+     * Dim the map and show PAUSED between the top and bottom bars
+     */
+    drawPausedOverlay() {
+        noStroke();
+        fill(0, 0, 0, 90);
+        rect(0, 60, RES_X, this.ui.barY - 60);
+
+        fill(255);
+        textAlign(CENTER, CENTER);
+        textSize(40);
+        text("PAUSED", RES_X / 2, RES_Y / 2);
+        textSize(16);
+        text("Press Space or click play to resume", RES_X / 2, RES_Y / 2 + 36);
     }
 
     drawButton(label, x) {
@@ -375,6 +439,11 @@ class GameScreen {
     }
 
     mousePressed() {
+        // check if battle UI is pressed
+        if (this.ui.mousePressed()) {
+            return;
+        }
+
         if (!mouseButton.left) {
             return;
         }
@@ -399,6 +468,7 @@ class GameScreen {
         for (const trp of this.troops) {
             if (trp.position.distanceTo(mPos) < trp.base.size * 2) {
                 this.selectedSquad = trp.squad;
+                this.ui.selectedSquadBase = null; // map selection replaces card selection
                 console.log(`Clicked on squad: `, this.selectedSquad);
                 return;
             }
