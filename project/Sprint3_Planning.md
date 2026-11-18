@@ -27,17 +27,18 @@ Every game must have the core gameplay loop. If the Users cannot actually intera
 - [x] Moved every Sprint Backlog Item into Sprint 1
 - [x] Every Sprint Backlog Item has a story-point estimate
 - [x] Every Sprint Backlog Item has acceptance criteria
-- [ ] Every Sprint Backlog Item has tasks with hour estimates and assigned team members, listed in the item's comments
-- [ ] **Started the sprint:** set every Sprint Backlog Item to **In Progress**
+- [x] Every Sprint Backlog Item has tasks with hour estimates and assigned team members, listed in the item's comments
+- [x] **Started the sprint:** set every Sprint Backlog Item to **In Progress**
 
 ## 3. Sprint Backlog Summary
 | # | Sprint Backlog Item (user story) | Story points | GitHub issue |
 | --- | --- | --- | --- |
-| 1 | (Squad/SquadBase) As a [user], I want [feature] so that [benefit]. | 1 | #10 |
-| 2 | (Enemy waves) As a [user], I want [feature] so that [benefit]. | 2 | #13 |
-| 3 | (Battle UI) As a [user], I want [feature] so that [benefit]. | 2 | #16 |
-| 3 | (Camera) As a [user], I want [feature] so that [benefit]. | 0.5 | #23 |
-| | **Total story points** | **5.5** | |
+| 1 | (Squad/SquadBase) As a User, I want to deploy more than one troop at once, and be able to command them. | 1 | #10 |
+| 2 | (Enemy waves) As a User, I want to fight the oncoming waves of enemies. | 2 | #13 |
+| 3 | (Battle UI) As a User, I want to be able to control the game during battles. | 2 | #16 |
+| 3 | (Camera) As a User, I want to be able to move around the camera on the map and zoom in and out. | 0.5 | #23 |
+| 4 | (Weapon/Troop visuals) | As a User, I want to be able to see basic custom visuals for both troops and weapons so that they are distinguishable on the map | 2 | #25
+| | **Total story points** | **7.5** | |
 
 ## 4. Work Distribution
 
@@ -46,9 +47,11 @@ Every game must have the core gameplay loop. If the Users cannot actually intera
 | Team member | Tasks assigned (count) | Total hours |
 | --- | --- | --- |
 | Caden VanValkenburg | 2 | 2 |
-| [Name 2] | [count] | [hrs] |
-| [Name 3] | [count] | [hrs] |
-| [Name 4] | [count] | [hrs] |
-| **Team total** | **[count]** | **[hrs]** |
+| Angelina Yoha | 1 | 2 |
+| Parker Giles | 1 | 2 |
+| Amaya Crawford | 1 | 2 |
+| Yony Woube | 1 | 2 |
+| Parash Khanal | 1 | 2 | 
+| **Team total** | **7** | **12** |
 
-**Is the work split fairly?** [Yes / No. If not, explain why, for example "Name 2 has fewer hours because they are also setting up the repository."]
+**Is the work split fairly?** Yes
