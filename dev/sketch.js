@@ -9,6 +9,7 @@ let RES_X = 1280;
 let RES_Y = 720;
 
 let mapSprites;
+let troopSprites;
 let assetsLoaded = false;
 
 // Team colors, set to defaults to begin
@@ -26,9 +27,10 @@ async function setup() {
     createCanvas(RES_X, RES_Y);
     noSmooth();
     try {
-        mapSprites = await loadImageAsync('../assets/mapObjects.png'); // or standard loadImage with a callback/promise if preferred
+        mapSprites = await loadImageAsync('../assets/mapObjects.png');
+        troopSprites = await loadImageAsync('../assets/troopObjects.png');
         assetsLoaded = true;
-        console.log("Sprite sheet loaded successfully!");
+        console.log("All sprite sheets loaded successfully!");
     } catch (err) {
         console.error("Failed to load mapObjects.png:", err);
     }

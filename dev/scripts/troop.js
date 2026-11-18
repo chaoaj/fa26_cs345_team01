@@ -63,7 +63,7 @@ class Troop {
             weapon.target = target;
         }
 
-        // TODO Implement Movement 
+        // TODO Implement Movement
         if (target != null) {
             if (this.weapons[0].range >= this.position.distanceTo(target.position)) {
                 this.moveTo = null;
@@ -109,7 +109,7 @@ class Troop {
             } else if (this.weapons[0].type === 'projectile') {
                 // TODO Implement projectile attack logic
             }
-            
+
         }
     }
 }
@@ -117,7 +117,7 @@ class Troop {
 function defineItems() {
     for (const [id, data] of Object.entries(WEAPON_DEFS)) {
         for (const [id, data] of Object.entries(WEAPON_DEFS)) {
-          new Weapon(id, data);
+            new WeaponBase(id, data);
         }
     }
     for (const [id, data] of Object.entries(TROOP_DEFS)) {
