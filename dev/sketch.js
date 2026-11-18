@@ -81,6 +81,12 @@ function mouseReleased() {
     }
 }
 
+function keyPressed() {
+    if (mode && typeof mode.keyPressed === 'function') {
+        return mode.keyPressed();
+    }
+}
+
 function mouseDragged() {
     if (mode && typeof mode.mouseDragged === 'function') {
         return mode.mouseDragged();

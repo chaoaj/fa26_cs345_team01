@@ -36,9 +36,16 @@ class GameScreen {
         this.enemySquads = new Set();
         this.playerTeam = { colors: TEAMS.PLAYER };
 
-        // added battle interface UI to be loaded
+        // Game speed. Game logic uses dt * timeScale, so pausing freezes the battle and
+        // wave timer while the camera and UI keep working with the real dt
         this.speed = 1;
-        this.ui = new BattleInterfaceUI(this.playerTeam);
+        this.paused = false;
+
+        // added battle interface UI to be loaded
+        this.ui = new BattleInterfaceUI(this.playerTeam, this);
+
+        // Squad clicked on the map. The battle UI shows its stats
+        this.selectedSquad = null;
         this.ui.currency = 100;
         this.ui.wave = 1;
         this.ui.waveTime = 90;
@@ -187,6 +194,26 @@ class GameScreen {
         this.grassObjects.sort((a, b) => a.y - b.y);
     }
 
+    /**
+     * Multiplier for game time: 0 while paused, otherwise the current speed
+     * @returns {number}
+     */
+    get timeScale() {
+        return this.paused ? 0 : this.speed;
+    }
+
+    togglePause() {
+        this.paused = !this.paused;
+    }
+
+    keyPressed() {
+        // Space toggles pause
+        if (key === ' ') {
+            this.togglePause();
+            return false;
+        }
+    }
+
     tickBefore() {
         // Green grass background
         background(100, 170, 80);
@@ -218,8 +245,12 @@ class GameScreen {
 
 
     tick(dt) {
-        // battle interface make timer tick down 
-        this.ui.waveTime = Math.max(0, this.ui.waveTime - dt);
+        // Game time: scaled by speed, 0 while paused. Use gameDt for anything that should
+        // freeze on pause (timers, troop movement, attacks). Camera movement keeps the real dt
+        const gameDt = dt * this.timeScale;
+
+        // battle interface make timer tick down
+        this.ui.waveTime = Math.max(0, this.ui.waveTime - gameDt);
         
         let dx = 0;
         let dy = 0;
@@ -306,9 +337,29 @@ class GameScreen {
         textSize(16);
         text("Selected: " + this.selected, 15, RES_Y - 20);
 
+        if (this.paused) {
+            this.drawPausedOverlay();
+        }
+
         // battle interface UI
         this.ui.draw();
 
+    }
+
+    /**
+     * Dim the map and show PAUSED between the top and bottom bars
+     */
+    drawPausedOverlay() {
+        noStroke();
+        fill(0, 0, 0, 90);
+        rect(0, 60, RES_X, this.ui.barY - 60);
+
+        fill(255);
+        textAlign(CENTER, CENTER);
+        textSize(40);
+        text("PAUSED", RES_X / 2, RES_Y / 2);
+        textSize(16);
+        text("Press Space or click play to resume", RES_X / 2, RES_Y / 2 + 36);
     }
 
     drawButton(label, x) {
@@ -369,6 +420,7 @@ class GameScreen {
         for (const trp of this.troops) {
             if (trp.position.distanceTo(mPos) < trp.base.size * 2) {
                 this.selectedSquad = trp.squad;
+                this.ui.selectedSquadBase = null; // map selection replaces card selection
                 console.log(`Clicked on squad: `, this.selectedSquad);
                 return;
             }
