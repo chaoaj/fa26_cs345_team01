@@ -37,12 +37,12 @@ At the Sprint Review you demonstrate your product to the stakeholder (your instr
 
 ✏️ *Change `[ ]` to `[x]` for each item that is true. Do not demo until every box is checked.*
 
-- [ ] All of our tasks are marked done in GitHub Projects
-- [ ] All of our Sprint Backlog Items meet their acceptance criteria
-- [ ] All of our code is committed and pushed to GitHub
-- [ ] The production URL loads the same version we will demonstrate (we refreshed it after the last push)
-- [ ] The commit ID above matches the commit we are demonstrating
-- [ ] Our demo person has the product loaded and ready to go
+- [x] All of our tasks are marked done in GitHub Projects
+- [] All of our Sprint Backlog Items meet their acceptance criteria
+- [x] All of our code is committed and pushed to GitHub
+- [x] The production URL loads the same version we will demonstrate (we refreshed it after the last push)
+- [x] The commit ID above matches the commit we are demonstrating
+- [x] Our demo person has the product loaded and ready to go
 
 ## 1.3 Sprint Backlog Results
 
@@ -50,29 +50,28 @@ At the Sprint Review you demonstrate your product to the stakeholder (your instr
 
 | # | Sprint Backlog Item | GitHub issue | Story points | All acceptance criteria met? | Final status |
 | --- | --- | --- | --- | --- | --- |
-| 1 | As a User, I want to be able to control the game during battles | #16 | 4 | [Yes / No] | [Done / Not done] |
-| 2 | As a User, I want to fight the oncoming waves of enemies | #13 | 2 | [Yes / No] | [Done / Not done] |
-| 3 | As a User, I want to deploy more than one troop at once, and be able to command them | #10 | 1 | [Yes / No] | [Done / Not done] |
-| 4 | As a User, I want to be able to move around the camera on the map and zoom in and out | #23  | 0.5 | [Yes / No] | [Done / Not done] |
-| 5 | As a User, I want to be able to see basic custom visuals for both troops and weapons so that they are distinguishable on the map | #25  | 2 | [Yes / No] | [Done / Not done] |
+| 1 | As a User, I want to be able to control the game during battles | #16 | 4 | [Yes] | [Done] |
+| 2 | As a User, I want to fight the oncoming waves of enemies | #13 | 2 | [No] | [Not done] |
+| 3 | As a User, I want to deploy more than one troop at once, and be able to command them | #10 | 1 | [Yes] | [Done] |
+| 4 | As a User, I want to be able to move around the camera on the map and zoom in and out | #23  | 0.5 | [Yes] | [Done] |
+| 5 | As a User, I want to be able to see basic custom visuals for both troops and weapons so that they are distinguishable on the map | #25  | 2 | [Yes] | [Done] |
 | | **Totals** | | **9.5** | | **[completed pts] completed** |
 
 ### Items Not Completed
-None
+Enemy waves were not implemented.
 
 ## 1.4 Sprint Scope
 
 ✏️ *Your sprint should be identical to what you started with. Adding, removing, or editing Sprint Backlog Items during the sprint is not proper Scrum practice.*
 
-**Did the Sprint Backlog stay the same as it was at Sprint Planning?** [Yes / No]
+**Did the Sprint Backlog stay the same as it was at Sprint Planning?** [Yes]
 
-[If No, list every item that was added, removed, or edited, and explain why.]
 
 ## 1.5 Sprint Goal
 
-**Did we meet our Sprint Goal?** [Yes / Partly / No]
+**Did we meet our Sprint Goal?** [Mostly]
 
-[Explain in one or two sentences, pointing to what you demonstrated.]
+[We almost 100% hit our sprint goal, but one task was not completed.]
 
 ## 1.6 Known Bugs
 
@@ -80,7 +79,7 @@ None
 
 | Bug | Show-stopper? | GitHub issue |
 | --- | --- | --- |
-| [Describe the bug] | [Yes / No] | [#issue or "not yet filed"] |
+| [Describe the bug] | [Yes] | [Troops Spawn everywhere the screen is clicked.] |
 
 # Part 2: Sprint Retrospective
 
@@ -88,32 +87,24 @@ None
 
 ✏️ *Do these steps before your retrospective meeting.*
 
-- [ ] Every task we completed is marked done
-- [ ] Every completed Sprint Backlog Item is moved to the **Done** (Closed) column, and its issue is closed
-- [ ] Every unfinished item is left open with a comment explaining what is left
-- [ ] The sprint is finished in GitHub Projects
+- [x] Every task we completed is marked done
+- [x] Every completed Sprint Backlog Item is moved to the **Done** (Closed) column, and its issue is closed
+- [x] Every unfinished item is left open with a comment explaining what is left
+- [x] The sprint is finished in GitHub Projects
 
 ## 2.2 Retrospective: More Of, Less Of, Same As
 
-✏️ *Hold your retrospective meeting as a team. List two or three things in each category.*
-
 ### More Of
-
-✏️ *Things we would like to do more often in future sprints.*
 
 - Regular check-ins on issue work
 - Assigning multiple people to an issue if it has a heavy workload
 
 ### Less Of
 
-✏️ *Things we would like to do less often in future sprints.*
-
 - Starting late
 - Not attending class
 
 ### Same As
-
-✏️ *Things we are already doing well and want to keep doing.*
 
 - Communicating
 - Open communication when anyone is confused
@@ -121,7 +112,7 @@ None
 
 ## 2.3 Team Summary
 
-✏️ *In a few sentences, describe honestly how the team thinks the sprint went, beyond what is in the retrospective. Include what went well and any trouble you had. You will not lose points for reporting problems.*
+Our sprint went relatively well. We completed almost all of our tasks and maintained open communication throughout this sprint.
 
 [Team summary]
 
@@ -130,19 +121,17 @@ None
 | Field | Your answer |
 | --- | --- |
 | Date of retrospective meeting | 2026-11-18 |
-| Team members present | [Names] |
+| Team members present | Caden VanValkenburg, Yony Woube, Amaya Crawford, Angelina Yoha |
 
 # Part 3: Self-Check Before Submitting
 
-✏️ *These questions match how the sprint will be graded. Answer each one honestly.*
-
 | Grading question | Our answer |
 | --- | --- |
-| Is our sprint identical to what we started with? | [Yes / No] |
-| Did we complete our tasks? | [Yes / Partly / No] |
-| Did we complete our backlog items, as shown by their acceptance criteria? | [Yes / Partly / No] |
-| Did we meet our Sprint Goal? | [Yes / Partly / No] |
-| Is our code committed and pushed? | [Yes / No] |
-| Is our code free of large show-stopper bugs? | [Yes / No] |
-| Did we write a reasonable retrospective (2–3 items in each category)? | [Yes / No] |
-| Did we write a thoughtful summary of our sprint? | [Yes / No] |
+| Is our sprint identical to what we started with? | No |
+| Did we complete our tasks? | Mostly |
+| Did we complete our backlog items, as shown by their acceptance criteria? | Yes |
+| Did we meet our Sprint Goal? | Mostly |
+| Is our code committed and pushed? | Yes |
+| Is our code free of large show-stopper bugs? | Yes |
+| Did we write a reasonable retrospective (2–3 items in each category)? | Yes |
+| Did we write a thoughtful summary of our sprint? | Yes |
