@@ -34,6 +34,11 @@ class GameScreen {
         this.selected = "None";
         this.troops = [];
         this.playerTeam = { colors: TEAMS.PLAYER };
+        this.enemyTeam = { colors: TEAMS.ENEMY };
+
+        this.playerSquads = new Set();
+        this.enemySquads = new Set();
+        this.selectedSquad = null;
 
         this.towerX = RES_X / 2;
         this.towerY = RES_Y / 2;
@@ -213,6 +218,11 @@ class GameScreen {
 
 
     tick(dt) {
+        // Update troop movement
+        for (const troop of this.troops) {
+            troop.tick(dt, this.troops);
+        }
+        
         // Draw river first
         this.drawRiver();
 
@@ -310,29 +320,104 @@ class GameScreen {
             y + this.btnHeight / 2);
     }
 
-    mousePressed() {
-        if (!mouseButton.left) {
-            return;
-        }
+    selectSquad(position) {
+        // Search friendly squads
+        for (const squad of this.playerSquads) {
 
-        if (mouseY >= 10 && mouseY <= 50) {
-            if (mouseX >= 20 && mouseX <= 120) {
-                this.selected = "Build";
-            } else if (mouseX >= 130 && mouseX <= 230) {
-                this.selected = "Upgrade";
-            } else if (mouseX >= 240 && mouseX <= 340) {
-                this.selected = "Shop";
-            } else if (mouseX >= 350 && mouseX <= 450) {
-                this.selected = "Settings";
+            // Check whether one of the squad's troops was clicked
+            for (const troop of squad.troops) {
+
+                const distance = troop.position.distanceTo(position);
+
+                if (distance <= troop.base.size + 10) {
+                    this.selectedSquad = squad;
+                    console.log("Selected squad:", squad.base.name);
+                    return true;
+                }
             }
         }
 
-        if (mouseY < 60) {
-            return;
+        // Deselect if clicking empty ground
+        this.selectedSquad = null;
+        return false;
+    }
+
+    mousePressed() {
+        // RIGHT CLICK - Move or attack
+        if (mouseButton === RIGHT) {
+
+            if (this.selectedSquad === null) {
+                return false;
+            }
+
+            // Ignore clicks on the taskbar
+            if (mouseY < 60) {
+                return false;
+            }
+        
+            const clickPos = new Position(mouseX, mouseY);
+
+            // Check if an enemy squad was clicked
+            for (const enemySquad of this.enemySquads) {
+
+                for (const troop of enemySquad.troops) {
+
+                    const distance = troop.position.distanceTo(clickPos);
+
+                    if (distance <= troop.base.size + 10) {
+                        this.selectedSquad.orderAttack(enemySquad);
+
+                        console.log("Attack order issued");
+                        return false;
+                    }
+                }
+            }
+        
+
+            // Otherwise move to right-clicked location
+            this.selectedSquad.attack = null;
+            this.selectedSquad.move(mouseX, mouseY);
+
+            console.log("Move order:", mouseX, mouseY);
+            return false;
         }
 
-        this.spawnTroop(new Position(mouseX, mouseY));
-        console.log("Total objects successfully generated:", this.mapObjects.length);
+        // LEFT CLICK - Controls and squad selection
+        if (mouseButton === LEFT) {
+
+            // Taskbar buttons
+            if (mouseY >= 10 && mouseY <= 50) {
+
+                if (mouseX >= 20 && mouseX <= 120) {
+                    this.selected = "Build";
+                } else if (mouseX >= 130 && mouseX <= 230) {
+                    this.selected = "Upgrade";
+                } else if (mouseX >= 240 && mouseX <= 340) {
+                    this.selected = "Shop";
+                } else if (mouseX >= 350 && mouseX <= 450) {
+                    this.selected = "Settings";
+                }
+            }
+
+            if (mouseY < 60) {
+                return false;
+            }
+
+            const clickPos = new Position(mouseX, mouseY);
+
+            // Select existing friendly squad
+            if (this.selectSquad(clickPos)) {
+                return false;
+            }
+
+            // Keep original troop spawning unchanged
+            this.spawnTroop(clickPos);
+
+            console.log(
+                "Total objects successfully generated:", this.mapObjects.length);
+
+            return false;
+        }
     }
 
     spawnTroop(position) {
