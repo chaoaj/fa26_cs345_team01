@@ -13,7 +13,7 @@ class SquadBase {
 	constructor(id, name, config = {}) {
 		this.id = id;
 		this.name = name;
-		squads[id] = this;
+		squadBases[id] = this;
 
 		this.startingTroops = config.startingTroops ?? [];			// Should be array of Objects { troop: string (id), count: number }
 		this.formation = config.formation ?? [new Position(0, 0)];	// Array of positions for formation

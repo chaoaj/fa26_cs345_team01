@@ -2,6 +2,7 @@
 // To show it (e.g. after difficulty is confirmed):
 //     mode = new FactionSelectScreen();
 // On Confirm, the chosen Faction is in this.selected
+const factions = {};
 
 
 /**

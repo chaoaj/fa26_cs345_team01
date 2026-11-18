@@ -136,7 +136,7 @@ function defineItems() {
 			config.name,
 			config
 		);
-		squad.startingTroops = config.troops.map(
+		squad.startingTroops = config.startingTroops.map(
 			troopId => {
 				const trp = troopId;
 				trp.troop = troopBases[trp.troop]
