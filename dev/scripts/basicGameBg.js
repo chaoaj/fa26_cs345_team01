@@ -35,6 +35,13 @@ class GameScreen {
         this.enemySquads = new Set();
         this.playerTeam = { colors: TEAMS.PLAYER };
 
+        // added battle interface UI to be loaded
+        this.speed = 1;
+        this.ui = new BattleInterfaceUI(this.playerTeam);
+        this.ui.currency = 100;
+        this.ui.wave = 1;
+        this.ui.waveTime = 90;
+
         this.towerX = RES_X / 2;
         this.towerY = RES_Y / 2;
 
@@ -344,6 +351,10 @@ class GameScreen {
         textAlign(LEFT, CENTER);
         textSize(16);
         text("Selected: " + this.selected, 15, RES_Y - 20);
+
+        // battle interface UI
+        this.ui.draw();
+
     }
 
     drawButton(label, x) {
@@ -375,6 +386,11 @@ class GameScreen {
     }
 
     mousePressed() {
+        // check if battle UI is pressed 
+        if (this.ui.mousePressed()) {
+            return;
+        }
+
         if (!mouseButton.left) {
             return;
         }
