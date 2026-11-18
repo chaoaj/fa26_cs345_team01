@@ -218,9 +218,9 @@ class GameScreen {
 
 
     tick(dt) {
-        // battle interface make timer tick down 
+        // battle interface make timer tick down
         this.ui.waveTime = Math.max(0, this.ui.waveTime - dt);
-        
+
         let dx = 0;
         let dy = 0;
         const dC = dt * 400 / camera.zoom;
@@ -241,6 +241,20 @@ class GameScreen {
         }
         // Draw river first
         this.drawRiver();
+
+        // Draw tower
+        let cut = MAP_OBJECTS['tower'];
+        let scaleFactor = 2;
+
+        let destW = cut.w * scaleFactor;
+        let destH = cut.h * scaleFactor;
+        let drawX = this.towerX - destW / 2;
+        let drawY = this.towerY - destH / 2; // Centers
+
+        if (typeof mapSprites !== 'undefined' && mapSprites && mapSprites.width > 0) {
+            image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+        }
+
 
         for (let obj of this.grassObjects) {
             let cut = MAP_OBJECTS[obj.type];
@@ -270,18 +284,6 @@ class GameScreen {
             image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
         }
 
-        // Draw tower
-        let cut = MAP_OBJECTS['tower'];
-        let scaleFactor = 2;
-
-        let destW = cut.w * scaleFactor;
-        let destH = cut.h * scaleFactor;
-        let drawX = this.towerX - destW / 2;
-        let drawY = this.towerY - destH / 2; // Centers
-
-        if (typeof mapSprites !== 'undefined' && mapSprites && mapSprites.width > 0) {
-            image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
-        }
 
         for (const troop of this.troops) {
             troop.draw();
