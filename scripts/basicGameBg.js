@@ -31,6 +31,8 @@ class GameScreen {
         this.btnHeight = 40;
         this.selected = "None";
         this.troops = [];
+        this.playerSquads = new Set();
+        this.enemySquads = new Set();
         this.playerTeam = { colors: TEAMS.PLAYER };
 
         this.towerX = RES_X / 2;
@@ -240,6 +242,24 @@ class GameScreen {
         */
 
     tick(dt) {
+        let dx = 0;
+        let dy = 0;
+        const dC = dt * 400 / camera.zoom;
+        if (keyIsDown('w')) {
+            dy -= dC;
+        }
+        if (keyIsDown('s')) {
+            dy += dC;
+        }
+        if (keyIsDown('a')) {
+            dx -= dC;
+        }
+        if (keyIsDown('d')) {
+            dx += dC;
+        }
+        if (dx !== 0 || dy !== 0) {
+            camera.move(dx, dy);
+        }
         // Draw river first
         this.drawRiver();
 
@@ -295,7 +315,18 @@ class GameScreen {
         // Tower window
         fill(180, 220, 255);
         rect(towerX - 5, towerY - 10, 10, 10);
-
+        if (this.selectedSquad) {
+            for (const troop of this.selectedSquad.troops) {
+                fill(255, 215, 0, 100);
+                strokeWeight(0);
+                ellipse(troop.position.x, troop.position.y, troop.base.size);
+            }
+        }
+        for (const troop of this.troops) {
+            troop.draw();
+        }
+    }
+    drawAfter() {
         // Draw top taskbar
         noStroke();
         fill(50, 70, 50);
@@ -313,11 +344,6 @@ class GameScreen {
         textAlign(LEFT, CENTER);
         textSize(16);
         text("Selected: " + this.selected, 15, RES_Y - 20);
-    }
-    drawAfter() {
-        for (const troop of this.troops) {
-            troop.draw();
-        }
     }
 
     drawButton(label, x) {
@@ -369,15 +395,24 @@ class GameScreen {
             return;
         }
 
-        this.spawnTroop(new Position(mouseX, mouseY));
+        const mPos = camera.screenToWorld(mouseX, mouseY);
+        for (const trp of this.troops) {
+            if (trp.position.distanceTo(mPos) < trp.base.size * 2) {
+                this.selectedSquad = trp.squad;
+                console.log(`Clicked on squad: `, this.selectedSquad);
+                return;
+            }
+        }
+        this.selectedSquad = null;
+        this.spawnTroop(mPos);
         console.log("Total objects successfully generated:", this.mapObjects.length);
     }
 
     spawnTroop(position) {
-        const base = troopBases["basic"];
+        const squadBase = squadBases.basic_squad;
+        const squad = new Squad(position.x, position.y, position.angle, squadBase, true, this);
 
-        const troop = new Troop(position, this.playerTeam, base);
-        this.troops.push(troop);
-        return troop;
+        // const troop = new Troop(position, this.playerTeam, base);
+        return squad;
     }
 }

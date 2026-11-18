@@ -51,7 +51,7 @@ const TROOP_DEFS = {
 		armor: 1,
 		speed: 50,
 		moveTo: null,
-		size: 10,
+		size: 64,
 		visual: new Visual(function (cols) {
 			let cut = TROOP_OBJECTS['knight'];
 			let scaleFactor = 2;
@@ -97,16 +97,16 @@ const SQUAD_DEFS = {
 			{ troop: "basic", count: 10 }
 		],
 		formation: [
-			new Position(15, 0),
-			new Position(15, 15),
-			new Position(15, -15),
-			new Position(0, -7.5),
-			new Position(0, 7.5),
+			new Position(45, 0),
+			new Position(45, 45),
+			new Position(45, -45),
 			new Position(0, -22.5),
-			new Position(-15, 0),
-			new Position(-15, 15),
-			new Position(-15, -15),
-			new Position(-30, -7.5)
+			new Position(0, 22.5),
+			new Position(0, 67.5),
+			new Position(0, -67.5),
+			new Position(-45, 0),
+			new Position(-45, 45),
+			new Position(-45, -45)
 		]
 	}
 }

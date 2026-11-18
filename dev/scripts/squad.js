@@ -101,9 +101,10 @@ class Squad {
 			const troop = base.startingTroops[i].troop;
 			for (let j = 0; j < base.startingTroops[i].count; j++) {
 				const position = this.getFormationPosition(ct++);
-				const newTroop = new Troop(troop, position.x, position.y, playerOwned, position.angle, mode);
+				const newTroop = new Troop(position, playerOwned, troop);
 				newTroop.squad = this;
 				this.troops.push(newTroop);
+				mode.troops.push(newTroop);
 			}
 			this.allTroops[troop.id] = { // Used for squad stats
 				base: troop,

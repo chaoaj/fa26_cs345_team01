@@ -1,3 +1,9 @@
+const TROOP_OBJECTS = {
+    knight: { x: 0, y: 0, w: 32, h: 32 },
+    sword:  { x: 32, y: 0, w: 16, h: 16 },
+    bow:    { x: 48, y: 0, w: 16, h: 22 }
+};
+
 const WEAPON_DEFS = {
 	sword: {
 		name: 'Sword',
@@ -6,10 +12,15 @@ const WEAPON_DEFS = {
 		attackSpeed: 1.5,
 		range: 10,
 		visual: new Visual(function (cols) {
-			strokeWeight(0);
-			fill(50);
-			rect(0, -0.5, 10, 1);
-			// TODO: Draw basic sword blade
+			let cut = TROOP_OBJECTS['sword'];
+			let scaleFactor = 2;
+			let destW = cut.w * scaleFactor;
+			let destH = cut.h * scaleFactor;
+			let drawX = 0;
+			let drawY = -destH / 2;
+			if (typeof troopSprites !== 'undefined' && troopSprites && troopSprites.width > 0) {
+				image(troopSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+			}
 		})
 	},
 
@@ -20,9 +31,15 @@ const WEAPON_DEFS = {
 		attackSpeed: 0.5,
 		range: 100,
 		visual: new Visual(function (cols) {
-			strokeWeight(0);
-			fill(...cols);
-			// TODO: Draw basic bow
+			let cut = TROOP_OBJECTS['bow'];
+			let scaleFactor = 2;
+			let destW = cut.w * scaleFactor;
+			let destH = cut.h * scaleFactor;
+			let drawX = 0;
+			let drawY = -destH / 2;
+			if (typeof troopSprites !== 'undefined' && troopSprites && troopSprites.width > 0) {
+				image(troopSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+			}
 		})
 	}
 }
@@ -34,16 +51,22 @@ const TROOP_DEFS = {
 		armor: 1,
 		speed: 50,
 		moveTo: null,
-		size: 10,
+		size: 64,
 		visual: new Visual(function (cols) {
-			strokeWeight(0);
-			fill(...cols);
-			ellipse(0, 0, 15, 30);
+			let cut = TROOP_OBJECTS['knight'];
+			let scaleFactor = 2;
+			let destW = cut.w * scaleFactor;
+			let destH = cut.h * scaleFactor;
+			let drawX = -destW / 2;
+			let drawY = -destH / 2;
+			if (typeof troopSprites !== 'undefined' && troopSprites && troopSprites.width > 0) {
+				image(troopSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+			}
 		}),
 		weapons: [
 			{
 				weapon: 'sword',
-				offset: new Position(1, -12),
+				offset: new Position(13, -1),
 				startingAngle: 0,
 				turnRange: [-Math.PI, Math.PI]
 			}
@@ -74,16 +97,16 @@ const SQUAD_DEFS = {
 			{ troop: "basic", count: 10 }
 		],
 		formation: [
-			new Position(15, 0),
-			new Position(15, 15),
-			new Position(15, -15),
-			new Position(0, -7.5),
-			new Position(0, 7.5),
+			new Position(45, 0),
+			new Position(45, 45),
+			new Position(45, -45),
 			new Position(0, -22.5),
-			new Position(-15, 0),
-			new Position(-15, 15),
-			new Position(-15, -15),
-			new Position(-30, -7.5)
+			new Position(0, 22.5),
+			new Position(0, 67.5),
+			new Position(0, -67.5),
+			new Position(-45, 0),
+			new Position(-45, 45),
+			new Position(-45, -45)
 		]
 	}
 }

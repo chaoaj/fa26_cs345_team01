@@ -5,8 +5,6 @@
 // function draw() {
 //   background(220);
 // }
-let RES_X = 1280;
-let RES_Y = 720;
 
 let mapSprites;
 let troopSprites;
@@ -35,7 +33,7 @@ async function setup() {
         console.error("Failed to load mapObjects.png:", err);
     }
     defineItems();
-    // camera = new Camera(MAP_W / 2, MAP_H / 2);
+    camera = new Camera(MAP_W / 2, MAP_H / 2);
     document.oncontextmenu = () => false; // Right click
     // initializeAll(definitions);
     mode = new StartScreen();
@@ -59,10 +57,10 @@ function draw() {
     textStyle(NORMAL);
     mode.tickBefore();
     const dt = deltaTime * 0.001;
-    // camera.update(dt);
-    // camera.begin();
-    mode.tick(dt * mode.speed);
-    // camera.end();
+    camera.update(dt);
+    camera.begin();
+    mode.tick(dt);
+    camera.end();
     mode.drawAfter();
 }
 

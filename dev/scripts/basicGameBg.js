@@ -22,9 +22,7 @@ const MAP_OBJECTS = {
     flatRock:        { x: 224, y: 64, w: 32, h: 32 },
 
     grassTuft1:      { x: 64,  y: 96, w: 32, h: 32 },
-    grassTuft2:      { x: 96,  y: 96, w: 32, h: 32 },
-
-    tower:           { x: 0,   y: 128, w: 64, h: 108 }
+    grassTuft2:      { x: 96,  y: 96, w: 32, h: 32 }
 };
 
 class GameScreen {
@@ -33,12 +31,9 @@ class GameScreen {
         this.btnHeight = 40;
         this.selected = "None";
         this.troops = [];
-        this.playerTeam = { colors: TEAMS.PLAYER };
-        this.enemyTeam = { colors: TEAMS.ENEMY };
-
         this.playerSquads = new Set();
         this.enemySquads = new Set();
-        this.selectedSquad = null;
+        this.playerTeam = { colors: TEAMS.PLAYER };
 
         this.towerX = RES_X / 2;
         this.towerY = RES_Y / 2;
@@ -122,12 +117,7 @@ class GameScreen {
                 x = leftSpace > rightSpace ? random(edgePadding, currentRiverX - riverBuffer) : random(currentRiverX + riverBuffer, RES_X - edgePadding);
             }
 
-            let towerLeft = this.towerX - 75;
-            let towerRight = this.towerX + 75;
-            let towerTop = this.towerY - 115;
-            let towerBottom = this.towerY + 115;
-
-            let nearTower = (x >= towerLeft && x <= towerRight && y >= towerTop && y <= towerBottom);
+            let nearTower = dist(x, y, this.towerX, this.towerY) < 110;
 
             let tooClose = false;
             for (let existing of this.mapObjects) {
@@ -168,13 +158,7 @@ class GameScreen {
                 x = leftSpace > rightSpace ? random(edgePadding, currentRiverX - riverBuffer) : random(currentRiverX + riverBuffer, RES_X - edgePadding);
             }
 
-            let towerLeft = this.towerX - 75;
-            let towerRight = this.towerX + 75;
-            let towerTop = this.towerY - 115;
-            let towerBottom = this.towerY + 115;
-
-            let nearTower = (x >= towerLeft && x <= towerRight && y >= towerTop && y <= towerBottom);
-
+            let nearTower = dist(x, y, this.towerX, this.towerY) < 90;
             if (!nearTower) {
                 let type = random(['grassTuft1', 'grassTuft2']);
                 this.grassObjects.push({ x, y, type });
@@ -182,10 +166,37 @@ class GameScreen {
         }
         this.mapObjects.sort((a, b) => a.y - b.y);
         this.grassObjects.sort((a, b) => a.y - b.y);
+        /* Create random rocks
+        this.rocks = [];
 
+        for (let i = 0; i < 14; i++) {
+            let x = random(25, RES_X - 25);
+            let y = random(70, RES_Y - 25);
+            let w = random(14, 28);
+            let h = random(10, 22);
+            let gray = random(110, 170);
+
+            let nearTower = dist(x, y, this.towerX, this.towerY) < 90;
+            let nearRiver = this.isNearRiver(x, y, max(w, h) / 2 + 10);
+
+            // Only add rock if it's not too close to the tower or river
+            if (!nearTower && !nearRiver) {
+                this.rocks.push({ x, y, w, h, gray });
+            }
+        }
+            */
     }
 
-
+    // Helper function: checks if an object is near the river
+    /* isNearRiver(x, y, buffer) {
+        for (let point of this.river) {
+            if (dist(x, y, point.x, point.y) < buffer) {
+                return true;
+            }
+        }
+        return false;
+    }
+        */
 
     tickBefore() {
         // Green grass background
@@ -216,28 +227,41 @@ class GameScreen {
         noStroke();
     }
 
+    /* drawRocks() {
+        for (let rock of this.rocks) {
+            fill(rock.gray);
+            stroke(90);
+            ellipse(rock.x, rock.y, rock.w, rock.h);
+
+            // small highlight
+            noStroke();
+            fill(rock.gray + 20);
+            ellipse(rock.x - rock.w * 0.15, rock.y - rock.h * 0.15, rock.w * 0.35, rock.h * 0.35);
+        }
+    }
+        */
 
     tick(dt) {
-        // Update troop movement
-        for (const troop of this.troops) {
-            troop.tick(dt, this.troops);
+        let dx = 0;
+        let dy = 0;
+        const dC = dt * 400 / camera.zoom;
+        if (keyIsDown('w')) {
+            dy -= dC;
         }
-        
+        if (keyIsDown('s')) {
+            dy += dC;
+        }
+        if (keyIsDown('a')) {
+            dx -= dC;
+        }
+        if (keyIsDown('d')) {
+            dx += dC;
+        }
+        if (dx !== 0 || dy !== 0) {
+            camera.move(dx, dy);
+        }
         // Draw river first
         this.drawRiver();
-
-        // Draw tower
-        let cut = MAP_OBJECTS['tower'];
-        let scaleFactor = 2;
-
-        let destW = cut.w * scaleFactor;
-        let destH = cut.h * scaleFactor;
-        let drawX = this.towerX - destW / 2;
-        let drawY = this.towerY - destH / 2; // Centers
-
-        if (typeof mapSprites !== 'undefined' && mapSprites && mapSprites.width > 0) {
-            image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
-        }
 
         for (let obj of this.grassObjects) {
             let cut = MAP_OBJECTS[obj.type];
@@ -267,7 +291,42 @@ class GameScreen {
             image(mapSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
         }
 
+        // Draw Tower in center
+        let towerX = this.towerX;
+        let towerY = this.towerY;
 
+        // Tower body
+        fill(120);
+        stroke(60);
+        rect(towerX - 15, towerY - 20, 30, 45);
+
+        // Tower roof
+        fill(80);
+        triangle(
+            towerX - 20, towerY - 20,
+            towerX, towerY - 40,
+            towerX + 20, towerY - 20
+        );
+
+        // Tower door
+        fill(90, 60, 30);
+        rect(towerX - 5, towerY + 10, 10, 15);
+
+        // Tower window
+        fill(180, 220, 255);
+        rect(towerX - 5, towerY - 10, 10, 10);
+        if (this.selectedSquad) {
+            for (const troop of this.selectedSquad.troops) {
+                fill(255, 215, 0, 100);
+                strokeWeight(0);
+                ellipse(troop.position.x, troop.position.y, troop.base.size);
+            }
+        }
+        for (const troop of this.troops) {
+            troop.draw();
+        }
+    }
+    drawAfter() {
         // Draw top taskbar
         noStroke();
         fill(50, 70, 50);
@@ -285,11 +344,6 @@ class GameScreen {
         textAlign(LEFT, CENTER);
         textSize(16);
         text("Selected: " + this.selected, 15, RES_Y - 20);
-    }
-    drawAfter() {
-        for (const troop of this.troops) {
-            troop.draw();
-        }
     }
 
     drawButton(label, x) {
@@ -320,111 +374,45 @@ class GameScreen {
             y + this.btnHeight / 2);
     }
 
-    selectSquad(position) {
-        // Search friendly squads
-        for (const squad of this.playerSquads) {
-
-            // Check whether one of the squad's troops was clicked
-            for (const troop of squad.troops) {
-
-                const distance = troop.position.distanceTo(position);
-
-                if (distance <= troop.base.size + 10) {
-                    this.selectedSquad = squad;
-                    console.log("Selected squad:", squad.base.name);
-                    return true;
-                }
-            }
-        }
-
-        // Deselect if clicking empty ground
-        this.selectedSquad = null;
-        return false;
-    }
-
     mousePressed() {
-        // RIGHT CLICK - Move or attack
-        if (mouseButton === RIGHT) {
-
-            if (this.selectedSquad === null) {
-                return false;
-            }
-
-            // Ignore clicks on the taskbar
-            if (mouseY < 60) {
-                return false;
-            }
-        
-            const clickPos = new Position(mouseX, mouseY);
-
-            // Check if an enemy squad was clicked
-            for (const enemySquad of this.enemySquads) {
-
-                for (const troop of enemySquad.troops) {
-
-                    const distance = troop.position.distanceTo(clickPos);
-
-                    if (distance <= troop.base.size + 10) {
-                        this.selectedSquad.orderAttack(enemySquad);
-
-                        console.log("Attack order issued");
-                        return false;
-                    }
-                }
-            }
-        
-
-            // Otherwise move to right-clicked location
-            this.selectedSquad.attack = null;
-            this.selectedSquad.move(mouseX, mouseY);
-
-            console.log("Move order:", mouseX, mouseY);
-            return false;
+        if (!mouseButton.left) {
+            return;
         }
 
-        // LEFT CLICK - Controls and squad selection
-        if (mouseButton === LEFT) {
-
-            // Taskbar buttons
-            if (mouseY >= 10 && mouseY <= 50) {
-
-                if (mouseX >= 20 && mouseX <= 120) {
-                    this.selected = "Build";
-                } else if (mouseX >= 130 && mouseX <= 230) {
-                    this.selected = "Upgrade";
-                } else if (mouseX >= 240 && mouseX <= 340) {
-                    this.selected = "Shop";
-                } else if (mouseX >= 350 && mouseX <= 450) {
-                    this.selected = "Settings";
-                }
+        if (mouseY >= 10 && mouseY <= 50) {
+            if (mouseX >= 20 && mouseX <= 120) {
+                this.selected = "Build";
+            } else if (mouseX >= 130 && mouseX <= 230) {
+                this.selected = "Upgrade";
+            } else if (mouseX >= 240 && mouseX <= 340) {
+                this.selected = "Shop";
+            } else if (mouseX >= 350 && mouseX <= 450) {
+                this.selected = "Settings";
             }
-
-            if (mouseY < 60) {
-                return false;
-            }
-
-            const clickPos = new Position(mouseX, mouseY);
-
-            // Select existing friendly squad
-            if (this.selectSquad(clickPos)) {
-                return false;
-            }
-
-            // Keep original troop spawning unchanged
-            this.spawnTroop(clickPos);
-
-            console.log(
-                "Total objects successfully generated:", this.mapObjects.length);
-
-            return false;
         }
+
+        if (mouseY < 60) {
+            return;
+        }
+
+        const mPos = camera.screenToWorld(mouseX, mouseY);
+        for (const trp of this.troops) {
+            if (trp.position.distanceTo(mPos) < trp.base.size * 2) {
+                this.selectedSquad = trp.squad;
+                console.log(`Clicked on squad: `, this.selectedSquad);
+                return;
+            }
+        }
+        this.selectedSquad = null;
+        this.spawnTroop(mPos);
+        console.log("Total objects successfully generated:", this.mapObjects.length);
     }
 
     spawnTroop(position) {
-        const base = troopBases["basic"];
+        const squadBase = squadBases.basic_squad;
+        const squad = new Squad(position.x, position.y, position.angle, squadBase, true, this);
 
-        const troop = new Troop(position, this.playerTeam, base);
-        this.troops.push(troop);
-        return troop;
+        // const troop = new Troop(position, this.playerTeam, base);
+        return squad;
     }
 }
