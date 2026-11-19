@@ -1,6 +1,6 @@
 # Sprint N Plan
 
-SCRUM MASTER: ANGELINA. PLEASE REVIEW/EDIT
+SCRUM MASTER: ANGELINA.
 ## Team and Sprint Information
 
 | Field                      | Your answer                                                                                      |
