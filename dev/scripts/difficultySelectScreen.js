@@ -24,25 +24,32 @@ class DifficultySelectScreen {
             this.difficulties[i].y = startY + i * (this.diffHeight + this.diffGap);
         }
 
-        this.btnWidth = 200;
-        this.btnHeight = 50;
+        this.btnWidth = BUTTON_OBJECTS.blueButton.w;
+        this.btnHeight = BUTTON_OBJECTS.blueButton.h;
         this.btnX = RES_X / 2 - this.btnWidth / 2;
         let lastCard = this.difficulties[this.difficulties.length - 1];
         this.btnY = lastCard.y + this.diffHeight + 30;
-        
+
         this.selected = null;
 
     }
 
     tickBefore() {
-        background(30, 30, 50);
-    }
+    if (typeof backgroundImage !== 'undefined' && backgroundImage && backgroundImage.width > 0) {
+            image(backgroundImage, 0, 0, RES_X, RES_Y);
+        } else {
+            // Fallback color while loading
+            background(30, 30, 50);
+        }    }
 
     tick(dt) {
         let anyHovered = false;
 
         textAlign(CENTER, CENTER);
         noStroke();
+        if (typeof pixelFont !== 'undefined' && pixelFont) {
+            textFont(pixelFont);
+        }
         fill(255);
         textSize(40);
         text("Select Difficulty", RES_X / 2, 70);
@@ -72,37 +79,57 @@ class DifficultySelectScreen {
 
             // Name and description to the right of the swatch
             fill(255);
-            textAlign(LEFT, TOP);
+            textAlign(LEFT, CENTER);
             textSize(16);
             text(difficulty.name, this.diffX + 80, difficulty.y + 20);
 
             textSize(12);
-            text(difficulty.desc, this.diffX + 80, difficulty.y + 38, this.diffWidth - 200);
+            text(difficulty.desc, this.diffX + 80, difficulty.y + 38);
             textAlign(CENTER, CENTER);
         }
 
         // Confirm button, disabled until a faction is selected
         let btnHovered = this.selected !== null &&
-                         this.isOver(this.btnX, this.btnY, this.btnWidth, this.btnHeight);
+                        this.isOver(this.btnX, this.btnY, this.btnWidth, this.btnHeight);
         if (btnHovered) {
             anyHovered = true;
         }
 
-        if (this.selected === null) {
-            fill(90);           // Grey when disabled
-        } else if (btnHovered) {
-            fill(100, 160, 210);
+        // Draw Confirm Button
+        if (typeof buttonSprites !== 'undefined' && buttonSprites) {
+            let b;
+            if (this.selected === null) {
+                b = BUTTON_OBJECTS.greyButton; // Gray when disabled
+            } else if (btnHovered) {
+                b = BUTTON_OBJECTS.blueHover;  // Blue hover when active and hovered
+            } else {
+                b = BUTTON_OBJECTS.blueButton; // Blue when active
+            }
+
+            image(buttonSprites,
+                this.btnX, this.btnY, this.btnWidth, this.btnHeight,
+                b.x, b.y, b.w, b.h);
         } else {
-            fill(70, 130, 180);
+            // Fallback rectangle if sprites are not loaded
+            if (this.selected === null) {
+                fill(90);
+            } else if (btnHovered) {
+                fill(100, 160, 210);
+            } else {
+                fill(70, 130, 180);
+            }
+            stroke(255);
+            rect(this.btnX, this.btnY, this.btnWidth, this.btnHeight, 10);
+            noStroke();
         }
 
-        stroke(255);
-        rect(this.btnX, this.btnY, this.btnWidth, this.btnHeight, 10);
-
-        noStroke();
+        // Confirm Text Label
         fill(255);
-        textSize(20);
-        text("Confirm", RES_X / 2, this.btnY + this.btnHeight / 2);
+        if (typeof pixelFont !== 'undefined' && pixelFont) {
+            textFont(pixelFont);
+        }
+        textSize(16);
+        text("Confirm", this.btnX + this.btnWidth / 2, this.btnY + this.btnHeight / 2);
 
         // Set cursor once so multiple buttons don't override each other
         cursor(anyHovered ? HAND : ARROW);

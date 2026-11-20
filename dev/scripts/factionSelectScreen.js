@@ -33,7 +33,7 @@ class FactionSelectScreen {
         //   Spiritbound - nature and spirit (Ionia in League of Legends, the Dryad in Terraria)
         //   Steampunk   - brass-and-steam inventors (Piltover in League of Legends)
 
-        // In the squads, the archetypes I was aiming for 
+        // In the squads, the archetypes I was aiming for
         // Basic expendable troops
         // Juggernaut class
         // Tank class
@@ -61,8 +61,8 @@ class FactionSelectScreen {
             this.factions[i].y = startY + i * (this.cardHeight + this.cardGap);
         }
 
-        this.btnWidth = 200;
-        this.btnHeight = 50;
+        this.btnWidth = BUTTON_OBJECTS.blueButton.w;
+        this.btnHeight = BUTTON_OBJECTS.blueButton.h;
         this.btnX = RES_X / 2 - this.btnWidth / 2;
         let lastCard = this.factions[this.factions.length - 1];
         this.btnY = lastCard.y + this.cardHeight + 30;
@@ -71,13 +71,21 @@ class FactionSelectScreen {
     }
 
     tickBefore() {
-        background(30, 30, 50);
+        if (typeof backgroundImage !== 'undefined' && backgroundImage && backgroundImage.width > 0) {
+            image(backgroundImage, 0, 0, RES_X, RES_Y);
+        } else {
+            // Fallback color while loading
+            background(30, 30, 50);
+        }
     }
 
     tick(dt) {
         let anyHovered = false;
 
         textAlign(CENTER, CENTER);
+        if (typeof pixelFont !== 'undefined' && pixelFont) {
+            textFont(pixelFont);
+        }
         noStroke();
         fill(255);
         textSize(40);
@@ -103,18 +111,30 @@ class FactionSelectScreen {
 
             // Color swatch on the left: accent ring around the primary color
             let swatchY = faction.y + this.cardHeight / 2;
-            noStroke();
-            fill(faction.colors.accent);
-            circle(this.cardX + 90, swatchY, 100);
-            fill(faction.colors.primary);
-            circle(this.cardX + 90, swatchY, 76);
+            if (typeof buttonSprites !== 'undefined' && buttonSprites) {
+                let gemDef;
+                if (faction.id === "imperial") gemDef = BUTTON_OBJECTS.imperialGem;
+                else if (faction.id === "spiritbound") gemDef = BUTTON_OBJECTS.spiritGem;
+                else if (faction.id === "steampunk") gemDef = BUTTON_OBJECTS.steamGem;
+
+                if (gemDef) {
+                    let drawW = 80; // scale to fit nicely in card slot
+                    let drawH = (gemDef.h / gemDef.w) * drawW;
+                    image(buttonSprites,
+                        (this.cardX + 90) - drawW / 2, swatchY - drawH / 2, drawW, drawH,
+                        gemDef.x, gemDef.y, gemDef.w, gemDef.h);
+                }
+            }
 
             // Name and description to the right of the swatch
             fill(255);
+            strokeWeight(15);
+            stroke(faction.colors.primary);
             textAlign(LEFT, TOP);
             textSize(28);
             text(faction.name, this.cardX + 170, faction.y + 35);
-
+            noStroke();
+            fill(255);
             textSize(16);
             text(faction.desc, this.cardX + 170, faction.y + 80, this.cardWidth - 200);
             textAlign(CENTER, CENTER);
@@ -127,21 +147,41 @@ class FactionSelectScreen {
             anyHovered = true;
         }
 
-        if (this.selected === null) {
-            fill(90);           // Grey when disabled
-        } else if (btnHovered) {
-            fill(100, 160, 210);
+        // Draw Confirm Button using sprite sheet
+        if (typeof buttonSprites !== 'undefined' && buttonSprites) {
+            let b;
+            if (this.selected === null) {
+                b = BUTTON_OBJECTS.greyButton; // Gray when disabled
+            } else if (btnHovered) {
+                b = BUTTON_OBJECTS.blueHover;  // Blue hover when active and hovered
+            } else {
+                b = BUTTON_OBJECTS.blueButton; // Blue when active
+            }
+
+            image(buttonSprites,
+                this.btnX, this.btnY, this.btnWidth, this.btnHeight,
+                b.x, b.y, b.w, b.h);
         } else {
-            fill(70, 130, 180);
+            // Fallback rectangle if sprites are not loaded
+            if (this.selected === null) {
+                fill(90);
+            } else if (btnHovered) {
+                fill(100, 160, 210);
+            } else {
+                fill(70, 130, 180);
+            }
+            stroke(255);
+            rect(this.btnX, this.btnY, this.btnWidth, this.btnHeight, 10);
+            noStroke();
         }
 
-        stroke(255);
-        rect(this.btnX, this.btnY, this.btnWidth, this.btnHeight, 10);
-
-        noStroke();
+        // Confirm Text Label
         fill(255);
-        textSize(20);
-        text("Confirm", RES_X / 2, this.btnY + this.btnHeight / 2);
+        if (typeof pixelFont !== 'undefined' && pixelFont) {
+            textFont(pixelFont);
+        }
+        textSize(16);
+        text("Confirm", this.btnX + this.btnWidth / 2, this.btnY + this.btnHeight / 2);
 
         // Set cursor once so multiple buttons don't override each other
         cursor(anyHovered ? HAND : ARROW);

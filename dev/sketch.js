@@ -8,6 +8,9 @@
 
 let mapSprites;
 let troopSprites;
+let backgroundImage;
+let buttonSprites;
+let pixelFont;
 let assetsLoaded = false;
 
 // Team colors, set to defaults to begin
@@ -27,6 +30,9 @@ async function setup() {
     try {
         mapSprites = await loadImageAsync('../assets/mapObjects.png');
         troopSprites = await loadImageAsync('../assets/troopObjects.png');
+        backgroundImage = await loadImageAsync('../assets/woodBackground.png');
+        buttonSprites = await loadImageAsync('../assets/buttons.png');
+        pixelFont = await loadFontAsync('../assets/pixelFont/PublicPixel.ttf');
         assetsLoaded = true;
         console.log("All sprite sheets loaded successfully!");
     } catch (err) {
@@ -45,6 +51,15 @@ function loadImageAsync(path) {
     return new Promise((resolve, reject) => {
         loadImage(path,
             img => resolve(img),
+            err => reject(err)
+        );
+    });
+}
+
+function loadFontAsync(path) {
+    return new Promise((resolve, reject) => {
+        loadFont(path,
+            font => resolve(font),
             err => reject(err)
         );
     });
