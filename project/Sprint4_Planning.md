@@ -1,4 +1,4 @@
-# Sprint N Plan
+# Sprint 4 Plan
 
 > **How to use this template:** Copy this to a SprintNPlan.md (i.e. Sprint1Plan.md).  Replace every `[bracketed placeholder]` with your team's information. Delete the instruction lines (they start with ✏️) before you submit. Copy the "Sprint Backlog Item" section once for each item in your sprint.
 
@@ -6,13 +6,13 @@
 
 | Field | Your answer |
 | --- | --- |
-| Team name | [Team name] |
-| Team members | [Name 1], [Name 2], [Name 3], [Name 4] , [Name 5], [Name 6]|
-| Project | [Project name] |
-| Sprint | Sprint 1 |
-| Sprint start date | [YYYY-MM-DD] |
-| Sprint end date (demo day) | [YYYY-MM-DD] |
-| GitHub Projects link | [Paste the link to your GitHub Project] |
+| Team name | Team 1 |
+| Team members | Amaya Cranford, Angelina Yoha, Yony Woube, Caden Cole VanValkenburg , Parker Giles, Parash Khanal|
+| Project | Tower Defense Game |
+| Sprint | Sprint 4 |
+| Sprint start date | 2026-11-04 |
+| Sprint end date (demo day) | 2026-12-04 |
+| GitHub Projects link | https://github.com/users/chaoaj/projects/5/views/1 |
 
 ## 1. Sprint Goal
 
@@ -30,10 +30,8 @@
 
 ### 2. GitHub Projects Setup Checklist
 
-✏️ *Check each box once it is done in GitHub Projects. Change `[ ]` to `[x]`.*
-
-- [ ] Created a new Sprint (iteration) named "Sprint 1" in GitHub Projects
-- [ ] Moved every Sprint Backlog Item into Sprint 1
+- [x] Created a new Sprint (iteration) named "Sprint 4" in GitHub Projects
+- [x] Moved every Sprint Backlog Item into Sprint 4
 - [ ] Every Sprint Backlog Item has a story-point estimate
 - [ ] Every Sprint Backlog Item has acceptance criteria
 - [ ] Every Sprint Backlog Item has tasks with hour estimates and assigned team members, listed in the item's comments
@@ -41,54 +39,28 @@
 
 ## 3. Sprint Backlog Summary
 
-✏️ *List every item in this sprint. Write each item from the stakeholder's point of view ("As a [type of user], I want [something] so that [benefit]").*
-
 | # | Sprint Backlog Item (user story) | Story points | GitHub issue |
 | --- | --- | --- | --- |
-| 1 | As a [user], I want [feature] so that [benefit]. | [pts] | [#issue] |
-| 2 | As a [user], I want [feature] so that [benefit]. | [pts] | [#issue] |
-| 3 | As a [user], I want [feature] so that [benefit]. | [pts] | [#issue] |
+| 1 | As a User, I want to fight the oncoming waves of enemies | 3 | #13 |
+| 2 | As a User, I want to be able to end the endless waves and win the game | [pts] | #14 |
+| 3 | As a User, I want my faction to have access to unique troops | [pts] | [#issue] | #17 |
+| 4 | As a User, I want my items on the map to actually collide, rather than gliding through each other |   | #19 |
+| 5 | As a User, I want my troops to actually attack the enemies |   | #24 |
+| 6 | As a User, I want custom designs for each faction so that I can distinguish between them | 4 | #27 |
 | | **Total story points** | **[total]** | |
 
 ## 4. Work Distribution
 
-✏️ *Add up each person's task hours from Section 4. Hours should be split roughly evenly.*
-
 | Team member | Tasks assigned (count) | Total hours |
 | --- | --- | --- |
-| [Name 1] | [count] | [hrs] |
-| [Name 2] | [count] | [hrs] |
-| [Name 3] | [count] | [hrs] |
-| [Name 4] | [count] | [hrs] |
+| Amaya Cranford | 4 | 4 hrs |
+| Angelina Yoha | [count] | [hrs] |
+| Yony Woube | [count] | [hrs] |
+| Caden Cole VanValkenburg | [count] | [hrs] |
+| Parker Giles | [count] | [hrs] |
+| Parash Khanal | [count] | [hrs] |
 | **Team total** | **[count]** | **[hrs]** |
 
 **Is the work split fairly?** [Yes / No. If not, explain why, for example "Name 2 has fewer hours because they are also setting up the repository."]
 
 ## ============================================================================
-## Example (delete before submitting)
-
-This example shows one completed Sprint Backlog Item.
-
-### Item 1: Application logo
-
-**User story:** As a user, I want the app to display an application logo at the top of the screen so that I know which app I am using.
-
-**Story points:** 2
-
-**GitHub issue:** #4
-
-**Acceptance criteria:**
-
-1. As a user, I can see an application logo at the top of the screen.
-2. The logo has alternative text that names the app.
-
-**Tasks:**
-
-| Task | Estimate (hours) | Assigned to |
-| --- | --- | --- |
-| Create logo artwork | 2 | Clark Kent |
-| Write code to display the logo | 1 | Diana Prince |
-| Review code | 1 | Bruce Wayne |
-| **Total for this item** | **4** | |
-
-These tasks are enough to complete the item, and each one can be done independently.
