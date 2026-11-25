@@ -136,7 +136,8 @@ const TROOP_DEFS = {
 		]
 	},
 
-	base: { // the base or "keep" to  defend
+  // centeral base 
+	base: {
 		name: 'Centeral Base',
 		health: 100,
 		armor: 0,
@@ -152,6 +153,7 @@ const TROOP_DEFS = {
 };
 
 const SQUAD_DEFS = {
+  // knight squad 
 	basic_squad: {
 		name: 'Knight Squad',
 		cost: 1000,
@@ -171,6 +173,38 @@ const SQUAD_DEFS = {
 			new Position(-45, 0),
 			new Position(-45, 45),
 			new Position(-45, -45)
+		]
+	},
+
+  // elf squad 
+  elf_squad: {
+		name: 'Elf Squad',
+		faction: 'spiritBound_faction',
+		cost: 1200,
+		pros: [],
+		cons: [],
+		startingTroops: [
+			{ troop: 'elf', count: 2 }
+		],
+		formation: [
+			new Position(25, -20),
+			new Position(25, 20)
+		]
+	},
+
+  // wizard squad 
+	wizard_squad: {
+		name: 'Wizard Squad',
+		faction: 'spiritBound_faction',
+		cost: 1400,
+		pros: [],
+		cons: [],
+		startingTroops: [
+			{ troop: 'wizard', count: 2 }
+		],
+		formation: [
+			new Position(35, -22),
+			new Position(35, 22)
 		]
 	}
 };
