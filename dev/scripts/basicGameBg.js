@@ -257,11 +257,31 @@ class GameScreen {
         }
     }
 
+    /**
+     * Whether the mouse is over the central base (tower sprite is 128 x 216, centered)
+     * @returns {boolean}
+     */
+    isOverBase() {
+        // Use map coordinates if the camera is running, since the tower sits on the map
+        const mPos = (typeof camera !== 'undefined' && camera)
+            ? camera.screenToWorld(mouseX, mouseY)
+            : new Position(mouseX, mouseY);
+
+        return Math.abs(mPos.x - this.towerX) <= 64 &&
+               Math.abs(mPos.y - this.towerY) <= 108;
+    }
+
     drawBaseHealthBar() {
-        const barW = 120;
-        const barH = 12;
-        const x = this.towerX - barW / 2;
-        const y = this.towerY - 125; // above the tower
+        // Only show the bar while the mouse is over the base
+        if (!this.isOverBase()) {
+            return;
+        }
+
+        const barW = 100;
+        const barH = 10;
+        const offsetX = 7; // nudge the bar to the right
+        const x = this.towerX - barW / 2 + offsetX;
+        const y = this.towerY - 120; // above the tower
         const fraction = this.baseHealth / this.baseMaxHealth;
 
         // Background
@@ -273,11 +293,11 @@ class GameScreen {
         // Health: green, then yellow, then red as it drops
         noStroke();
         if (fraction > 0.5) {
-            fill(80, 200, 80);
+            fill(60, 255, 80);
         } else if (fraction > 0.25) {
-            fill(230, 190, 40);
+            fill(255, 230, 0);
         } else {
-            fill(220, 60, 60);
+            fill(225, 50, 50);
         }
         rect(x, y, barW * fraction, barH);
     }
