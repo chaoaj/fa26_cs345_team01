@@ -53,6 +53,9 @@ class GameScreen {
         this.towerX = RES_X / 2;
         this.towerY = RES_Y / 2;
 
+        // Central base health
+        this.baseMaxHealth = troopBases.keep ? troopBases.keep.health : 100;
+        this.baseHealth = this.baseMaxHealth;
 
         // Create randomized river
         this.river = [];
@@ -243,6 +246,41 @@ class GameScreen {
         noStroke();
     }
 
+        /**
+     * Damage the central base. Reaching zero health ends the game.
+     * @param {number} amount damage dealt to the base
+     */
+    damageBase(amount) {
+        this.baseHealth = Math.max(0, this.baseHealth - amount);
+        if (this.baseHealth <= 0) {
+            mode = new GameOverScreen();
+        }
+    }
+
+    drawBaseHealthBar() {
+        const barW = 120;
+        const barH = 12;
+        const x = this.towerX - barW / 2;
+        const y = this.towerY - 125; // above the tower
+        const fraction = this.baseHealth / this.baseMaxHealth;
+
+        // Background
+        stroke(255);
+        strokeWeight(1);
+        fill(60);
+        rect(x, y, barW, barH);
+
+        // Health: green, then yellow, then red as it drops
+        noStroke();
+        if (fraction > 0.5) {
+            fill(80, 200, 80);
+        } else if (fraction > 0.25) {
+            fill(230, 190, 40);
+        } else {
+            fill(220, 60, 60);
+        }
+        rect(x, y, barW * fraction, barH);
+    }
 
     tick(dt) {
         // Game time: scaled by speed, 0 while paused. Use gameDt for anything that should
@@ -326,6 +364,9 @@ class GameScreen {
         for (const troop of this.troops) {
             troop.draw();
         }
+
+        // draw centeral base health 
+        this.drawBaseHealthBar();
     }
     drawAfter() {
         // Draw top taskbar
