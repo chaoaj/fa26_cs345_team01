@@ -54,7 +54,7 @@ class GameScreen {
         this.towerY = RES_Y / 2;
 
         // Central base health
-        this.baseMaxHealth = troopBases.keep ? troopBases.keep.health : 100;
+        this.baseMaxHealth = troopBases.base ? troopBases.base.health : 100;
         this.baseHealth = this.baseMaxHealth;
 
         // Create randomized river

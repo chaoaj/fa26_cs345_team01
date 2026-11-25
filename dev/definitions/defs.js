@@ -136,8 +136,8 @@ const TROOP_DEFS = {
 		]
 	},
 
-	keep: { // the base or "keep" to  defend
-		name: 'Keep',
+	base: { // the base or "keep" to  defend
+		name: 'Centeral Base',
 		health: 100,
 		armor: 0,
 		speed: 0,
