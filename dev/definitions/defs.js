@@ -4,7 +4,9 @@ const TROOP_OBJECTS = {
     bow:    { x: 48, y: 0, w: 16, h: 22 }
 };
 
+// defintions for weapon objects
 const WEAPON_DEFS = {
+  // sword weapon
 	sword: {
 		name: 'Sword',
 		type: 'melee',
@@ -24,6 +26,7 @@ const WEAPON_DEFS = {
 		})
 	},
 
+  // bow weapon
 	bow: {
 		name: 'Bow',
 		type: 'projectile',
@@ -41,9 +44,27 @@ const WEAPON_DEFS = {
 				image(troopSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
 			}
 		})
-	}
+	},
+  
+  // wand weapon 
+  wand: {
+		name: 'Wand',
+		type: 'projectile',
+		damage: 4,
+		attackSpeed: 0.75,
+		range: 110,
+		projectile: {
+			kind: 'fireball',
+			radius: 6,
+			speed: 240
+		},
+		visual: new Visual(function (cols) {
+			// TODO: draw wand sprite here later
+		})
+	},
 }
 
+// defintions for troop objects
 const TROOP_DEFS = {
 	basic: {
 		name: 'Basic',
@@ -72,6 +93,49 @@ const TROOP_DEFS = {
 			}
 		]
 	},
+
+  // ELF TROOP (SPIRIT BOUND) -----------------
+  elf: {
+		name: 'Elf',
+		health: 8,
+		armor: 0,
+		speed: 65,
+		moveTo: null,
+		size: 64,
+		visual: new Visual(function (cols) {
+			// TODO: draw elf sprite later
+		}),
+		weapons: [
+			{
+				weapon: 'bow',
+				offset: new Position(12, 0),
+				startingAngle: 0,
+				turnRange: [-Math.PI, Math.PI]
+			}
+		]
+	},
+
+  // WIZARD TROOP (SPIRIT BOUND) -----------------
+  wizard: {
+		name: 'Wizard',
+		health: 7,
+		armor: 0,
+		speed: 45,
+		moveTo: null,
+		size: 64,
+		visual: new Visual(function (cols) {
+			// TODO: draw wizard sprite later
+		}),
+		weapons: [
+			{
+				weapon: 'wand',
+				offset: new Position(12, 0),
+				startingAngle: 0,
+				turnRange: [-Math.PI, Math.PI]
+			}
+		]
+	},
+
 	keep: { // the base or "keep" to  defend
 		name: 'Keep',
 		health: 100,
@@ -89,7 +153,7 @@ const TROOP_DEFS = {
 
 const SQUAD_DEFS = {
 	basic_squad: {
-		name: 'Squad Template',
+		name: 'Knight Squad',
 		cost: 1000,
 		pros: [],
 		cons: [],
@@ -109,4 +173,4 @@ const SQUAD_DEFS = {
 			new Position(-45, -45)
 		]
 	}
-}
+};
