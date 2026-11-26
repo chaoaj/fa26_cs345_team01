@@ -52,7 +52,7 @@ const WEAPON_DEFS = {
   wand: {
 		name: 'Wand',
 		type: 'projectile',
-		damage: 4,
+		damage: 5,
 		attackSpeed: 0.75,
 		range: 110,
 		projectile: {
@@ -183,35 +183,15 @@ const SQUAD_DEFS = {
 		pros: [],
 		cons: [],
 		startingTroops: [
-			{ troop: "basic", count: 10 }
+			{ troop: "basic", count: 6 }
 		],
 		formation: [
 			new Position(45, 0),
-			new Position(45, 45),
-			new Position(45, -45),
 			new Position(0, -22.5),
 			new Position(0, 22.5),
-			new Position(0, 67.5),
-			new Position(0, -67.5),
 			new Position(-45, 0),
 			new Position(-45, 45),
 			new Position(-45, -45)
-		]
-	},
-
-  // elf squad 
-  elf_squad: {
-		name: 'Elf Squad',
-		faction: 'spiritBound_faction',
-		cost: 1200,
-		pros: [],
-		cons: [],
-		startingTroops: [
-			{ troop: 'elf', count: 2 }
-		],
-		formation: [
-			new Position(25, -20),
-			new Position(25, 20)
 		]
 	},
 
@@ -228,6 +208,22 @@ const SQUAD_DEFS = {
 		formation: [
 			new Position(35, -22),
 			new Position(35, 22)
+		]
+	},
+
+  // elf squad 
+  elf_squad: {
+		name: 'Elf Squad',
+		faction: 'spiritBound_faction',
+		cost: 1200,
+		pros: [],
+		cons: [],
+		startingTroops: [
+			{ troop: 'elf', count: 2 }
+		],
+		formation: [
+			new Position(25, -20),
+			new Position(25, 20)
 		]
 	}
 };
