@@ -382,7 +382,11 @@ class GameScreen {
             }
         }
         for (const troop of this.troops) {
-            troop.draw();
+          // update troop movement
+          if (gameDt > 0) {
+                troop.updateMovement(gameDt);
+            }
+          troop.draw();
         }
 
         // draw centeral base health 
@@ -461,14 +465,35 @@ class GameScreen {
     }
 
     mousePressed() {
-        // check if battle UI is pressed
-        if (this.ui.mousePressed()) {
-            return;
-        }
+      // check if battle UI is pressed
+      if (this.ui.mousePressed()) {
+          return;
+      }
 
-        if (!mouseButton.left) {
-            return;
-        }
+      const mPos = camera.screenToWorld(mouseX, mouseY);
+
+      const isRightClick =
+          mouseButton === RIGHT ||
+          mouseButton === 'right' ||
+          Boolean(mouseButton && mouseButton.right);
+
+      // Right-click moves the currently selected squad to mPos
+      if (isRightClick) {
+        if (mouseY >= 60 && mouseY < this.ui.barY && this.selectedSquad) {
+            this.moveSquadTo(this.selectedSquad, mPos);
+          }
+          return;
+      }
+
+      const isLeftClick =
+      mouseButton === LEFT ||
+      mouseButton === 'left' ||
+      Boolean(mouseButton && mouseButton.left) ||
+       mouseButton == null;
+
+      if (!isLeftClick) {
+          return;
+      }
 
         if (mouseY >= 10 && mouseY <= 50) {
             if (mouseX >= 20 && mouseX <= 120) {
@@ -486,7 +511,6 @@ class GameScreen {
             return;
         }
 
-      const mPos = camera.screenToWorld(mouseX, mouseY);
         for (const trp of this.troops) {
             if (trp.position.distanceTo(mPos) < trp.base.size * 2) {
                 this.selectedSquad = trp.squad;
@@ -495,6 +519,7 @@ class GameScreen {
                 return;
             }
         }
+
         this.selectedSquad = null;
         if (this.ui.selectedSquadBase) {
             this.spawnTroop(mPos);
@@ -502,6 +527,18 @@ class GameScreen {
         console.log("Total objects successfully generated:", this.mapObjects.length);
     }
 
+    moveSquadTo(squad, targetPos) {
+      const troops = squad.troops ?? [];
+      const formation = squad.base?.formation ?? [];
+      troops.forEach((troop, i) => {
+          const offset = formation[i] ?? { x: 0, y: 0 };
+          troop.orderMove(new Position(
+            targetPos.x + offset.x,
+            targetPos.y + offset.y,
+            targetPos.angle ?? 0
+          ));
+      });
+    }
     spawnTroop(position) {
         const squadBase = this.ui.selectedSquadBase;
         const squad = new Squad(position.x, position.y, position.angle, squadBase, true, this);

@@ -30,6 +30,10 @@ class Troop {
             target: null
         }));
         this.moveTo = base.moveTo;
+
+        // walking animation
+        this.animTimer = 0;
+        this.animFrame = 0;
     }
 
     orderMove(position) {
@@ -39,7 +43,9 @@ class Troop {
     updateMovement(dt) {
 
         if (this.moveTo === null) {
-            return;
+          this.animTimer = 0;
+          this.animFrame = 0;
+          return;
         }
 
         const dx = this.moveTo.x - this.position.x;
@@ -52,7 +58,18 @@ class Troop {
             this.position.y = this.moveTo.y;
             this.position.angle = this.moveTo.angle;
             this.moveTo = null;
+            // stops walking animation
+            this.animTimer = 0;
+            this.animFrame = 0;
             return;
+        }
+
+        // Advance walk animation (8 frames per second)
+        this.animTimer += dt;
+        const frameDuration = 1 / 8;
+        if (this.animTimer >= frameDuration) {
+          this.animTimer -= frameDuration;
+          this.animFrame++;
         }
 
         // Calculate distance to move this frame
@@ -66,19 +83,23 @@ class Troop {
     }
 
     draw() {
-        push();
-        translate(this.position.x, this.position.y);
-        rotate(this.position.angle);
-        this.visual.draw([255, 0, 0]);
-        // this.visual.draw(this.team.colors);
-        for (const wep of this.weapons) {
-            push()
-            translate(wep.mount.offset.x, wep.mount.offset.y);
-            rotate(wep.angle);
-            wep.mount.weapon.visual.draw([255, 0, 0]);
-            pop();
-        }
-        pop();
+      const facingLeft = Math.cos(this.position.angle) < 0;
+
+      push();
+      translate(this.position.x, this.position.y);
+      if (facingLeft) {
+          scale(-1, 1);
+      }
+      this.visual.draw([255, 0, 0], this.animFrame);
+      // this.visual.draw(this.team.colors);
+      for (const wep of this.weapons) {
+          push()
+          translate(wep.mount.offset.x, wep.mount.offset.y);
+          rotate(wep.angle);
+          wep.mount.weapon.visual.draw([255, 0, 0]);
+          pop();
+      }
+      pop();
     }
 
     /**

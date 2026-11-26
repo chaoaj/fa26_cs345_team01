@@ -1,9 +1,23 @@
 const TROOP_OBJECTS = {
     knight: { x: 0, y: 0, w: 32, h: 32 },
-    sword:  { x: 32, y: 0, w: 16, h: 16 },
-    bow:    { x: 48, y: 0, w: 16, h: 22 },
+    knightWalk: [ // frames of walking animation 
+        { x: 0,  y: 0, w: 32, h: 32 }, 
+        { x: 32, y: 0, w: 32, h: 32 },
+        { x: 64, y: 0, w: 32, h: 32 },
+        { x: 96, y: 0, w: 32, h: 32 }
+    ],
+
     wizard: { x: 0, y: 32, w: 32, h: 32 },
-    wand:   { x: 32, y: 32, w: 24, h: 32 }
+    wizardWalk: [ // frames of walking animation
+        { x: 0,  y: 32, w: 32, h: 32 },
+        { x: 32, y: 32, w: 32, h: 32 },
+        { x: 64, y: 32, w: 32, h: 32 },
+        { x: 96, y: 32, w: 32, h: 32 }
+    ],
+
+    sword:  { x: 0,  y: 64, w: 32, h: 32 },
+    bow:    { x: 32, y: 64, w: 32, h: 32 },
+    wand:   { x: 64, y: 64, w: 32, h: 32 }
 };
 
 // defintions for weapon objects
@@ -69,28 +83,37 @@ const WEAPON_DEFS = {
 			let drawY = -destH / 2;
 			if (typeof troopSprites !== 'undefined' && troopSprites && troopSprites.width > 0) {
 				image(troopSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
-				// Temporary debug border showing the exact crop area
-				// noFill();
-				// stroke(0, 255, 255);
-				// strokeWeight(1);
-				// rect(drawX, drawY, destW, destH);
 			}
 		})
 	},
+
+  // dagger weapon
+  dagger: {
+    name: 'Dagger',
+    type: 'melee',
+    damage: 3,
+    attackSpeed: 0.75,
+    range: 7,
+    visual: new Visual(function (cols) {
+      // TODO: draw dagger sprite
+    })
+
+  }
 }
 
 // defintions for troop objects
 const TROOP_DEFS = {
   // KNIGHT TROOP (IMPERIAL) -----------------------
 	basic: {
-		name: 'Basic',
+		name: 'Knight',
 		health: 10,
 		armor: 1,
 		speed: 50,
 		moveTo: null,
 		size: 64,
-		visual: new Visual(function (cols) {
-			let cut = TROOP_OBJECTS['knight'];
+    visual: new Visual(function (cols, frame = 0) {
+			let frames = TROOP_OBJECTS['knightWalk']; // use 'wizardWalk' for wizard
+			let cut = frames[frame % frames.length];
 			let scaleFactor = 2;
 			let destW = cut.w * scaleFactor;
 			let destH = cut.h * scaleFactor;
@@ -103,7 +126,28 @@ const TROOP_DEFS = {
 		weapons: [
 			{
 				weapon: 'sword',
-				offset: new Position(13, -1),
+				offset: new Position(1, 1),
+				startingAngle: 0,
+				turnRange: [-Math.PI, Math.PI]
+			}
+		]
+	},
+
+  // ROYAL ARCHER (IMPERIAL) -----------------
+  royal_archer: {
+		name: 'Archer',
+		health: 8,
+		armor: 0,
+		speed: 60,
+		moveTo: null,
+		size: 64,
+		visual: new Visual(function (cols) {
+			// TODO: draw archer sprite later
+		}),
+		weapons: [
+			{
+				weapon: 'bow',
+				offset: new Position(12, 0),
 				startingAngle: 0,
 				turnRange: [-Math.PI, Math.PI]
 			}
@@ -118,8 +162,9 @@ const TROOP_DEFS = {
 		speed: 45,
 		moveTo: null,
 		size: 64,
-    visual: new Visual(function (cols) {
-			let cut = TROOP_OBJECTS['wizard'];
+    visual: new Visual(function (cols, frame = 0) {
+			let frames = TROOP_OBJECTS['wizardWalk'];
+			let cut = frames[frame % frames.length];
 			let scaleFactor = 2;
 			let destW = cut.w * scaleFactor;
 			let destH = cut.h * scaleFactor;
@@ -132,18 +177,19 @@ const TROOP_DEFS = {
 		weapons: [
 			{
 				weapon: 'wand',
-				offset: new Position(12, 0),
+				offset: new Position(-4, 6),
 				startingAngle: 0,
 				turnRange: [-Math.PI, Math.PI]
 			}
 		]
 	},
-  // ELF TROOP (SPIRIT BOUND) -----------------
+
+  // ELF (SPIRIT BOUND) -----------------
   elf: {
 		name: 'Elf',
-		health: 8,
+		health: 6,
 		armor: 0,
-		speed: 65,
+		speed: 60,
 		moveTo: null,
 		size: 64,
 		visual: new Visual(function (cols) {
@@ -151,14 +197,13 @@ const TROOP_DEFS = {
 		}),
 		weapons: [
 			{
-				weapon: 'bow',
+				weapon: 'dagger',
 				offset: new Position(12, 0),
 				startingAngle: 0,
 				turnRange: [-Math.PI, Math.PI]
 			}
 		]
 	},
-
   // centeral base 
 	base: {
 		name: 'Centeral Base',
@@ -179,6 +224,7 @@ const SQUAD_DEFS = {
   // knight squad 
 	basic_squad: {
 		name: 'Knight Squad',
+    faction: 'imperial_faction',
 		cost: 1000,
 		pros: [],
 		cons: [],
@@ -194,6 +240,21 @@ const SQUAD_DEFS = {
 			new Position(-45, -45)
 		]
 	},
+
+  // archer squad
+  archer_squad: {
+    name: 'Royal Archer Squad',
+    faction: 'imperial_faction',
+    cost: 1000,
+    pros: [],
+    cons: [],
+    startingTroops: [
+      { troop: 'royal_archer', count: 4 }
+    ],
+    formation: [
+      // decide formation
+    ]
+  },
 
   // wizard squad 
 	wizard_squad: {
