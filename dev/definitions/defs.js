@@ -15,9 +15,9 @@ const TROOP_OBJECTS = {
         { x: 96, y: 32, w: 32, h: 32 }
     ],
 
-    sword:  { x: 0,  y: 64, w: 32, h: 32 },
-    bow:    { x: 32, y: 64, w: 32, h: 32 },
-    wand:   { x: 64, y: 64, w: 32, h: 32 }
+    sword: { x: 128, y: 0,  w: 32, h: 32 },
+    bow:   { x: 160, y: 0,  w: 32, h: 32 },
+    wand:  { x: 128, y: 32, w: 32, h: 32 }
 };
 
 // defintions for weapon objects
