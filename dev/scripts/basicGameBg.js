@@ -486,7 +486,7 @@ class GameScreen {
             return;
         }
 
-        const mPos = camera.screenToWorld(mouseX, mouseY);
+      const mPos = camera.screenToWorld(mouseX, mouseY);
         for (const trp of this.troops) {
             if (trp.position.distanceTo(mPos) < trp.base.size * 2) {
                 this.selectedSquad = trp.squad;
@@ -496,12 +496,14 @@ class GameScreen {
             }
         }
         this.selectedSquad = null;
-        this.spawnTroop(mPos);
+        if (this.ui.selectedSquadBase) {
+            this.spawnTroop(mPos);
+        }
         console.log("Total objects successfully generated:", this.mapObjects.length);
     }
 
     spawnTroop(position) {
-        const squadBase = squadBases.wizard_squad;
+        const squadBase = this.ui.selectedSquadBase;
         const squad = new Squad(position.x, position.y, position.angle, squadBase, true, this);
 
         // const troop = new Troop(position, this.playerTeam, base);
