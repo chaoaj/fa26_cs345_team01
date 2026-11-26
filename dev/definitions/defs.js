@@ -1,7 +1,9 @@
 const TROOP_OBJECTS = {
     knight: { x: 0, y: 0, w: 32, h: 32 },
     sword:  { x: 32, y: 0, w: 16, h: 16 },
-    bow:    { x: 48, y: 0, w: 16, h: 22 }
+    bow:    { x: 48, y: 0, w: 16, h: 22 },
+    wizard: { x: 0, y: 32, w: 32, h: 32 },
+    wand:   { x: 32, y: 32, w: 24, h: 32 }
 };
 
 // defintions for weapon objects
@@ -58,14 +60,28 @@ const WEAPON_DEFS = {
 			radius: 6,
 			speed: 240
 		},
-		visual: new Visual(function (cols) {
-			// TODO: draw wand sprite here later
+    visual: new Visual(function (cols) {
+			let cut = TROOP_OBJECTS['wand'];
+			let scaleFactor = 2;
+			let destW = cut.w * scaleFactor;
+			let destH = cut.h * scaleFactor;
+			let drawX = 0;
+			let drawY = -destH / 2;
+			if (typeof troopSprites !== 'undefined' && troopSprites && troopSprites.width > 0) {
+				image(troopSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+				// Temporary debug border showing the exact crop area
+				// noFill();
+				// stroke(0, 255, 255);
+				// strokeWeight(1);
+				// rect(drawX, drawY, destW, destH);
+			}
 		})
 	},
 }
 
 // defintions for troop objects
 const TROOP_DEFS = {
+  // KNIGHT TROOP (IMPERIAL) -----------------------
 	basic: {
 		name: 'Basic',
 		health: 10,
@@ -94,6 +110,34 @@ const TROOP_DEFS = {
 		]
 	},
 
+  // WIZARD TROOP (SPIRIT BOUND) -----------------
+  wizard: {
+		name: 'Wizard',
+		health: 7,
+		armor: 0,
+		speed: 45,
+		moveTo: null,
+		size: 64,
+    visual: new Visual(function (cols) {
+			let cut = TROOP_OBJECTS['wizard'];
+			let scaleFactor = 2;
+			let destW = cut.w * scaleFactor;
+			let destH = cut.h * scaleFactor;
+			let drawX = -destW / 2;
+			let drawY = -destH / 2;
+			if (typeof troopSprites !== 'undefined' && troopSprites && troopSprites.width > 0) {
+				image(troopSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+			}
+		}),
+		weapons: [
+			{
+				weapon: 'wand',
+				offset: new Position(12, 0),
+				startingAngle: 0,
+				turnRange: [-Math.PI, Math.PI]
+			}
+		]
+	},
   // ELF TROOP (SPIRIT BOUND) -----------------
   elf: {
 		name: 'Elf',
@@ -108,27 +152,6 @@ const TROOP_DEFS = {
 		weapons: [
 			{
 				weapon: 'bow',
-				offset: new Position(12, 0),
-				startingAngle: 0,
-				turnRange: [-Math.PI, Math.PI]
-			}
-		]
-	},
-
-  // WIZARD TROOP (SPIRIT BOUND) -----------------
-  wizard: {
-		name: 'Wizard',
-		health: 7,
-		armor: 0,
-		speed: 45,
-		moveTo: null,
-		size: 64,
-		visual: new Visual(function (cols) {
-			// TODO: draw wizard sprite later
-		}),
-		weapons: [
-			{
-				weapon: 'wand',
 				offset: new Position(12, 0),
 				startingAngle: 0,
 				turnRange: [-Math.PI, Math.PI]

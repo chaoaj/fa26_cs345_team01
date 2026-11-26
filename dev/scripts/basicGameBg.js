@@ -501,7 +501,7 @@ class GameScreen {
     }
 
     spawnTroop(position) {
-        const squadBase = squadBases.basic_squad;
+        const squadBase = squadBases.wizard_squad;
         const squad = new Squad(position.x, position.y, position.angle, squadBase, true, this);
 
         // const troop = new Troop(position, this.playerTeam, base);
