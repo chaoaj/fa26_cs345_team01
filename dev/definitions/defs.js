@@ -226,8 +226,8 @@ const SQUAD_DEFS = {
 		name: 'Knight Squad',
     faction: 'imperial_faction',
 		cost: 1000,
-		pros: [],
-		cons: [],
+		pros: ['Cheap & dependable'],
+		cons: ['too basic'],
 		startingTroops: [
 			{ troop: "basic", count: 6 }
 		],
@@ -249,7 +249,7 @@ const SQUAD_DEFS = {
     pros: [],
     cons: [],
     startingTroops: [
-      { troop: 'royal_archer', count: 4 }
+      { troop: 'royal_archer', count: 3 }
     ],
     formation: [
       // decide formation
@@ -261,8 +261,8 @@ const SQUAD_DEFS = {
 		name: 'Wizard Squad',
 		faction: 'spiritBound_faction',
 		cost: 1400,
-		pros: [],
-		cons: [],
+		pros: ['Heavy hitting range'],
+		cons: ['Slow (they are old)'],
 		startingTroops: [
 			{ troop: 'wizard', count: 2 }
 		],
@@ -280,11 +280,40 @@ const SQUAD_DEFS = {
 		pros: [],
 		cons: [],
 		startingTroops: [
-			{ troop: 'elf', count: 2 }
+			{ troop: 'elf', count: 4 }
 		],
 		formation: [
-			new Position(25, -20),
-			new Position(25, 20)
+      // decide formation
 		]
-	}
+	},
+
+  // steam punk squad 1 --- (UNFINISHED)
+  steamPunk_melee: {
+		name: 'Steampunk Melee',
+		faction: 'steamPunk_faction',
+		cost: 0,
+		pros: [],
+		cons: [],
+		startingTroops: [
+			{ troop: 'n/a', count: 0 }
+		],
+		formation: [
+      // decide formation
+		]
+	},
+
+    // steam punk squad 2 --- (UNFINISHED)
+  steamPunk_ranged: {
+		name: 'Steampunk Ranged',
+		faction: 'steamPunk_faction',
+		cost: 0,
+		pros: [],
+		cons: [],
+		startingTroops: [
+			{ troop: 'n/a', count: 0 }
+		],
+		formation: [
+      // decide formation
+		]
+	},
 };
