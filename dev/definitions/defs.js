@@ -1,23 +1,36 @@
 const TROOP_OBJECTS = {
-    knight: { x: 0, y: 0, w: 32, h: 32 },
-    knightWalk: [ // frames of walking animation 
-        { x: 0,  y: 0, w: 32, h: 32 }, 
-        { x: 32, y: 0, w: 32, h: 32 },
-        { x: 64, y: 0, w: 32, h: 32 },
-        { x: 96, y: 0, w: 32, h: 32 }
-    ],
+  // knight sprite & walking frames
+  knight: { x: 0, y: 0, w: 32, h: 32 },
+  knightWalk: [ 
+    { x: 0,  y: 0, w: 32, h: 32 }, 
+    { x: 32, y: 0, w: 32, h: 32 },
+    { x: 64, y: 0, w: 32, h: 32 },
+    { x: 96, y: 0, w: 32, h: 32 }
+  ],
 
-    wizard: { x: 0, y: 32, w: 32, h: 32 },
-    wizardWalk: [ // frames of walking animation
-        { x: 0,  y: 32, w: 32, h: 32 },
-        { x: 32, y: 32, w: 32, h: 32 },
-        { x: 64, y: 32, w: 32, h: 32 },
-        { x: 96, y: 32, w: 32, h: 32 }
-    ],
+  // wizard sprite & walking frames
+  wizard: { x: 0, y: 32, w: 32, h: 32 },
+  wizardWalk: [ 
+    { x: 0,  y: 32, w: 32, h: 32 },
+    { x: 32, y: 32, w: 32, h: 32 },
+    { x: 64, y: 32, w: 32, h: 32 },
+    { x: 96, y: 32, w: 32, h: 32 }
+  ],
 
-    sword: { x: 128, y: 0,  w: 32, h: 32 },
-    bow:   { x: 160, y: 0,  w: 32, h: 32 },
-    wand:  { x: 128, y: 32, w: 32, h: 32 }
+  // elf sprite & walking frames
+  elf: { x: 0, y: 64, w: 32, h: 32 },
+  elfWalk: [ 
+    { x: 0,  y: 64, w: 32, h: 32 },
+    { x: 32, y: 64, w: 32, h: 32 },
+    { x: 64, y: 64, w: 32, h: 32 },
+    { x: 96, y: 64, w: 32, h: 32 }
+  ],
+  
+  // troop weapons sprite
+  sword: { x: 128, y: 0,  w: 32, h: 32 },
+  bow:   { x: 160, y: 0,  w: 32, h: 16 },
+  wand:  { x: 128, y: 32, w: 32, h: 32 },
+  dagger: { x: 128, y: 64, w: 32, h: 32 }
 };
 
 // defintions for weapon objects
@@ -91,13 +104,20 @@ const WEAPON_DEFS = {
   dagger: {
     name: 'Dagger',
     type: 'melee',
-    damage: 3,
-    attackSpeed: 0.75,
+    damage: 2.5,
+    attackSpeed: 1.2,
     range: 7,
-    visual: new Visual(function (cols) {
-      // TODO: draw dagger sprite
-    })
-
+      visual: new Visual(function (cols) {
+        let cut = TROOP_OBJECTS['dagger'];
+        let scaleFactor = 2;
+        let destW = cut.w * scaleFactor;
+        let destH = cut.h * scaleFactor;
+        let drawX = 0;
+        let drawY = -destH / 2;
+        if (typeof troopSprites !== 'undefined' && troopSprites && troopSprites.width > 0) {
+          image(troopSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+        }
+      })
   }
 }
 
@@ -126,7 +146,7 @@ const TROOP_DEFS = {
 		weapons: [
 			{
 				weapon: 'sword',
-				offset: new Position(1, 1),
+				offset: new Position(0, 1),
 				startingAngle: 0,
 				turnRange: [-Math.PI, Math.PI]
 			}
@@ -192,13 +212,22 @@ const TROOP_DEFS = {
 		speed: 60,
 		moveTo: null,
 		size: 64,
-		visual: new Visual(function (cols) {
-			// TODO: draw elf sprite later
+		visual: new Visual(function (cols, frame = 0) {
+			let frames = TROOP_OBJECTS['elfWalk'];
+			let cut = frames[frame % frames.length];
+			let scaleFactor = 2;
+			let destW = cut.w * scaleFactor;
+			let destH = cut.h * scaleFactor;
+			let drawX = -destW / 2;
+			let drawY = -destH / 2;
+			if (typeof troopSprites !== 'undefined' && troopSprites && troopSprites.width > 0) {
+				image(troopSprites, drawX, drawY, destW, destH, cut.x, cut.y, cut.w, cut.h);
+			}
 		}),
 		weapons: [
 			{
 				weapon: 'dagger',
-				offset: new Position(12, 0),
+				offset: new Position(-13, 10),
 				startingAngle: 0,
 				turnRange: [-Math.PI, Math.PI]
 			}
@@ -280,10 +309,11 @@ const SQUAD_DEFS = {
 		pros: [],
 		cons: [],
 		startingTroops: [
-			{ troop: 'elf', count: 4 }
+			{ troop: 'elf', count: 2 }
 		],
 		formation: [
-      // decide formation
+			new Position(25, -20),
+			new Position(25, 20)
 		]
 	},
 
