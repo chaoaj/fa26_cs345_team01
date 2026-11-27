@@ -28,7 +28,7 @@ const TROOP_OBJECTS = {
   
   // troop weapons sprite
   sword: { x: 128, y: 0,  w: 32, h: 32 },
-  bow:   { x: 160, y: 0,  w: 32, h: 16 },
+  bow:   { x: 160, y: 0,  w: 32, h: 32 },
   wand:  { x: 128, y: 32, w: 32, h: 32 },
   dagger: { x: 128, y: 64, w: 32, h: 32 }
 };
@@ -153,27 +153,6 @@ const TROOP_DEFS = {
 		]
 	},
 
-  // ROYAL ARCHER (IMPERIAL) -----------------
-  royal_archer: {
-		name: 'Archer',
-		health: 8,
-		armor: 0,
-		speed: 60,
-		moveTo: null,
-		size: 64,
-		visual: new Visual(function (cols) {
-			// TODO: draw archer sprite later
-		}),
-		weapons: [
-			{
-				weapon: 'bow',
-				offset: new Position(12, 0),
-				startingAngle: 0,
-				turnRange: [-Math.PI, Math.PI]
-			}
-		]
-	},
-
   // WIZARD TROOP (SPIRIT BOUND) -----------------
   wizard: {
 		name: 'Wizard',
@@ -197,14 +176,14 @@ const TROOP_DEFS = {
 		weapons: [
 			{
 				weapon: 'wand',
-				offset: new Position(-4, 6),
+				offset: new Position(-6, 8),
 				startingAngle: 0,
 				turnRange: [-Math.PI, Math.PI]
 			}
 		]
 	},
 
-  // ELF (SPIRIT BOUND) -----------------
+  // ELF ARCHERS (SPIRIT BOUND) -----------------
   elf: {
 		name: 'Elf',
 		health: 6,
@@ -226,8 +205,8 @@ const TROOP_DEFS = {
 		}),
 		weapons: [
 			{
-				weapon: 'dagger',
-				offset: new Position(-13, 10),
+				weapon: 'bow',
+				offset: new Position(-10, 10),
 				startingAngle: 0,
 				turnRange: [-Math.PI, Math.PI]
 			}
@@ -270,15 +249,15 @@ const SQUAD_DEFS = {
 		]
 	},
 
-  // archer squad
-  archer_squad: {
-    name: 'Royal Archer Squad',
+  // imperaial squad 2 --- (UNFINISHED)
+  imperial_squad: {
+    name: 'Imperial Ranged',
     faction: 'imperial_faction',
     cost: 1000,
     pros: [],
     cons: [],
     startingTroops: [
-      { troop: 'royal_archer', count: 3 }
+      { troop: 'n/a', count: 3 }
     ],
     formation: [
       // decide formation
