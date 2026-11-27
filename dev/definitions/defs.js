@@ -309,11 +309,12 @@ const SQUAD_DEFS = {
 		pros: [],
 		cons: [],
 		startingTroops: [
-			{ troop: 'elf', count: 2 }
+			{ troop: 'elf', count: 3 }
 		],
 		formation: [
 			new Position(25, -20),
-			new Position(25, 20)
+			new Position(25, 20),
+      new Position(65, 0),
 		]
 	},
 
